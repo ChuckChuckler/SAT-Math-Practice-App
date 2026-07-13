@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { isActionFailure } from "@sveltejs/kit";
+
     let problem:string=$state("");
-    let solution:number=0;
+    let solutions:number[]=[];
     let pos:boolean=$state(true)
     let userAnswer:string=$state("");
 
@@ -36,14 +38,15 @@
 
     function checkAnswer():boolean{
         let x:number=parseFloat(userAnswer);
-        console.log(x, solution);
-        if(x==solution){
-            feedback="Correct!";
-            return true;
-        }else{
-            feedback="Incorrect...try again!";
-            return false;
+        for(let i of solutions){
+            console.log(i);
+            if(x==i){
+                feedback="Correct!";
+                return true;
+            }
         }
+        feedback="Incorrect...try again!";
+        return false;
     }
 
     function typeA(){
@@ -107,60 +110,60 @@
                 problem+=`a + b?`;
                 if(smallest){
                     if(a+b<c+d){
-                        solution=a+b;
+                        solutions.push(a+b);
                     }else{
-                        solution=c+d;
+                        solutions.push(c+d);
                     }
                 }else{
                     if(a+b>c+d){
-                        solution=a+b;
+                        solutions.push(a+b);
                     }else{
-                        solution=c+d;
+                        solutions.push(c+d);
                     }
                 }
             }else if(operation==2){
                 problem+=`a - b?`;
                 if(smallest){
                     if(a-b<c-d){
-                        solution=a-b;
+                        solutions.push(a-b);
                     }else{
-                        solution=c-d;
+                        solutions.push(c-d);
                     }
                 }else{
                     if(a-b>c-d){
-                        solution=a-b;
+                        solutions.push(a-b);
                     }else{
-                        solution=c-d;
+                        solutions.push(c-d);
                     }
                 }
             }else if(operation==3){
                 problem+=`ab?`;
                 if(smallest){
                     if(a*b<c*d){
-                        solution=a*b;
+                        solutions.push(a*b);
                     }else{
-                        solution=c*d;
+                        solutions.push(c*d);
                     }
                 }else{
                     if(a*b>c*d){
-                        solution=a*b;
+                        solutions.push(a*b);
                     }else{
-                        solution=c*d;
+                        solutions.push(c*d);
                     }
                 }
             }else if(operation==4){
                 problem+=`a/b?`;
                 if(smallest){
                     if(a/b<c/d){
-                        solution=a/b;
+                        solutions.push(a/b);
                     }else{
-                        solution=c/d;
+                        solutions.push(c/d);
                     }
                 }else{
                     if(a/b>c/d){
-                        solution=a/b;
+                        solutions.push(a/b);
                     }else{
-                        solution=c/d;
+                        solutions.push(c/d);
                     }
                 }
             }
@@ -170,69 +173,69 @@
                 problem+=`c + d?`;
                 if(smallest){
                     if(a+b<c+d){
-                        solution=a+b;
+                        solutions.push(a+b);
                     }else{
-                        solution=c+d;
+                        solutions.push(c+d);
                     }
                 }else{
                     if(a+b>c+d){
-                        solution=a+b;
+                        solutions.push(a+b);
                     }else{
-                        solution=c+d;
+                        solutions.push(c+d);
                     }
                 }
             }else if(operation==2){
                 problem+=`c - d?`;
                 if(smallest){
                     if(a-b<c-d){
-                        solution=a-b;
+                        solutions.push(a-b);
                     }else{
-                        solution=c-d;
+                        solutions.push(c-d);
                     }
                 }else{
                     if(a-b>c-d){
-                        solution=a-b;
+                        solutions.push(a-b);
                     }else{
-                        solution=c-d;
+                        solutions.push(c-d);
                     }
                 }
             }else if(operation==3){
                 problem+=`cd?`;
                 if(smallest){
                     if(a*b<c*d){
-                        solution=a*b;
+                        solutions.push(a*b);
                     }else{
-                        solution=c*d;
+                        solutions.push(c*d);
                     }
                 }else{
                     if(a*b>c*d){
-                        solution=a*b;
+                        solutions.push(a*b);
                     }else{
-                        solution=c*d;
+                        solutions.push(c*d);
                     }
                 }
             }else if(operation==4){
                 problem+=`c/d?`;
                 if(smallest){
                     if(a/b<c/d){
-                        solution=a/b;
+                        solutions.push(a/b);
                     }else{
-                        solution=c/d;
+                        solutions.push(c/d);
                     }
                 }else{
                     if(a/b>c/d){
-                        solution=a/b;
+                        solutions.push(a/b);
                     }else{
-                        solution=c/d;
+                        solutions.push(c/d);
                     }
                 }
             }
         }
 
-        if(solution < 0) pos=false;
-        solution=Math.round(solution*1000)/1000;
+        if(solutions[0] < 0) pos=false;
+        solutions[0]=Math.round(solutions[0]*1000)/1000;
 
-        console.log(solution);
+        console.log(solutions[0]);
     }
 
     function typeC(){
@@ -255,18 +258,6 @@
             m=randint(-5,5);
 
             e=-((Math.pow(b-m,2)/(4*a))-c);
-        }
-
-        let xOrY:number=randint(1,2);
-        let chosenForSolution:string=``;
-
-        if(xOrY==1){ //x
-            solution = (-(b-m))/(2*a);
-            chosenForSolution="x";
-        }else{
-            x = (-(b-m))/(2*a);
-            solution = m*x + b;
-            chosenForSolution="y";
         }
 
         //solution = (-(b-m))/(2*a);
@@ -303,10 +294,28 @@
             equation2=`y = ${m}x + e`;
         }
 
-        if(solution < 0) pos=false;
-        solution=Math.round(solution*1000)/1000;
+        let xOrY:number=randint(1,2);
+        let chosenForSolution:string=``;
 
-        problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
+        if(xOrY==1){ //x
+            solutions.push((Math.round(-(b-m))/(2*a)*1000)/1000);
+            if(chosenUnknownName=="b"){
+                solutions.push(-((Math.round(-(b-m))/(2*a)*1000)/1000));
+            }
+            chosenForSolution="x";
+        }else{
+            x = (-(b-m))/(2*a);
+            solutions.push(Math.round((m*x + e)*1000)/1000);
+            if(chosenUnknownName=="b"){
+                x = -(-(b-m))/(2*a);
+                solutions.push(Math.round((m*x + e)*1000)/1000);
+            }
+            chosenForSolution="y";
+        }
+
+        pos=false;
+
+        (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
     /*List of parabola questions:
