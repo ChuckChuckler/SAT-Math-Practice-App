@@ -4,6 +4,9 @@
     let pos:boolean=$state(true)
     let userAnswer:string=$state("");
 
+    let equation1:string=$state("");
+    let equation2:string=$state("");
+
     let feedback:string=$state("");
 
     function randint(min:number, max:number):number{
@@ -254,12 +257,20 @@
             e=-((Math.pow(b-m,2)/(4*a))-c);
         }
 
-        console.log(`${a}x^2 + ${b}x + ${c}`);
-        console.log(`${m}x + ${e}`);
+        let xOrY:number=randint(1,2);
+        let chosenForSolution:string=``;
 
-        solution = (-(b-m))/(2*a);
+        if(xOrY==1){ //x
+            solution = (-(b-m))/(2*a);
+            chosenForSolution="x";
+        }else{
+            x = (-(b-m))/(2*a);
+            solution = m*x + b;
+            chosenForSolution="y";
+        }
 
-        console.log(`x =`, solution);
+        //solution = (-(b-m))/(2*a);
+
         /*
         Possible unknowns (assuming y = ax^2 + bx + c; y = mx + e):
         - a
@@ -269,17 +280,33 @@
         - e
         */
         let whichUnknown:number=randint(1,5);
+        let chosenUnknownName:string=``;
         if(whichUnknown==1){ //a
-            
+            chosenUnknownName=`a`;
+            equation1=`y = ax² + ${b}x + ${c}`;
+            equation2=`y = ${m}x + ${e}`;
         }else if(whichUnknown==2){ //b
-
+            chosenUnknownName=`b`;
+            equation1=`y = ${a}x² + bx + ${c}`
+            equation2=`y = ${m}x + ${e}`;
         }else if(whichUnknown==3){ //c
-
+            chosenUnknownName=`c`;
+            equation1=`y = ${a}x² + ${b}x + c`
+            equation2=`y = ${m}x + ${e}`;
         }else if(whichUnknown==4){ //d
-
+            chosenUnknownName=`d`;
+            equation1=`y = ${a}x² + ${b}x + ${c}`
+            equation2=`y = mx + ${e}`;
         }else if(whichUnknown==5){ //e
-
+            chosenUnknownName=`e`;
+            equation1=`y = ${a}x² + ${b}x + ${c}`
+            equation2=`y = ${m}x + e`;
         }
+
+        if(solution < 0) pos=false;
+        solution=Math.round(solution*1000)/1000;
+
+        problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
     /*List of parabola questions:
@@ -292,6 +319,8 @@
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
+<h3>{equation1}</h3>
+<h3>{equation2}</h3>
 <h3>{problem}</h3>
 <label for="answer">Answer:</label>
 <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer}>
