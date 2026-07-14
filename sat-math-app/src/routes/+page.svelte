@@ -20,15 +20,22 @@
         }
         return x;
     }
+
+    function checkIfNegative(){
+        (userAnswer.includes("-"))?pos=false:pos=true;
+    }
+
     function makeQuestion(){
         makeQuestionVisible=false;
         checkAnswerVisible=true;
         answerInterfaceVisible=true;
         feedback="";
         userAnswer="";
+        equation1="";
+        equation2="";
 
-        //let choice:number=randint(1,5);
-        let choice:number=2;
+        let choice:number=randint(1,5);
+        //let choice:number=3;
         if(choice==1){
             typeA();
         }else if(choice==2){
@@ -43,9 +50,10 @@
     }
 
     function checkAnswer():boolean{
-        let x:number=parseFloat(userAnswer);
+        let x:number=0;
+        userAnswer.includes("/")?x=(Math.round(parseFloat(userAnswer.split("/")[0])/parseFloat(userAnswer.split("/")[1])*1000))/1000:x=parseFloat(userAnswer);
         for(let i of solutions){
-            console.log(i);
+            //console.log(i);
             if(x==i){
                 feedback="Correct!";
                 solutions=[];
@@ -59,9 +67,6 @@
     }
 
     function typeA(){
-        equation1="";
-        equation2="";
-        
         problem="The ";
 
         var exponent1:string;
@@ -88,10 +93,26 @@
         }
 
         if(k==1){
-            (a*c)<0?(problem+=`${a*c*-1}x${exponent1} + ${(a*d + c*b)*-1}x${exponent2} + ${b*d*-1}`):(problem+=`${a*c}x${exponent1} + ${a*d + c*b}x${exponent2} + ${b*d}`);
+            if(a*c<0){
+                problem+=`${a*c*-1}x${exponent1} `;
+                ((a*d + c*b)*-1 < 0)?problem+=`- ${(a*d + c*b)}x${exponent2}`:problem+=`+ ${(a*d + c*b)*-1}x${exponent2} `;
+                (b*d*-1 < 0)?problem+=`- ${b*d}`:problem+=`+ ${b*d*-1}`
+            }else{
+                problem+=`${a*c}x${exponent1} `;
+                ((a*d + c*b) < 0)?problem+=`- ${(a*d + c*b)*-1}x${exponent2}`:problem+=`+ ${(a*d + c*b)}x${exponent2} `;
+                (b*d < 0)?problem+=`- ${b*d*-1}`:problem+=`+ ${b*d}`;
+            }
             problem+=` can be factored as (ax${exponent2} + b)(cx${exponent2} + d), where a, b, c, and d are integers. `;
         }else{
-            (a*c)<0?(problem+=`${a*c*-1*k}x${exponent1} + ${(a*d + c*b)*-1*k}x${exponent2} + ${b*d*-1*k}`):(problem+=`${a*c*k}x${exponent1} + ${(a*d + c*b)*k}x${exponent2} + ${b*d*k}`);
+            if(a*c<0){
+                problem+=`${a*c*-1*k}x${exponent1} `;
+                ((a*d + c*b)*-1 < 0)?problem+=`- ${(a*d + c*b)*k}x${exponent2} `:problem+=`+ ${(a*d + c*b)*k*-1}x${exponent2} `;
+                (b*d*-1 < 0)?problem+=`- ${b*d*k}`:problem+=`+ ${b*d*k*-1}`;
+            }else{
+                problem+=`${a*c}x${exponent1} `;
+                ((a*d + c*b) < 0)?problem+=`- ${(a*d + c*b)*-1}x${exponent2} `:problem+=`+ ${(a*d + c*b)}x${exponent2} `;
+                (b*d < 0)?problem+=`- ${b*d*-1}`:problem+=`+ ${b*d}`
+            }
             problem+=` can be factored as (k)(ax${exponent2} + b)(cx${exponent2} + d), where a, b, c, d, and k are integers. `;
         }
 
@@ -244,16 +265,12 @@
             }
         }
 
-        if(solutions[0] < 0) pos=false;
         solutions[0]=Math.round(solutions[0]*1000)/1000;
 
         console.log(solutions[0]);
     }
 
     function typeB(){
-        equation1="";
-        equation2="";
-
         /*
             - find factors and coefficients. name them?
             - (r1x + a)(r2x + b)
@@ -292,8 +309,12 @@
             d=yb;
             c=(a*b)/yb;
         }
+
+        problem=`The expression ${r1*r2}x² `;
+        ((r1*b)+(r2*a)<0)?problem+=`- ${-((r1*b)+(r2*a))}x `:problem+=`+ ${(r1*b)+(r2*a)}x `;
+        (a*b<0)?problem+=`- ${a*b*-1}`:problem+=`+ ${a*b}`;
        
-       problem=`The expression ${r1*r2}x² + ${(r1*b)+(r2*a)}x + ${a*b} can be rewritten as (${r1}x + a)(${r2}x + b), where a and b are integers, or as (${r1}x + c)(${r2}x + d), where c and d are nonintegers. What is the value of `;
+        problem+=` can be rewritten as (${r1}x + a)(${r2}x + b), where a and b are integers, or as (${r1}x + c)(${r2}x + d), where c and d are nonintegers. What is the value of `;
        /*
        Things we can try to find:
        a+c
@@ -302,23 +323,22 @@
        b+d
        i fear the rest is a hugeee timesink
        */
-      let whatToFind:number=randint(1,4);
-      if(whatToFind==1){ //a+c
-        problem+=`a + c?`;
-        solutions.push(a+c);
-      }else if(whatToFind==2){ //a+d
-        problem+=`a + d?`;
-        solutions.push(a+d);
-      }else if(whatToFind==3){ //b+c
-        problem+=`b + c?`;
-        solutions.push(b+c);
-      }else{
-        problem+=`b + d?`;
-        solutions.push(b+d);
-      }
+        let whatToFind:number=randint(1,4);
+        if(whatToFind==1){ //a+c
+            problem+=`a + c?`;
+            solutions.push(a+c);
+        }else if(whatToFind==2){ //a+d
+            problem+=`a + d?`;
+            solutions.push(a+d);
+        }else if(whatToFind==3){ //b+c
+            problem+=`b + c?`;
+            solutions.push(b+c);
+        }else{
+            problem+=`b + d?`;
+            solutions.push(b+d);
+        }
 
-      if (solutions[0]<0) pos=false;
-      solutions[0]=Math.round(solutions[0]*1000)/1000;
+        solutions[0]=Math.round(solutions[0]*1000)/1000;
     }
 
     function typeC(){
@@ -357,23 +377,35 @@
         let chosenUnknownName:string=``;
         if(whichUnknown==1){ //a
             chosenUnknownName=`a`;
-            equation1=`y = ax² + ${b}x + ${c}`;
-            equation2=`y = ${m}x + ${e}`;
+            equation1=`y = ax² `;
+            (b<0)?equation1+=`- ${-b}x `:equation1+=`+ ${b}x `;
+            (c<0)?equation1+=`- ${-c}x `:equation1+=` + ${c}x`;
+            equation2=`y = ${m}x `;
+            (e<0)?equation2+=`- ${-e}`:equation2+=`+ ${e}`;
         }else if(whichUnknown==2){ //b
             chosenUnknownName=`b`;
-            equation1=`y = ${a}x² + bx + ${c}`
-            equation2=`y = ${m}x + ${e}`;
+            equation1=`y = ${a}x² + bx `;
+            (c<0)?equation1+=`- ${-c}`:equation1+=`+ ${c};`
+            equation2=`y = ${m}x `;
+            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==3){ //c
             chosenUnknownName=`c`;
-            equation1=`y = ${a}x² + ${b}x + c`
-            equation2=`y = ${m}x + ${e}`;
+            equation1=`y = ${a}x² `;
+            equation1+=(b<0)?`- ${-b}x + c`:`+ ${b}x + c`;
+            equation2=`y = ${m}x `;
+            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==4){ //d
             chosenUnknownName=`d`;
-            equation1=`y = ${a}x² + ${b}x + ${c}`
-            equation2=`y = mx + ${e}`;
+            equation1=`y = ${a}x² `;
+            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
+            equation2=`y = mx `;
+            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==5){ //e
             chosenUnknownName=`e`;
-            equation1=`y = ${a}x² + ${b}x + ${c}`
+            equation1=`y = ${a}x² `;
+            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
             equation2=`y = ${m}x + e`;
         }
 
@@ -396,13 +428,10 @@
             chosenForSolution="y";
         }
 
-        pos=false;
-
         (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
     function typeD(){
-        equation2="";
         console.log("if jx+k factor, what is ac")
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
@@ -416,6 +445,10 @@
         let a:number=randint(-5,5);
         let b:number=randint(1,20);
         let c:number=Math.pow(b,2)/(4*a);
+        if((a<0 && c<0) || (a>0 && c>0)){ //b will be undefined if -4ac ends up positive
+            let x:number=randint(1,2);
+            (x==1)?a*=-1:c*=-1;
+        }
         /*options:
         - b is unknown (parabola)
         - c is unknown (horizontal line)
@@ -438,7 +471,6 @@
             problem+=`${coeffY}y = c for some constant c intersects a parabola at exactly one point. If the parabola has equation y = ${a}x² + ${b}x, what is the value of c?`;
             solutions.push(c*coeffY);
         }
-        if(solutions[0]<0) pos=false;
     }
     /*List of parabola questions:
     - smallest or largest values of ab
@@ -455,7 +487,7 @@
 <h3>{problem}</h3>
 <div id="answerInputContainer" style={answerInterfaceVisible?`display:block`:`display:none`}>
     <label for="answer">Answer:</label>
-    <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer}>
+    <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer} oninput={checkIfNegative}>
     <br>
     <button onclick={checkAnswer} style={checkAnswerVisible?`display:block`:`display:none`}>Check answer</button>
     <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="_blank" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide</a>.</p>
