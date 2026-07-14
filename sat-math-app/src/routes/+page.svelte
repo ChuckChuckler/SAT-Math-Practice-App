@@ -28,11 +28,11 @@
         userAnswer="";
 
         //let choice:number=randint(1,5);
-        let choice:number=5;
+        let choice:number=2;
         if(choice==1){
             typeA();
         }else if(choice==2){
-            console.log("find a+c, a+d, etc");
+            typeB()
         }else if(choice==3){
             typeC();
         }else if(choice==4){
@@ -248,6 +248,77 @@
         solutions[0]=Math.round(solutions[0]*1000)/1000;
 
         console.log(solutions[0]);
+    }
+
+    function typeB(){
+        equation1="";
+        equation2="";
+
+        /*
+            - find factors and coefficients. name them?
+            - (r1x + a)(r2x + b)
+            - a and b are the integers
+            - solve out a system of equations --> get d, plug back in for c
+        */
+
+        /*
+        Requirements for c and d to be nonintegers:
+        assuming ax^2 + bx + c
+        - b%r1 must = 0 and b%r2 must = 0!!!
+        - so we will do a while loop when deciding r1, r2, a, b; make sure r1!=r2 and that (r1b+r2a)%r1 or r2 does not equal 0
+        */
+
+        let r1:number=randint(2,5);
+        let r2:number=randint(2,5);
+        let a:number=randint(-10,10);
+        let b:number=randint(-10,10);
+        while(r1==r2 || (r1*b+r2*a)%r1==0 || (r1*b+r2*a)%r2==0){
+            r1=randint(2,5);
+            r2=randint(2,5);
+            a=randint(-10,10);
+            b=randint(-10,10);
+        }
+
+        let c:number=0;
+        let d:number=0;
+
+        let ya:number=((r1*b)+(r2*a) + Math.sqrt(Math.pow((r1*b)+(r2*a),2)-(4*r1*(a*b*r2))))/(2*r1);
+        let yb:number=((r1*b)+(r2*a) - Math.sqrt(Math.pow((r1*b)+(r2*a),2)-(4*r1*(a*b*r2))))/(2*r1);
+
+        if(ya.toString().includes(".")){ //find the solution that is noninteger; that is d
+            d=ya;
+            c=(a*b)/ya;
+        }else if(yb.toString().includes(".")){
+            d=yb;
+            c=(a*b)/yb;
+        }
+       
+       problem=`The expression ${r1*r2}x² + ${(r1*b)+(r2*a)}x + ${a*b} can be rewritten as (${r1}x + a)(${r2}x + b), where a and b are integers, or as (${r1}x + c)(${r2}x + d), where c and d are nonintegers. What is the value of `;
+       /*
+       Things we can try to find:
+       a+c
+       a+d
+       b+c
+       b+d
+       i fear the rest is a hugeee timesink
+       */
+      let whatToFind:number=randint(1,4);
+      if(whatToFind==1){ //a+c
+        problem+=`a + c?`;
+        solutions.push(a+c);
+      }else if(whatToFind==2){ //a+d
+        problem+=`a + d?`;
+        solutions.push(a+d);
+      }else if(whatToFind==3){ //b+c
+        problem+=`b + c?`;
+        solutions.push(b+c);
+      }else{
+        problem+=`b + d?`;
+        solutions.push(b+d);
+      }
+
+      if (solutions[0]<0) pos=false;
+      solutions[0]=Math.round(solutions[0]*1000)/1000;
     }
 
     function typeC(){
