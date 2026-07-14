@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { isActionFailure } from "@sveltejs/kit";
+    let checkAnswerVisible:boolean=$state(true);
+    let answerInterfaceVisible:boolean=$state(false);
+    let makeQuestionVisible:boolean=$state(true);
 
     let problem:string=$state("");
     let solutions:number[]=[];
@@ -19,6 +21,11 @@
         return x;
     }
     function makeQuestion(){
+        makeQuestionVisible=false;
+        checkAnswerVisible=true;
+        answerInterfaceVisible=true;
+        feedback="";
+        userAnswer="";
 
         //let choice:number=randint(1,5);
         let choice:number=4;
@@ -43,6 +50,8 @@
             if(x==i){
                 feedback="Correct!";
                 solutions=[];
+                makeQuestionVisible=true;
+                checkAnswerVisible=false;
                 return true;
             }
         }
@@ -344,12 +353,14 @@
 <h3>{equation1}</h3>
 <h3>{equation2}</h3>
 <h3>{problem}</h3>
-<label for="answer">Answer:</label>
-<input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer}>
-<br>
-<button onclick={checkAnswer}>Check answer</button>
-<p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="_blank" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide</a>.</p>
-<br>
+<div id="answerInputContainer" style={answerInterfaceVisible?`display:block`:`display:none`}>
+    <label for="answer">Answer:</label>
+    <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer}>
+    <br>
+    <button onclick={checkAnswer} style={checkAnswerVisible?`display:block`:`display:none`}>Check answer</button>
+    <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="_blank" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide</a>.</p>
+    <br>
+</div>
 <h1>{feedback}</h1>
 <br>
-<button onclick={makeQuestion}>make question</button>
+<button onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>make question</button>
