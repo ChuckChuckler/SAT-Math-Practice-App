@@ -21,15 +21,15 @@
     function makeQuestion(){
 
         //let choice:number=randint(1,5);
-        let choice:number=3;
+        let choice:number=4;
         if(choice==1){
             typeA();
         }else if(choice==2){
-            
+            console.log("find a+c, a+d, etc");
         }else if(choice==3){
             typeC();
         }else if(choice==4){
-            console.log("if jx+k factor, what is ac")
+            typeD();
         }else if(choice==5){
             console.log("horizontal line with equation intersects parabola at 1 point")
         }
@@ -42,6 +42,7 @@
             console.log(i);
             if(x==i){
                 feedback="Correct!";
+                solutions=[];
                 return true;
             }
         }
@@ -50,6 +51,9 @@
     }
 
     function typeA(){
+        equation1="";
+        equation2="";
+        
         problem="The ";
 
         var exponent1:string;
@@ -67,12 +71,12 @@
 
         if(quadOrQuart==1){ //quadratic
             problem+="quadratic ";
-            exponent1="^2";
+            exponent1="²";
             exponent2="";
         }else{ //quartic
             problem+="quartic ";
-            exponent1="^4";
-            exponent2="^2";
+            exponent1="⁴";
+            exponent2="²";
         }
 
         if(k==1){
@@ -318,6 +322,15 @@
         (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
+    function typeD(){
+        equation2="";
+        console.log("if jx+k factor, what is ac")
+        let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let b:number=randint(1,150)*2;
+        equation1=`ax² + ${b}x + c`;
+        problem=`In the given expression, a and c are positive integer constants. If (${alphabet[randint(0,alphabet.length-1)]}x + ${alphabet[randint(0,alphabet.length-1)]}) is a factor of the expression, where j and k are positive constants, what is a possible value of ac?`
+        solutions.push(Math.pow(b,2)/4);
+    }
     /*List of parabola questions:
     - smallest or largest values of ab
     - find a+c, a+d, b+c, b+d...int and non-int
