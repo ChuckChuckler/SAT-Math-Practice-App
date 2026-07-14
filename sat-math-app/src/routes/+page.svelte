@@ -1,4 +1,7 @@
 <script lang="ts">
+    import Fraction from "$lib/comps/Fraction.svelte";
+    import McqDiv from "$lib/comps/McqDiv.svelte";
+
     let checkAnswerVisible:boolean=$state(true);
     let answerInterfaceVisible:boolean=$state(false);
     let makeQuestionVisible:boolean=$state(true);
@@ -472,13 +475,11 @@
             solutions.push(c*coeffY);
         }
     }
-    /*List of parabola questions:
-    - smallest or largest values of ab
-    - find a+c, a+d, b+c, b+d...int and non-int
-    - a is constant, intersect at point (x,y), where do they intersect
-    - f jx+k factor, what is ac
-    - line intersects at one point
-    */
+
+    function typeF(){
+        //what is the value of g/k?
+
+    }
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
@@ -493,6 +494,8 @@
     <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="_blank" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide</a>.</p>
     <br>
 </div>
+<!--<McqDiv a="option a" b="option b" c="option c" d="option d"></McqDiv>-->
 <h1>{feedback}</h1>
 <br>
+<h1><Fraction n=4 d=5></Fraction><div class="inline-block relative bottom-2 left-1">x + 3</div></h1>
 <button onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>make question</button>
