@@ -37,8 +37,8 @@
         equation1="";
         equation2="";
 
-        let choice:number=randint(1,5);
-        //let choice:number=3;
+        //let choice:number=randint(1,7);
+        let choice:number=7;
         if(choice==1){
             typeA();
         }else if(choice==2){
@@ -49,6 +49,10 @@
             typeD();
         }else if(choice==5){
             typeE();
+        }else if(choice==6){
+            typeF();
+        }else if(choice==7){
+            typeG();
         }
     }
 
@@ -439,7 +443,12 @@
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
         equation1=`ax² + ${b}x + c`;
-        problem=`In the given expression, a and c are positive integer constants. If (${alphabet[randint(0,alphabet.length-1)]}x + ${alphabet[randint(0,alphabet.length-1)]}) is a factor of the expression, where j and k are positive constants, what is a possible value of ac?`
+        let letter1=randint(0,alphabet.length-1);
+        let letter2=randint(0,alphabet.length-1);
+        while(letter1==letter2){
+            letter2=randint(0,alphabet.length-1);
+        }
+        problem=`In the given expression, a and c are positive integer constants. If (${alphabet[letter1]}x + ${alphabet[letter2]}) is a factor of the expression, where j and k are positive constants, what is a possible value of ac?`
         solutions.push(Math.pow(b,2)/4);
     }
 
@@ -478,7 +487,104 @@
 
     function typeF(){
         //what is the value of g/k?
+        let a:number=randint(-10,10);
+        let b:number=randint(-10,10);
+        while(a==b){
+            b=randint(-10,10);
+        }
+        let c:number=randint(-30,30);
+        let d:number=randint(-30,30);
+        while(c==d){
+            d=randint(-30,30);
+        }
 
+        let g:number=(d/c)*a;
+        let k:number=(d/c)*b;
+
+        let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let letter1=randint(0,alphabet.length-1);
+        let letter2=randint(0,alphabet.length-1);
+        while(letter1==letter2){
+            letter2=randint(0,alphabet.length-1);
+        } 
+
+        equation1=`${a}x `;
+        equation1+=(b<0)?`- ${-b}y = ${c}`:`+ ${b}y = ${c}`;
+        equation2=`${alphabet[letter1]}x + ${alphabet[letter2]}y = ${d}`;
+        problem=`In the given system of equations, ${alphabet[letter1]} and ${alphabet[letter2]} are constants. The system has infinitely many solutions. What is `;
+
+        let solutionFormat = randint(1,4);
+        if(solutionFormat==1){ //g+k
+            problem+=`${alphabet[letter1]} + ${alphabet[letter2]}?`;
+            solutions.push(Math.round((g+k)*1000)/1000);
+        }else if(solutionFormat==2){ //g-k
+            problem+=`${alphabet[letter1]} - ${alphabet[letter2]}?`;
+            solutions.push(Math.round((g-k)*1000)/1000);
+        }else if(solutionFormat==3){ //gk
+            problem+=`${alphabet[letter1]}${alphabet[letter2]}?`;
+            solutions.push(Math.round((g*k)*1000)/1000);
+        }else{ //g/k
+            problem+=`${alphabet[letter1]}/${alphabet[letter2]}?`;
+            solutions.push(Math.round((g/k)*1000)/1000);
+        }
+    }
+
+    function typeG(){
+        //no solutions...what is r?
+        /*
+            x + y1 = y2 + c
+            a + b = d
+        */
+        let x:number=randint(1,20);
+        let y1:number=randint(-20,20);
+        let y2:number=randint(-20,20);
+        while(y1-y2==0){
+            y2=randint(-20,20);
+        }
+
+        let c:number=randint(-30,30);
+        let d:number=randint(-30,30);
+        while(c==d){
+            d=randint(-30,30);
+        }
+
+        let scale:number=randint(2,7);
+        let a:number=0;
+        let b:number=0;
+        if(x%scale==0){
+            a=x/scale;
+            b=(y1-y2)/scale;
+        }else{
+            a=x*scale;
+            b=(y1-y2)*scale;
+        }
+
+        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+
+        let equation1Format:number=randint(1,5); //5 different formats for equation 1, just because it's cool to have multiple formats
+        if(equation1Format==1){
+            equation1=`${x}x `;
+            equation1+=(y1<0)?`- ${-y1}y = ${y2}y `:`+ ${y1}y = ${y2}y `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
+        }else if(equation1Format==2){
+            equation1=`${x}x = ${y2-y1}y `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
+        }else if(equation1Format==3){
+            equation1=`${y1-y2}y = ${-x}x `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
+        }else if(equation1Format==4){
+            equation1=`${x}x `;
+            equation1+=((y1-y2)<0)?`- ${-(y1-y2)}y = ${c}`:`+ ${y1-y2}y = ${c}`;
+        }else if(equation1Format==5){
+            equation1=`${x}x `;
+            equation1+=((y1-y2)<0)?`- ${-(y1-y2)}y `:`+ ${y1-y2}y `;
+            equation1+=(-c<0)?`- ${c} = 0`:`+ ${-c} = 0`;
+        }
+
+        let chosenLetter:number=randint(0,alphabet.length-1);
+        equation2=`${a}x + ${alphabet[chosenLetter]}y = ${d}`;
+        problem=`In the given system of equations, ${alphabet[chosenLetter]} is a constant. If the system has no solution, what is the value of ${alphabet[chosenLetter]}?`;
+        solutions.push(b);
     }
 </script>
 
@@ -491,11 +597,11 @@
     <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer} oninput={checkIfNegative}>
     <br>
     <button onclick={checkAnswer} style={checkAnswerVisible?`display:block`:`display:none`}>Check answer</button>
-    <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="_blank" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide</a>.</p>
+    <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="https://satsuite.collegeboard.org/media/pdf/english-sat-test-directions-bb.pdf" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide (p.7)</a>.</p>
     <br>
 </div>
 <!--<McqDiv a="option a" b="option b" c="option c" d="option d"></McqDiv>-->
 <h1>{feedback}</h1>
 <br>
-<h1><Fraction n=4 d=5></Fraction><div class="inline-block relative bottom-2 left-1">x + 3</div></h1>
+<!--<h1><Fraction n=4 d=5></Fraction><div class="inline-block relative bottom-2 left-1">x + 3</div></h1>-->
 <button onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>make question</button>
