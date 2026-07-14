@@ -28,7 +28,7 @@
         userAnswer="";
 
         //let choice:number=randint(1,5);
-        let choice:number=4;
+        let choice:number=5;
         if(choice==1){
             typeA();
         }else if(choice==2){
@@ -38,9 +38,8 @@
         }else if(choice==4){
             typeD();
         }else if(choice==5){
-            console.log("horizontal line with equation intersects parabola at 1 point")
+            typeE();
         }
-        
     }
 
     function checkAnswer():boolean{
@@ -339,6 +338,36 @@
         equation1=`ax² + ${b}x + c`;
         problem=`In the given expression, a and c are positive integer constants. If (${alphabet[randint(0,alphabet.length-1)]}x + ${alphabet[randint(0,alphabet.length-1)]}) is a factor of the expression, where j and k are positive constants, what is a possible value of ac?`
         solutions.push(Math.pow(b,2)/4);
+    }
+
+    function typeE(){
+        //very similar to type C/choice 3
+        let a:number=randint(-5,5);
+        let b:number=randint(1,20);
+        let c:number=Math.pow(b,2)/(4*a);
+        /*options:
+        - b is unknown (parabola)
+        - c is unknown (horizontal line)
+        */
+        problem=`In the xy-plane, a line with equation `;
+        let bOrC:number=randint(1,2);
+        if(bOrC==1){ //b is unknown
+            let coeffY=randint(1,3)*2;
+            problem+=`${coeffY}y = ${Math.round(c*coeffY*10000)/10000} intersects a parabola at exactly one point. If the parabola has equation y = ${a}x² + bx, where b is a `;
+            let posOrNeg:number=randint(1,2);
+            if(posOrNeg==1){ //pos
+                problem+=`positive constant, what is the value of b?`;
+                solutions.push(b);
+            }else{
+                problem+=`negative constant, what is the value of b?`;
+                solutions.push(-b);
+            }
+        }else{ //c is unknown
+            let coeffY:number=randint(1,3)*2;
+            problem+=`${coeffY}y = c for some constant c intersects a parabola at exactly one point. If the parabola has equation y = ${a}x² + ${b}x, what is the value of c?`;
+            solutions.push(c*coeffY);
+        }
+        if(solutions[0]<0) pos=false;
     }
     /*List of parabola questions:
     - smallest or largest values of ab
