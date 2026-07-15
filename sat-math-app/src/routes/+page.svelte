@@ -1,9 +1,12 @@
 <script lang="ts">
     import Fraction from "$lib/comps/Fraction.svelte";
     import McqDiv from "$lib/comps/McqDiv.svelte";
+    import OpenResponse from "$lib/comps/OpenResponse.svelte";
+
+    let mcqdiv:any=$state();
+    let openResponse:any=$state();
 
     let checkAnswerVisible:boolean=$state(true);
-    let answerInterfaceVisible:boolean=$state(false);
     let makeQuestionVisible:boolean=$state(true);
 
     let problem:string=$state("");
@@ -24,53 +27,62 @@
         return x;
     }
 
-    function checkIfNegative(){
-        (userAnswer.includes("-"))?pos=false:pos=true;
-    }
-
     function makeQuestion(){
         makeQuestionVisible=false;
         checkAnswerVisible=true;
-        answerInterfaceVisible=true;
         feedback="";
         userAnswer="";
         equation1="";
         equation2="";
 
-        //let choice:number=randint(1,7);
-        let choice:number=7;
+        //let choice:number=randint(1,8);
+        let choice:number=8;
         if(choice==1){
             typeA();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==2){
-            typeB()
+            typeB();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==3){
             typeC();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==4){
             typeD();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==5){
             typeE();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==6){
             typeF();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
         }else if(choice==7){
             typeG();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
+        }else if(choice==8){
+            typeH();
+            openResponse.makeVisible(false);
+            mcqdiv.makeVisible(true);
         }
     }
 
-    function checkAnswer():boolean{
-        let x:number=0;
-        userAnswer.includes("/")?x=(Math.round(parseFloat(userAnswer.split("/")[0])/parseFloat(userAnswer.split("/")[1])*1000))/1000:x=parseFloat(userAnswer);
-        for(let i of solutions){
-            //console.log(i);
-            if(x==i){
+    function submitAnswer(){
+        if(mcqdiv.getVisible()){
+            if(mcqdiv.checkAnswer()){
                 feedback="Correct!";
                 solutions=[];
                 makeQuestionVisible=true;
                 checkAnswerVisible=false;
-                return true;
+            }else{
+                feedback="Incorrect...Try again!!!"
             }
         }
-        feedback="Incorrect...try again!";
-        return false;
     }
 
     function typeA(){
@@ -586,21 +598,41 @@
         problem=`In the given system of equations, ${alphabet[chosenLetter]} is a constant. If the system has no solution, what is the value of ${alphabet[chosenLetter]}?`;
         solutions.push(b);
     }
+
+    function typeH(){
+        //factor of x + 2b
+        let a:number=1;
+        let bCoefficient:number=randint(2,5);
+        let c:number=randint(2,5);
+        let d:number=randint(1,15)
+        while(bCoefficient%d==0 || d%bCoefficient==0){
+            d=randint(1,15);
+        }
+        let options:number[]=[0,0,0,0];
+        for(let i in options){
+            let decidedValue:number=d*randint(3,10);
+            while((decidedValue-d)%bCoefficient==0 || (decidedValue==options[0] || decidedValue==options[1] || decidedValue==options[2] || decidedValue==options[3])){
+                decidedValue=d*randint(3,10);
+            }
+            options[i]=decidedValue;
+        }
+        let chosenCorrect=randint(0,4);
+        options[chosenCorrect]=(bCoefficient*randint(3,10))+d;
+        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let chosenLetter:number=randint(0,alphabet.length-1);
+        problem=`Which of the following has a factor of (x + ${bCoefficient}${alphabet[chosenLetter]}), where b is a positive integer constant?`;
+        mcqdiv.updateOptions(`${a*c}x² + ${options[0]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[1]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[2]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[3]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[chosenCorrect]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`);
+    }
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
 <h3>{equation1}</h3>
 <h3>{equation2}</h3>
 <h3>{problem}</h3>
-<div id="answerInputContainer" style={answerInterfaceVisible?`display:block`:`display:none`}>
-    <label for="answer">Answer:</label>
-    <input type="text" autocomplete="off" name="answer" id="answer" maxlength={pos?5:6} bind:value={userAnswer} oninput={checkIfNegative}>
-    <br>
-    <button onclick={checkAnswer} style={checkAnswerVisible?`display:block`:`display:none`}>Check answer</button>
-    <p>Enter your answer as an integer, an improper fraction, or a rounded decimal. See <a href="https://satsuite.collegeboard.org/media/pdf/english-sat-test-directions-bb.pdf" target="_blank" aria-label="SAT decimal rounding guide">SAT decimal rounding guide (p.7)</a>.</p>
-    <br>
-</div>
-<!--<McqDiv a="option a" b="option b" c="option c" d="option d"></McqDiv>-->
+
+<McqDiv bind:this={mcqdiv}></McqDiv>
+<OpenResponse bind:this={openResponse}></OpenResponse>
+<button style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>Check answer</button>
 <h1>{feedback}</h1>
 <br>
 <!--<h1><Fraction n=4 d=5></Fraction><div class="inline-block relative bottom-2 left-1">x + 3</div></h1>-->
