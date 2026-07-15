@@ -35,8 +35,8 @@
         equation1="";
         equation2="";
 
-        //let choice:number=randint(1,8);
-        let choice:number=8;
+        let choice:number=randint(1,8);
+        //let choice:number=8;
         if(choice==1){
             typeA();
             openResponse.makeVisible(true);
@@ -73,15 +73,19 @@
     }
 
     function submitAnswer(){
+        let correct:boolean=false;
         if(mcqdiv.getVisible()){
-            if(mcqdiv.checkAnswer()){
-                feedback="Correct!";
-                solutions=[];
-                makeQuestionVisible=true;
-                checkAnswerVisible=false;
-            }else{
-                feedback="Incorrect...Try again!!!"
-            }
+            correct=mcqdiv.checkAnswer();
+        }else{
+            correct=openResponse.checkAnswer(solutions);
+        }
+        if(correct){
+            feedback="Correct!";
+            solutions=[];
+            makeQuestionVisible=true;
+            checkAnswerVisible=false;
+        }else{
+            feedback="Incorrect...Try again!!!"
         }
     }
 

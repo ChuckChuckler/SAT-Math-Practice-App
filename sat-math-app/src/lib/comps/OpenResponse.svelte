@@ -11,7 +11,6 @@
         let x:number=0;
         userAnswer.includes("/")?x=(Math.round(parseFloat(userAnswer.split("/")[0])/parseFloat(userAnswer.split("/")[1])*1000))/1000:x=parseFloat(userAnswer);
         for(let i of solutions){
-            //console.log(i);
             if(x==i){
                 return true;
             }
@@ -22,12 +21,6 @@
     export function makeVisible(visible:boolean){
         answerInterfaceVisible=visible;
     }
-
-    /*
-                feedback="Correct!";
-                solutions=[];
-                makeQuestionVisible=true;
-                checkAnswerVisible=false;*/
 </script>
 
 <div id="answerInputContainer" style={answerInterfaceVisible?`display:block`:`display:none`}>
