@@ -50,7 +50,7 @@
             "Type I":typeI
         },
         "Geometry and Trigonometry":{
-
+            "Type K":typeK
         }
     }
 
@@ -62,49 +62,10 @@
         equation1="";
         equation2="";
 
-        let choice:number=randint(1,10);
-        //let choice:number=10;
-        if(choice==1){
-            typeA();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==2){
-            typeB();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==3){
-            typeC();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==4){
-            typeD();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==5){
-            typeE();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==6){
-            typeF();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==7){
-            typeG();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==8){
-            typeH();
-            openResponse.makeVisible(false);
-            mcqdiv.makeVisible(true);
-        }else if(choice==9){
-            typeI();
-            openResponse.makeVisible(true);
-            mcqdiv.makeVisible(false);
-        }else if(choice==10){
-            typeJ();
-            openResponse.makeVisible(false);
-            mcqdiv.makeVisible(true);
-        }
+        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        let index:number=randint2(0,Object.keys(domain).length-1);
+        domain[Object.keys(domain)[index]]();*/
+        typeL();
     }
 
     function submitAnswer():void{
@@ -125,6 +86,9 @@
     }
 
     function typeA():void{ //smallest possible value of ab?
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
+
         problem="The ";
 
         var exponent1:string;
@@ -329,6 +293,8 @@
     }
 
     function typeB():void{ //ab integers cd nonintegers
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         /*
             - find factors and coefficients. name them?
             - (r1x + a)(r2x + b)
@@ -400,6 +366,8 @@
     }
 
     function typeC():void{ //non-horizontal line intersects parabola at 1 point
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         //the following (w,x,y,z) will be used to calculate a, b, and c in a way they can actually be factored into ints
         let w:number=randint(1,5);
         let x:number=randint(-10,10);
@@ -490,6 +458,8 @@
     }
 
     function typeD():void{ //(jx+k) is a factor
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         console.log("if jx+k factor, what is ac")
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
@@ -504,6 +474,8 @@
     }
 
     function typeE():void{ //horizontal line intersects a parabola at 1 point
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         //very similar to type C/choice 3
         let a:number=randint(-5,5);
         let b:number=randint(1,20);
@@ -537,6 +509,8 @@
     }
 
     function typeF():void{ //g/k, infinite solutions
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         //what is the value of g/k?
         let a:number=randint(-10,10);
         let b:number=randint(-10,10);
@@ -578,6 +552,8 @@
     }
 
     function typeG():void{ //r, no solutions
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         //no solutions...what is r?
         /*
             x + y1 = y2 + c
@@ -637,6 +613,8 @@
 
     function typeH():void{ //has a factor of (x + 2b), what could be the equation...
         //factor of x + 2b
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         let a:number=1;
         let bCoefficient:number=randint(2,5);
         let c:number=randint(2,5);
@@ -662,6 +640,8 @@
 
     function typeI():void{ //find the store cost of an item?
         //store cost of an item
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
         problem=`The regular cost of an item at a store is `;
         let regularCost:number=randint(500,2000)/100;
         problem+=`$${regularCost}. The sale price of the item is `;
@@ -675,6 +655,8 @@
     }
 
     function typeJ():void{ //how many fewer miles? how many fewer gallons?
+        openResponse.makeVisible(false);
+        mcqdiv.makeVisible(true);
         let mpg:number=randint(20,40); //miles per gallon
         let mpw:number=mpg*randint(4,6); //miles per week
         let dpg:number=randint(3,6); //dollars per gallon
@@ -755,6 +737,30 @@
         }
         
     }
+
+    function typeK():void{ //ktan33
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        let angleZ:number=randint(20,80);
+        while(angleZ==30||angleZ==45||angleZ==60){
+            angleZ=randint(20,80);
+        }
+        let lenYZ:number=randint(5,30);
+        solutions.push(Math.pow(lenYZ,2)/2);
+        problem=`In triangle XYZ, angle Y is a right angle, the measure of angle Z is ${angleZ}°, and the length of side YZ is ${lenYZ} units. If the area, in square units, of triangle XYZ can be represented by the expression ktan${angleZ}°, where k is a constant, what is the value of k?`;
+    }
+
+    function typeL():void{ //sphere inside a cube
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
+        let squareEdgeLength:number=randint(5,23)*2;
+        let sphereRadius:number=squareEdgeLength/2;
+        let sqVolume:number=Math.pow(squareEdgeLength,3);
+        let sphVolume:number=(4/3)*Math.PI*Math.pow(sphereRadius,3);
+        solutions.push(Math.round(sqVolume-sphVolume));
+        problem=`A cube has edge length ${squareEdgeLength} inches. A solid sphere with radius ${sphereRadius} inches is inside the cube, such that the sphere touches the center of each face of the cube. To the nearest cubic inch, what is the volume of the space in the cube NOT taken up by the sphere?`;
+    }
+    
 
 </script>
 
