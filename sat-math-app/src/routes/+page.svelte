@@ -19,7 +19,7 @@
 
     let feedback:string=$state("");
 
-    function randint(min:number, max:number):number{
+    function randint(min:number, max:number):number{ //for when 0 is unwanted
         let x:number=Math.floor(Math.random()*(max-min+1)+min);
         while(x==0){
             x=Math.floor(Math.random()*(max-min+1)+min);
@@ -27,11 +27,34 @@
         return x;
     }
 
-    function randint2(min:number,max:number){
+    function randint2(min:number,max:number):number{ //for when 0 is ok
         return Math.floor(Math.random()*(max-min+1)+min);
     }
 
-    function makeQuestion(){
+    let questionsSorted:Record<string, Record<string,()=>void>>={
+        "Algebra":{
+            "Type G":typeG,
+            "Type J":typeJ,
+            "Type F":typeF
+        },
+        "Advanced Math":{
+            "Type E":typeE,
+            "Type A":typeA,
+            "Type B":typeB,
+            "Type C":typeC,
+            "Type D":typeD,
+            "Type H":typeH
+
+        },
+        "Problem-Solving and Data Analysis":{
+            "Type I":typeI
+        },
+        "Geometry and Trigonometry":{
+
+        }
+    }
+
+    function makeQuestion():void{
         makeQuestionVisible=false;
         checkAnswerVisible=true;
         feedback="";
@@ -39,8 +62,8 @@
         equation1="";
         equation2="";
 
-        //let choice:number=randint(1,10);
-        let choice:number=10;
+        let choice:number=randint(1,10);
+        //let choice:number=10;
         if(choice==1){
             typeA();
             openResponse.makeVisible(true);
@@ -84,7 +107,7 @@
         }
     }
 
-    function submitAnswer(){
+    function submitAnswer():void{
         let correct:boolean=false;
         if(mcqdiv.getVisible()){
             correct=mcqdiv.checkAnswer();
@@ -101,7 +124,7 @@
         }
     }
 
-    function typeA(){ //smallest possible value of ab?
+    function typeA():void{ //smallest possible value of ab?
         problem="The ";
 
         var exponent1:string;
@@ -305,7 +328,7 @@
         console.log(solutions[0]);
     }
 
-    function typeB(){ //ab integers cd nonintegers
+    function typeB():void{ //ab integers cd nonintegers
         /*
             - find factors and coefficients. name them?
             - (r1x + a)(r2x + b)
@@ -376,7 +399,7 @@
         solutions[0]=Math.round(solutions[0]*1000)/1000;
     }
 
-    function typeC(){ //non-horizontal line intersects parabola at 1 point
+    function typeC():void{ //non-horizontal line intersects parabola at 1 point
         //the following (w,x,y,z) will be used to calculate a, b, and c in a way they can actually be factored into ints
         let w:number=randint(1,5);
         let x:number=randint(-10,10);
@@ -466,7 +489,7 @@
         (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
-    function typeD(){ //(jx+k) is a factor
+    function typeD():void{ //(jx+k) is a factor
         console.log("if jx+k factor, what is ac")
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
@@ -480,7 +503,7 @@
         solutions.push(Math.pow(b,2)/4);
     }
 
-    function typeE(){ //horizontal line intersects a parabola at 1 point
+    function typeE():void{ //horizontal line intersects a parabola at 1 point
         //very similar to type C/choice 3
         let a:number=randint(-5,5);
         let b:number=randint(1,20);
@@ -513,7 +536,7 @@
         }
     }
 
-    function typeF(){ //g/k, infinite solutions
+    function typeF():void{ //g/k, infinite solutions
         //what is the value of g/k?
         let a:number=randint(-10,10);
         let b:number=randint(-10,10);
@@ -554,7 +577,7 @@
         }
     }
 
-    function typeG(){ //r, no solutions
+    function typeG():void{ //r, no solutions
         //no solutions...what is r?
         /*
             x + y1 = y2 + c
@@ -612,7 +635,7 @@
         solutions.push(b);
     }
 
-    function typeH(){ //has a factor of (x + 2b), what could be the equation...
+    function typeH():void{ //has a factor of (x + 2b), what could be the equation...
         //factor of x + 2b
         let a:number=1;
         let bCoefficient:number=randint(2,5);
@@ -637,7 +660,7 @@
         mcqdiv.updateOptions(`${a*c}x² + ${options[0]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[1]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[2]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[3]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[chosenCorrect]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`);
     }
 
-    function typeI(){ //find the store cost of an item?
+    function typeI():void{ //find the store cost of an item?
         //store cost of an item
         problem=`The regular cost of an item at a store is `;
         let regularCost:number=randint(500,2000)/100;
@@ -651,7 +674,7 @@
         solutions.push(Math.round(c*100)/100);
     }
 
-    function typeJ(){ //how many fewer miles? how many fewer gallons?
+    function typeJ():void{ //how many fewer miles? how many fewer gallons?
         let mpg:number=randint(20,40); //miles per gallon
         let mpw:number=mpg*randint(4,6); //miles per week
         let dpg:number=randint(3,6); //dollars per gallon
