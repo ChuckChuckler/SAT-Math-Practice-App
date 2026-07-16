@@ -27,6 +27,10 @@
         return x;
     }
 
+    function randint2(min:number,max:number){
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
     function makeQuestion(){
         makeQuestionVisible=false;
         checkAnswerVisible=true;
@@ -35,8 +39,8 @@
         equation1="";
         equation2="";
 
-        let choice:number=randint(1,8);
-        //let choice:number=8;
+        //let choice:number=randint(1,10);
+        let choice:number=10;
         if(choice==1){
             typeA();
             openResponse.makeVisible(true);
@@ -69,6 +73,14 @@
             typeH();
             openResponse.makeVisible(false);
             mcqdiv.makeVisible(true);
+        }else if(choice==9){
+            typeI();
+            openResponse.makeVisible(true);
+            mcqdiv.makeVisible(false);
+        }else if(choice==10){
+            typeJ();
+            openResponse.makeVisible(false);
+            mcqdiv.makeVisible(true);
         }
     }
 
@@ -89,7 +101,7 @@
         }
     }
 
-    function typeA(){
+    function typeA(){ //smallest possible value of ab?
         problem="The ";
 
         var exponent1:string;
@@ -293,7 +305,7 @@
         console.log(solutions[0]);
     }
 
-    function typeB(){
+    function typeB(){ //ab integers cd nonintegers
         /*
             - find factors and coefficients. name them?
             - (r1x + a)(r2x + b)
@@ -364,7 +376,7 @@
         solutions[0]=Math.round(solutions[0]*1000)/1000;
     }
 
-    function typeC(){
+    function typeC(){ //non-horizontal line intersects parabola at 1 point
         //the following (w,x,y,z) will be used to calculate a, b, and c in a way they can actually be factored into ints
         let w:number=randint(1,5);
         let x:number=randint(-10,10);
@@ -454,7 +466,7 @@
         (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
-    function typeD(){
+    function typeD(){ //(jx+k) is a factor
         console.log("if jx+k factor, what is ac")
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
@@ -468,7 +480,7 @@
         solutions.push(Math.pow(b,2)/4);
     }
 
-    function typeE(){
+    function typeE(){ //horizontal line intersects a parabola at 1 point
         //very similar to type C/choice 3
         let a:number=randint(-5,5);
         let b:number=randint(1,20);
@@ -501,7 +513,7 @@
         }
     }
 
-    function typeF(){
+    function typeF(){ //g/k, infinite solutions
         //what is the value of g/k?
         let a:number=randint(-10,10);
         let b:number=randint(-10,10);
@@ -529,7 +541,7 @@
         equation2=`${alphabet[letter1]}x + ${alphabet[letter2]}y = ${d}`;
         problem=`In the given system of equations, ${alphabet[letter1]} and ${alphabet[letter2]} are constants. The system has infinitely many solutions. What is `;
 
-        let solutionFormat = randint(1,4);
+        let solutionFormat = randint(1,3);
         if(solutionFormat==1){ //g+k
             problem+=`${alphabet[letter1]} + ${alphabet[letter2]}?`;
             solutions.push(Math.round((g+k)*1000)/1000);
@@ -539,13 +551,10 @@
         }else if(solutionFormat==3){ //gk
             problem+=`${alphabet[letter1]}${alphabet[letter2]}?`;
             solutions.push(Math.round((g*k)*1000)/1000);
-        }else{ //g/k
-            problem+=`${alphabet[letter1]}/${alphabet[letter2]}?`;
-            solutions.push(Math.round((g/k)*1000)/1000);
         }
     }
 
-    function typeG(){
+    function typeG(){ //r, no solutions
         //no solutions...what is r?
         /*
             x + y1 = y2 + c
@@ -603,7 +612,7 @@
         solutions.push(b);
     }
 
-    function typeH(){
+    function typeH(){ //has a factor of (x + 2b), what could be the equation...
         //factor of x + 2b
         let a:number=1;
         let bCoefficient:number=randint(2,5);
@@ -620,13 +629,110 @@
             }
             options[i]=decidedValue;
         }
-        let chosenCorrect=randint(0,4);
+        let chosenCorrect=randint(0,3);
         options[chosenCorrect]=(bCoefficient*randint(3,10))+d;
         let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let chosenLetter:number=randint(0,alphabet.length-1);
         problem=`Which of the following has a factor of (x + ${bCoefficient}${alphabet[chosenLetter]}), where b is a positive integer constant?`;
         mcqdiv.updateOptions(`${a*c}x² + ${options[0]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[1]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[2]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[3]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[chosenCorrect]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`);
     }
+
+    function typeI(){ //find the store cost of an item?
+        //store cost of an item
+        problem=`The regular cost of an item at a store is `;
+        let regularCost:number=randint(500,2000)/100;
+        problem+=`$${regularCost}. The sale price of the item is `;
+        let salePricePercentOff:number=randint(60,90);
+        problem+=`${salePricePercentOff}% less than the regular price, and the sale price is `;
+        let salePricePercentGreater:number=randint(20,50);
+        problem+=`${salePricePercentGreater}% greater than the store's cost for the item. What was the store's cost, in dollars, for the item? (Disregard the $ sign when entering your answer.)`;
+        let s = regularCost*(1-(salePricePercentOff/100));
+        let c = s*(100/(100+salePricePercentGreater));
+        solutions.push(Math.round(c*100)/100);
+    }
+
+    function typeJ(){ //how many fewer miles? how many fewer gallons?
+        let mpg:number=randint(20,40); //miles per gallon
+        let mpw:number=mpg*randint(4,6); //miles per week
+        let dpg:number=randint(3,6); //dollars per gallon
+        let dtr:number=randint(2,5); //dollars to reduce
+        let mtr:number=randint(10,30); //miles to reduce
+        while(mpw==mtr){
+            mtr=randint(10,30);
+        }
+        /*
+        Potential problems? Equation to model:
+        - How mnay fewer average miles
+        - How many miles (NOT fewer)
+        - How much money will be saved (if miles are reduced)
+        - How much money he will be paying for gas (if miles are reduced)
+        */
+
+        let whatToSolve:number=randint(1,4);
+        if(whatToSolve==1){
+            problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many fewer miles, m, Joe Banana should drive each week?`;
+            let optionsUnrandomized:string[]=["","","",""];
+            optionsUnrandomized[0]=`${mpg}/${dpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[1]=`${mpg}/${dpg} * m = ${dtr}`;
+            optionsUnrandomized[2]=`${dpg}/${mpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[3]=`${dpg}/${mpg} * m = ${dtr}`;
+            let correct:string=optionsUnrandomized[3];
+            let optionsRandomized:string[]=[];
+            for(let i=0;i<4;i++){
+                let index:number=randint2(0,optionsUnrandomized.length-1);
+                optionsRandomized.push(optionsUnrandomized[index]);
+                optionsUnrandomized.splice(index,1);
+            }
+            mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+        }else if(whatToSolve==2){
+            problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many miles, m, Joe Banana should drive each week?`;
+            let optionsUnrandomized:string[]=["","","",""];
+            optionsUnrandomized[0]=`${mpg}/${dpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[1]=`${mpg}/${dpg} * m = ${dtr}`;
+            optionsUnrandomized[2]=`${dpg}/${mpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[3]=`${dpg}/${mpg} * m = ${dtr}`;
+            let correct:string=optionsUnrandomized[2];
+            let optionsRandomized:string[]=[];
+            for(let i=0;i<4;i++){
+                let index:number=randint2(0,optionsUnrandomized.length-1);
+                optionsRandomized.push(optionsUnrandomized[index]);
+                optionsUnrandomized.splice(index,1);
+            }
+            mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+        }else if(whatToSolve==3){
+            problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will save on gas next week?`;
+            let optionsUnrandomized:string[]=["","","",""];
+            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})(${dpg}) = d`;
+            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})(${dpg}) = d`;
+            optionsUnrandomized[2]=`(${mpg}/${mtr})(${dpg}) = d`;
+            optionsUnrandomized[3]=`(${mtr}/${mpg})(${dpg}) = d`;
+            let correct:string=optionsUnrandomized[3];
+            let optionsRandomized:string[]=[];
+            for(let i=0;i<4;i++){
+                let index:number=randint2(0,optionsUnrandomized.length-1);
+                optionsRandomized.push(optionsUnrandomized[index]);
+                optionsUnrandomized.splice(index,1);
+            }
+            mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+        }else{
+            problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will pay for gas next week?`;
+            let optionsUnrandomized:string[]=["","","",""];
+            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})(${dpg}) = d`;
+            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})(${dpg}) = d`;
+            optionsUnrandomized[2]=`(${mpg}/${mtr})(${dpg}) = d`;
+            optionsUnrandomized[3]=`(${mtr}/${mpg})(${dpg}) = d`;
+            let correct:string=optionsUnrandomized[1];
+            let optionsRandomized:string[]=[];
+            for(let i=0;i<4;i++){
+                let index:number=randint2(0,optionsUnrandomized.length-1);
+                optionsRandomized.push(optionsUnrandomized[index]);
+                optionsUnrandomized.splice(index,1);
+            }
+            mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+        }
+        
+    }
+
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
