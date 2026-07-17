@@ -1,10 +1,15 @@
 <script lang="ts">
+    //comps
     import Fraction from "$lib/comps/Fraction.svelte";
     import McqDiv from "$lib/comps/McqDiv.svelte";
     import OpenResponse from "$lib/comps/OpenResponse.svelte";
 
+    //imgs
+    import typemImg from "$lib/images/typeM.png";
+
     let mcqdiv:any=$state();
     let openResponse:any=$state();
+    let imageVisible:boolean=$state(false);
 
     let checkAnswerVisible:boolean=$state(true);
     let makeQuestionVisible:boolean=$state(true);
@@ -50,7 +55,8 @@
             "Type I":typeI
         },
         "Geometry and Trigonometry":{
-            "Type K":typeK
+            "Type K":typeK,
+            "Type L":typeL
         }
     }
 
@@ -65,7 +71,7 @@
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeL();
+        typeM();
     }
 
     function submitAnswer():void{
@@ -760,11 +766,64 @@
         solutions.push(Math.round(sqVolume-sphVolume));
         problem=`A cube has edge length ${squareEdgeLength} inches. A solid sphere with radius ${sphereRadius} inches is inside the cube, such that the sphere touches the center of each face of the cube. To the nearest cubic inch, what is the volume of the space in the cube NOT taken up by the sphere?`;
     }
-    
+
+    function typeM():void{ //
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        imageVisible=true;
+        problem=`In the figure above, tan`;
+        let ac:number=randint(3,15);
+        let ba:number=randint(3,15);
+        while(ac==ba || ac%ba==0 || ba%ac==0){
+            ba=randint(3,8);
+        }
+        problem+=`B = ${ac}/${ba}. If BC = `;
+        let bc:number=Math.pow(ac,2)+Math.pow(ba,2);
+        let scale:number=randint(3,5);
+        if(Math.sqrt(bc*Math.pow(scale,2)).toString().includes(".")){ //not a perfect square
+            problem+=`√(${bc*Math.pow(scale,2)})`;
+        }else{
+            problem+=`${Math.sqrt(bc*Math.pow(scale,2))}`;
+        }
+
+        let toFind:number=randint(1,3);
+        //toFind=3;
+        if(toFind==1){ //de
+            ba*=scale;
+            let da:number=randint(3,10);
+            while(ba-da<=0){
+                da=randint(3,10);
+            }
+            problem+=` and DA = ${da}, what is the length of segment DE, rounded to the nearest hundredth?`;
+            solutions.push(Math.round((ac*scale)*((ba-da)/ba)*100)/100);
+        }else if(toFind==2){ //da
+            ba*=scale;
+            ac*=scale;
+            let de:number=randint(3,10);
+            while(ac-de<=0){
+                de=randint(3,10);
+            }
+            problem+=` and DE = ${de}, what is the length of segment DA, rounded to the nearest hundredth?`
+            solutions.push(Math.round((ba-(ba*(de/ac)))*100)/100);
+        }else if(toFind==3){ //find bd
+            ba*=scale;
+            ac*=scale;
+            let de:number=randint(3,10);
+            while(ac-de<=0){
+                de=randint(3,10);
+            }
+            problem+=` and DE = ${de}, what is the length of segment BD, rounded to the nearest hundredth?`;
+            solutions.push(Math.round((ba*(de/ac))*100)/100);
+        }
+    }
 
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
+<div style={(imageVisible)?`display:block`:`display:none`}>
+    <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
+    <p>Image is not to scale.</p>
+</div>
 <h3>{equation1}</h3>
 <h3>{equation2}</h3>
 <h3>{problem}</h3>
