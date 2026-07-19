@@ -40,7 +40,9 @@
         "Algebra":{
             "Type G":typeG,
             "Type J":typeJ,
-            "Type F":typeF
+            "Type F":typeF,
+            "Type N":typeN,
+            "Type O":typeO
         },
         "Advanced Math":{
             "Type E":typeE,
@@ -48,15 +50,17 @@
             "Type B":typeB,
             "Type C":typeC,
             "Type D":typeD,
-            "Type H":typeH
-
+            "Type H":typeH,
+            "Type K":typeK,
+            "Type P":typeP,
         },
         "Problem-Solving and Data Analysis":{
             "Type I":typeI
         },
         "Geometry and Trigonometry":{
             "Type K":typeK,
-            "Type L":typeL
+            "Type L":typeL,
+            "Type M":typeM
         }
     }
 
@@ -71,7 +75,7 @@
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeM();
+        typeQ();
     }
 
     function submitAnswer():void{
@@ -767,7 +771,7 @@
         problem=`A cube has edge length ${squareEdgeLength} inches. A solid sphere with radius ${sphereRadius} inches is inside the cube, such that the sphere touches the center of each face of the cube. To the nearest cubic inch, what is the volume of the space in the cube NOT taken up by the sphere?`;
     }
 
-    function typeM():void{ //
+    function typeM():void{ //given a triangle and a smaller similar triangle inside, find DE, etc.
         mcqdiv.makeVisible(false);
         openResponse.makeVisible(true);
         imageVisible=true;
@@ -817,6 +821,177 @@
         }
     }
 
+    function typeN():void{ //find s or k idk
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let whatToSolve:number=randint(1,4);
+        if(whatToSolve==1){ //var outside, infinite solutions
+            let toDistribute:number=randint(3,10);
+            let xCoeff:number=randint(2,25);
+            let constant:number=randint(2,25);
+            let chosenLetter:number=randint(0,alphabet.length-1);
+            equation1=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
+            solutions.push(toDistribute);
+        }else if(whatToSolve==2){ //var outside, no solutions
+            let toDistribute:number=randint(3,10);
+            let xCoeff:number=randint(2,25);
+            let constant:number=randint(2,25);
+            let constantRight:number=randint(2*toDistribute, constant*toDistribute);
+            while(constant==constantRight/toDistribute){
+                constantRight=randint(2*toDistribute, constant*toDistribute);
+            }
+            let chosenLetter:number=randint(0,alphabet.length-1);
+            equation1=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
+            solutions.push(toDistribute);
+        }else if(whatToSolve==3){ //var inside, infinite solutions
+            let toDistribute:number=randint(3,10);
+            let xCoeff:number=randint(2,25);
+            let constant:number=randint(2,25);
+            let chosenLetter:number=randint(0,alphabet.length-1);
+            equation1=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            solutions.push(xCoeff);
+            problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
+        }else if(whatToSolve==4){ //var inside, no solutions
+            let toDistribute:number=randint(3,10);
+            let xCoeff:number=randint(2,25);
+            let constant:number=randint(2,25);
+            let constantRight:number=randint(2*toDistribute, constant*toDistribute);
+            while(constant==constantRight/toDistribute){
+                constantRight=randint(2*toDistribute, constant*toDistribute);
+            }
+            let chosenLetter:number=randint(0,alphabet.length-1);
+            equation1=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
+            solutions.push(xCoeff);
+        }
+    }
+
+    function typeO():void{ //for each real number r, whch of the following points...
+        mcqdiv.makeVisible(true);
+        openResponse.makeVisible(false);
+        let xCoeff:number=randint(2,10);
+        let yCoeff:number=randint(2,10);
+        let c:number=randint(1,10);
+        let scale:number=randint(3,6);
+        equation1=`${xCoeff}x `;
+        equation1+=(yCoeff<0)?`- ${-yCoeff}y = ${c}`:`+ ${yCoeff}y = ${c}`;
+        equation2=`${xCoeff*scale}x + ${yCoeff*scale}y = ${c*scale}`;
+        problem=`For each real number r, which of the following points lies on the graph of each equation in the xy-plane for the given equation?`;
+        let xOrY=randint(1,2);
+        //xOrY=1;
+        let optionsUnrandomized:string[]=["","","",""];
+        let optionsRandomized:string[]=[];
+        let correct:string="";
+        optionsUnrandomized[0]=`(r/${scale} + ${c}, r/${scale} + ${c*scale})`;
+        if(xOrY==1){ //x = r, y = whatever whatever r
+            optionsUnrandomized[1]=`(r, (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff})`;
+            optionsUnrandomized[2]=`((${yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
+            optionsUnrandomized[3]=`((${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}, r)`;
+            correct=optionsUnrandomized[1];
+        }else{
+            optionsUnrandomized[1]=`((${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
+            optionsUnrandomized[2]=`(r, (${xCoeff}/${yCoeff})r + ${c}/${yCoeff})`;
+            optionsUnrandomized[3]=`(r, (${-yCoeff}/${xCoeff})r + ${c}/${xCoeff})`;
+            correct=optionsUnrandomized[1];
+        }
+        
+        for(let i=0;i<4;i++){
+            let index:number=randint2(0,optionsUnrandomized.length-1);
+            optionsRandomized.push(optionsUnrandomized[index]);
+            optionsUnrandomized.splice(index,1);
+        }
+
+        mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+    }
+
+    function typeP():void{ //the solutions are kab, what is k?
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        let product:number=randint(20,72);
+        let factors:number[][]=[];
+        for(let i=1;i<=product;i++){
+            if(product%i==0){
+                factors.push([i,product/i]);
+            }
+        }
+        let factorsChosen:number=randint2(0,factors.length-1);
+        let factor1:number=factors[factorsChosen][0];
+        let factor2:number=factors[factorsChosen][1];
+        let factorsNegative:number=randint(1,2);
+        equation1=factorsNegative==1?`${product}x² + (${factor1}a + ${factor2}b)x + ab`:`${product}x² - (${factor1}a + ${factor2}b)x + ab`;
+        let whatToFind:number=randint(1,4);
+        whatToFind=4;
+        problem=`In the given equation, a and b are positive constants. The `;
+        let kDenom:number=0;
+        if(whatToFind==1 || whatToFind==2){ //sum or difference (they have identical setup)
+            problem+=`${(whatToFind==2)?`difference`:`sum`} of the solutions to the given equation is `;
+            if(factor1>factor2){
+                factorsNegative==1?kDenom=-factor1:kDenom=factor1;
+            }else if(factor2>factor1){
+                factorsNegative==1?kDenom=-factor2:kDenom=factor2;
+            }
+            console.log(`1/${kDenom}(${Math.abs(kDenom)}/${factor2}a + ${Math.abs(kDenom)}/${factor1}b)`);
+            problem+=`k(`;
+            problem+=(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`${Math.abs(kDenom)}/${factor2}a `;
+            problem+=(whatToFind==2)?` - `:` + `;
+            problem+=(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b), `:`${Math.abs(kDenom)}/${factor1}b), `;
+            solutions.push(Math.round((1/kDenom)*1000)/1000);
+        }else if(whatToFind==3){ //product
+            solutions.push(Math.round((1/(factor1*factor2))*1000)/1000);
+            problem+=`product of the solutions to the given equation is kab, `;
+        }else{
+            solutions.push(Math.round((factor1/factor2)*1000)/1000);
+            problem+=`quotient of the solutions to the given equation is k(a/b), `
+        }
+        
+        problem+=`where k is a constant. What is the value of k?`;
+    }
+
+    function typeQ():void{ //the function is...the graph passes through these two points...a is greater than 1...
+        mcqdiv.makeVisible(true);
+        openResponse.makeVisible(false);
+        problem=`The function f is defined by f(x) = ax² + bx + c, where a, b, and c are constants. The graph of y = f(x) in the xy-plane passes through the points `;
+        let r1:number=randint(-10,10);
+        let r2:number=randint(-10,10);
+        problem+=`(${r1}, 0) and (${r2}, 0). If a is an integer `
+        let bUnscaled:number=r1+r2;
+        let cUnscaled:number=r1*r2;
+        let aGreaterOrLess:number=randint(1,2);
+        let aScale:number=randint(2,4);
+        let optionsUnrandomized:number[]=[0,0,0,0];
+        let optionsRandomized:number[]=[];
+        let correct:number=0;
+        if(aGreaterOrLess==1){ //a>1
+            problem+=`greater than 1, which of the following could be the value of `;
+            let whatToFind:number=randint(1,3);
+            if(whatToFind==1){ //a+b
+                problem+=`a + b?`;
+                optionsUnrandomized[0]=1+bUnscaled;
+                optionsUnrandomized[1]=(1+bUnscaled)*aScale;
+                optionsUnrandomized[2]=(1+bUnscaled)*-aScale;
+                optionsUnrandomized[3]=(1+bUnscaled)*aScale+(randint2(0,2)*aScale+1);
+            }else if(whatToFind==2){ //b+c
+                problem+=`b + c?`;
+                optionsUnrandomized[0]=(bUnscaled+cUnscaled);
+                optionsUnrandomized[1]=(bUnscaled+cUnscaled)*aScale;
+                optionsUnrandomized[2]=(bUnscaled+cUnscaled)*-aScale;
+                optionsUnrandomized[3]=(bUnscaled+cUnscaled)*aScale+(randint2(0,2)*aScale+1);
+            }else{ //a+c
+                problem+=`a + c`;
+                optionsUnrandomized[0]=(1+cUnscaled);
+                optionsUnrandomized[1]=(1+cUnscaled)*aScale;
+                optionsUnrandomized[2]=(1+cUnscaled)*-aScale;
+                optionsUnrandomized[3]=(1+cUnscaled)*aScale+(randint2(0,2)*aScale+1);
+            }
+        }
+    }
+
+    function typeR():void{ //
+
+    }
 </script>
 
 <h1>SAT MATHHH AHH AHH AHH</h1>
