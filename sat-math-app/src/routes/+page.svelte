@@ -957,36 +957,107 @@
         let r1:number=randint(-10,10);
         let r2:number=randint(-10,10);
         problem+=`(${r1}, 0) and (${r2}, 0). If a is an integer `
-        let bUnscaled:number=r1+r2;
+        let bUnscaled:number=-r1-r2;
         let cUnscaled:number=r1*r2;
         let aGreaterOrLess:number=randint(1,2);
         let aScale:number=randint(2,4);
         let optionsUnrandomized:number[]=[0,0,0,0];
         let optionsRandomized:number[]=[];
         let correct:number=0;
+        aGreaterOrLess=2;
         if(aGreaterOrLess==1){ //a>1
             problem+=`greater than 1, which of the following could be the value of `;
             let whatToFind:number=randint(1,3);
+            //whatToFind=3;
             if(whatToFind==1){ //a+b
                 problem+=`a + b?`;
                 optionsUnrandomized[0]=1+bUnscaled;
                 optionsUnrandomized[1]=(1+bUnscaled)*aScale;
-                optionsUnrandomized[2]=(1+bUnscaled)*-aScale;
-                optionsUnrandomized[3]=(1+bUnscaled)*aScale+(randint2(0,2)*aScale+1);
+                optionsUnrandomized[2]=(1+bUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]%(1+bUnscaled)==0){
+                    optionsUnrandomized[2]=(1+bUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
+                optionsUnrandomized[3]=(1+bUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+bUnscaled)==0){
+                    optionsUnrandomized[3]=(1+bUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
             }else if(whatToFind==2){ //b+c
                 problem+=`b + c?`;
                 optionsUnrandomized[0]=(bUnscaled+cUnscaled);
                 optionsUnrandomized[1]=(bUnscaled+cUnscaled)*aScale;
-                optionsUnrandomized[2]=(bUnscaled+cUnscaled)*-aScale;
-                optionsUnrandomized[3]=(bUnscaled+cUnscaled)*aScale+(randint2(0,2)*aScale+1);
+                optionsUnrandomized[2]=(bUnscaled+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]%(bUnscaled+cUnscaled)==0){
+                    optionsUnrandomized[2]=(bUnscaled+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
+                optionsUnrandomized[3]=(bUnscaled+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(bUnscaled+cUnscaled)==0){
+                    optionsUnrandomized[3]=(bUnscaled+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
             }else{ //a+c
-                problem+=`a + c`;
+                problem+=`a + c?`;
                 optionsUnrandomized[0]=(1+cUnscaled);
                 optionsUnrandomized[1]=(1+cUnscaled)*aScale;
-                optionsUnrandomized[2]=(1+cUnscaled)*-aScale;
-                optionsUnrandomized[3]=(1+cUnscaled)*aScale+(randint2(0,2)*aScale+1);
+                optionsUnrandomized[2]=(1+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]%(1+cUnscaled)==0){
+                    optionsUnrandomized[2]=(1+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
+                optionsUnrandomized[3]=(1+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+cUnscaled)==0){
+                    optionsUnrandomized[3]=(1+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
+                }
+            }
+        }else{ //a<1
+            problem+=`less than 1, which of the following could be the value of `;
+            let whatToFind:number=randint(1,3);
+            //whatToFind=3;
+            if(whatToFind==1){ //a+b
+                problem+=`a + b?`;
+                optionsUnrandomized[0]=1+bUnscaled;
+                optionsUnrandomized[1]=(1+bUnscaled)*-aScale;
+                optionsUnrandomized[2]=(1+bUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                while(optionsUnrandomized[2]%(1+bUnscaled)==0){
+                    optionsUnrandomized[2]=(1+bUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
+                optionsUnrandomized[3]=(1+bUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+bUnscaled)==0){
+                    optionsUnrandomized[3]=(1+bUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
+            }else if(whatToFind==2){ //b+c
+                problem+=`b + c?`;
+                optionsUnrandomized[0]=(bUnscaled+cUnscaled);
+                optionsUnrandomized[1]=(bUnscaled+cUnscaled)*-aScale;
+                optionsUnrandomized[2]=(bUnscaled+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                while(optionsUnrandomized[2]%(bUnscaled+cUnscaled)==0){
+                    optionsUnrandomized[2]=(bUnscaled+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
+                optionsUnrandomized[3]=(bUnscaled+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(bUnscaled+cUnscaled)==0){
+                    optionsUnrandomized[3]=(bUnscaled+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
+            }else{ //a+c
+                problem+=`a + c?`;
+                optionsUnrandomized[0]=(1+cUnscaled);
+                optionsUnrandomized[1]=(1+cUnscaled)*-aScale;
+                optionsUnrandomized[2]=(1+cUnscaled)*-aScale+(randint2(-3,3)*-aScale+1);
+                while(optionsUnrandomized[2]%(1+cUnscaled)==0){
+                    optionsUnrandomized[2]=(1+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
+                optionsUnrandomized[3]=(1+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+cUnscaled)==0){
+                    optionsUnrandomized[3]=(1+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
+                }
             }
         }
+
+        correct=optionsUnrandomized[1];
+
+        for(let i:number=0;i<4;i++){
+            let index=randint2(0,optionsUnrandomized.length-1);
+            optionsRandomized.push(optionsUnrandomized[index]);
+            optionsUnrandomized.splice(index, 1);
+        }
+
+        mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
     }
 
     function typeR():void{ //
