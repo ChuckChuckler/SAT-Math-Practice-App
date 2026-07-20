@@ -1068,75 +1068,152 @@
         openResponse.makeVisible(false);
         let unrandomized:string[]=["","",""];
         let randomized:string[]=[];
-        /*types of no solutions?
-        - a system of equations with a parabola and a horizontal line
-        - two parallel lines
-        */
-        let type:number=randint(1,2);
-        type=2;
-        if(type==1){ //system with parabola + horizontal line
-            let aFactor1:number=randint(-5,5);
-            let aFactor2:number=randint(-5,5);
-            let r1:number=randint(-10,10);
-            let r2:number=randint(-10,10);
-
-            let a:number=aFactor1*aFactor2;
-            let b:number=aFactor1*r2 + aFactor2*r1;
-            let c:number=r1*r2;
-
-            let h:number=(-b)/(2*a);
-            let k:number=(a*Math.pow(h,2))+(b*h)+c;
-
-            equation1=`y = ${a}x² `;
-            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-            equation1=`y = ax² + bx + c`;
-            equation2=`y = mx + s`;
-
-        }else{
-            let m:number=randint(-10,10);
-            let b:number=randint(-10,10);
-            let choice:number=randint(1,4);
-            choice=1;
-            if(choice==1){
-                equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
-                equation2=`y = a(x + b)`;
-                let mustOrCould:number=randint(1,2);
-                mustOrCould=1;
-                if(mustOrCould==1){ //which of the following MUST be true
-                    problem=`If the above system has no solutions, which of the following must be true?`;
-                    let randomB:number=randint(-20,20);
-                    let randomA:number=randint(-10,10);
-                    while(randomA==m){
-                        randomA=randint(-10,10);
-                    }
-                    let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`];
-                    let possibleIncorrects:string[]=[`a ≠ 0`, `a ≠ ${m}`, `b = ${b}`, `b ≠ ${randomB}`, `a = ${randomA}`];
-                    let howManyCorrects:number=randint(1,2);
-                    if(howManyCorrects==1){ //1 correct answer
-                        let i:number=randint(0,possibleCorrects.length-1)
-                        unrandomized[0]=possibleCorrects[i];
-                        i=randint(0,possibleIncorrects.length-1);
-                        unrandomized[1]=possibleIncorrects[i];
-                        i=randint(0,possibleIncorrects.length-1);
-                        unrandomized[2]=possibleIncorrects[i];
-                    }
-                    console.log(unrandomized[0],unrandomized[1],unrandomized[2]);
-                }else if(mustOrCould==2){ //which of the following COULD be true
-                    problem=`If the above system has no solutions, which of the following could be true?`;
-                    let randomNumber:number=randint(-20,20);
-                    let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`, `b = ${randomNumber}`];
+        let corrects:string[]=[];
+        
+        let m:number=randint(-10,10);
+        let b:number=randint(-10,10);
+        let choice:number=randint(1,4);
+        choice=1;
+        if(choice==1){
+            equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
+            equation2=`y = a(x + b)`;
+            let mustOrCould:number=randint(1,2);
+            mustOrCould=1;
+            if(mustOrCould==1){ //which of the following MUST be true
+                problem=`If the above system has no solutions, which of the following must be true?`;
+                let randomB:number=randint(-20,20);
+                let randomA:number=randint(-10,10);
+                while(randomA==m){
+                    randomA=randint(-10,10);
                 }
-                let possibleIncorrects:string[]=[];
-            }else if(choice==2){
-                equation1=`y = mx `+((b<0)?`- ${-b}`:`+ ${b}`);
-                equation2=`y = a(x + b)`;
-            }else if(choice==3){
-                equation2=`y = a(cx + b)`;
+                let possibleCorrects:string[]=[];
+                //`a = ${m}`, `b ≠ ${b}/${m}`
+                if(b%m==0){
+                    possibleCorrects=[`a = ${m}`, `b ≠ ${b/m}`];
+                }else if(!(b<0&&m>0)){
+                    possibleCorrects=[`a = ${m}`, `b ≠ ${-b}/${-m}`];
+                }else{
+                    possibleCorrects=[`a = ${m}`, `b ≠ ${b}/${m}`];
+                }
+                let possibleIncorrects:string[]=[`a ≠ 0`, `a ≠ ${m}`, `b = ${b}`, `b ≠ ${randomB}`, `a = ${randomA}`];
+                let howManyCorrects:number=randint(1,2);
+                howManyCorrects=2;
+                if(howManyCorrects==1){ //1 correct answer
+                    let i:number=randint2(0,possibleCorrects.length-1);
+                    unrandomized[0]=possibleCorrects[i];
+                    corrects.push(possibleCorrects[i]);
+                    possibleCorrects.splice(i,1);
+
+                    i=randint2(0,possibleIncorrects.length-1);
+                    unrandomized[1]=possibleIncorrects[i];
+                    possibleIncorrects.splice(i,1);
+
+                    i=randint2(0,possibleIncorrects.length-1);
+                    unrandomized[2]=possibleIncorrects[i];
+                    possibleIncorrects.splice(i,1);
+                }else{
+                    let i:number=randint2(0,possibleCorrects.length-1);
+                    unrandomized[0]=possibleCorrects[i];
+                    corrects.push(possibleCorrects[i]);
+                    possibleCorrects.splice(i,1);
+
+                    i=randint2(0,possibleCorrects.length-1);
+                    unrandomized[1]=possibleCorrects[i];
+                    corrects.push(possibleCorrects[i]);
+                    possibleCorrects.splice(i,1);
+
+                    i=randint2(0,possibleIncorrects.length-1);
+                    unrandomized[2]=possibleIncorrects[i];
+                    possibleIncorrects.splice(i,1);
+                }
+                console.log(unrandomized[0],unrandomized[1],unrandomized[2]);
+            }else if(mustOrCould==2){ //which of the following COULD be true
+                problem=`If the above system has no solutions, which of the following could be true?`;
+                let randomNumber:number=randint(-20,20);
+                let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`, `b = ${randomNumber}`];
             }
+        }else if(choice==2){
+            equation1=`y = mx `+((b<0)?`- ${-b}`:`+ ${b}`);
+            equation2=`y = a(x + b)`;
+        }else if(choice==3){
+            equation2=`y = a(cx + b)`;
+        }
+    
+        possibles.makeVisible(true);
+        for(let i=0;i<3;i++){
+            let index:number=randint2(0,unrandomized.length-1);
+            randomized.push(unrandomized[index]);
+            unrandomized.splice(index,1);
+        }
+        let boolCorrects:boolean[]=[false,false,false];
+        for(let i of corrects){
+            boolCorrects[randomized.indexOf(i)]=true;
         }
 
-        possibles.makeVisible(true);
+        if(corrects.length==1){ //only 1 correct option
+            if(boolCorrects[0]==true){
+                let answerChoices:number=randint(1,5);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("None", "I only", "I and II", "I and III", "I only");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("I only", "II only", "II and III", "I and III", "I only");
+                }else if(answerChoices==3){
+                    mcqdiv.updateOptions("None", "I only", "II only", "I and III", "I only");
+                }else if(answerChoices==4){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "II and III", "I only");
+                }else if(answerChoices==5){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "I and III", "I only");
+                }
+            }else if(boolCorrects[1]==true){
+                let answerChoices:number=randint(1,2);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("I only", "II only", "II and III", "I and III", "II only");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("None", "I only", "II only", "I and III", "II only");
+                }
+            }else if(boolCorrects[2]==true){
+                let answerChoices:number=randint(1,2);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "II and III", "III only");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "I and III", "III only");
+                }
+            }
+        }else{ //2 correct options
+            if(boolCorrects[0]==true&&boolCorrects[1]==true){ //I and II
+                let answerChoices:number=randint(1,3);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("None", "I only", "I and II", "I and III", "I and II");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "II and III", "I and II");
+                }else{
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "I and III", "I and II");
+                }
+            }else if(boolCorrects[0]==true&&boolCorrects[2]==true){ //I and III
+                let answerChoices:number=randint(1,4);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("None", "I only", "I and II", "I and III", "I and III");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "I and III", "I and III");
+                }else if(answerChoices==3){
+                    mcqdiv.updateOptions("I only", "II only", "II and III", "I and III", "I and III");
+                }else if(answerChoices==4){
+                    mcqdiv.updateOptions("None", "I only", "II only", "I and III", "I and III");
+                }
+            }else if(boolCorrects[1]==true&&boolCorrects[2]==true){ //II and III
+                let answerChoices:number=randint(1,2);
+                if(answerChoices==1){
+                    mcqdiv.updateOptions("I only", "II only", "II and III", "I and III", "II and III");
+                }else if(answerChoices==2){
+                    mcqdiv.updateOptions("I only", "I and II", "III only", "II and III", "II and III");
+                }
+            }
+        }
+        possibles.set(randomized[0],randomized[1],randomized[2]);
+    }   
+
+    function typeS():void{
+        
     }
 </script>
 
