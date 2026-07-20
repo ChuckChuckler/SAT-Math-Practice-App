@@ -3,12 +3,14 @@
     import Fraction from "$lib/comps/Fraction.svelte";
     import McqDiv from "$lib/comps/McqDiv.svelte";
     import OpenResponse from "$lib/comps/OpenResponse.svelte";
+    import Possibles from "$lib/comps/Possibles.svelte";
 
     //imgs
     import typemImg from "$lib/images/typeM.png";
 
     let mcqdiv:any=$state();
     let openResponse:any=$state();
+    let possibles:any=$state();
     let imageVisible:boolean=$state(false);
 
     let checkAnswerVisible:boolean=$state(true);
@@ -53,6 +55,7 @@
             "Type H":typeH,
             "Type K":typeK,
             "Type P":typeP,
+            "Type Q":typeQ
         },
         "Problem-Solving and Data Analysis":{
             "Type I":typeI
@@ -75,7 +78,7 @@
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeQ();
+        typeR();
     }
 
     function submitAnswer():void{
@@ -1060,8 +1063,80 @@
         mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
     }
 
-    function typeR():void{ //
+    function typeR():void{ //the equation blah is given as blah, no solutions, what must be true..
+        mcqdiv.makeVisible(true);
+        openResponse.makeVisible(false);
+        let unrandomized:string[]=["","",""];
+        let randomized:string[]=[];
+        /*types of no solutions?
+        - a system of equations with a parabola and a horizontal line
+        - two parallel lines
+        */
+        let type:number=randint(1,2);
+        type=2;
+        if(type==1){ //system with parabola + horizontal line
+            let aFactor1:number=randint(-5,5);
+            let aFactor2:number=randint(-5,5);
+            let r1:number=randint(-10,10);
+            let r2:number=randint(-10,10);
 
+            let a:number=aFactor1*aFactor2;
+            let b:number=aFactor1*r2 + aFactor2*r1;
+            let c:number=r1*r2;
+
+            let h:number=(-b)/(2*a);
+            let k:number=(a*Math.pow(h,2))+(b*h)+c;
+
+            equation1=`y = ${a}x² `;
+            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
+            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
+            equation1=`y = ax² + bx + c`;
+            equation2=`y = mx + s`;
+
+        }else{
+            let m:number=randint(-10,10);
+            let b:number=randint(-10,10);
+            let choice:number=randint(1,4);
+            choice=1;
+            if(choice==1){
+                equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
+                equation2=`y = a(x + b)`;
+                let mustOrCould:number=randint(1,2);
+                mustOrCould=1;
+                if(mustOrCould==1){ //which of the following MUST be true
+                    problem=`If the above system has no solutions, which of the following must be true?`;
+                    let randomB:number=randint(-20,20);
+                    let randomA:number=randint(-10,10);
+                    while(randomA==m){
+                        randomA=randint(-10,10);
+                    }
+                    let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`];
+                    let possibleIncorrects:string[]=[`a ≠ 0`, `a ≠ ${m}`, `b = ${b}`, `b ≠ ${randomB}`, `a = ${randomA}`];
+                    let howManyCorrects:number=randint(1,2);
+                    if(howManyCorrects==1){ //1 correct answer
+                        let i:number=randint(0,possibleCorrects.length-1)
+                        unrandomized[0]=possibleCorrects[i];
+                        i=randint(0,possibleIncorrects.length-1);
+                        unrandomized[1]=possibleIncorrects[i];
+                        i=randint(0,possibleIncorrects.length-1);
+                        unrandomized[2]=possibleIncorrects[i];
+                    }
+                    console.log(unrandomized[0],unrandomized[1],unrandomized[2]);
+                }else if(mustOrCould==2){ //which of the following COULD be true
+                    problem=`If the above system has no solutions, which of the following could be true?`;
+                    let randomNumber:number=randint(-20,20);
+                    let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`, `b = ${randomNumber}`];
+                }
+                let possibleIncorrects:string[]=[];
+            }else if(choice==2){
+                equation1=`y = mx `+((b<0)?`- ${-b}`:`+ ${b}`);
+                equation2=`y = a(x + b)`;
+            }else if(choice==3){
+                equation2=`y = a(cx + b)`;
+            }
+        }
+
+        possibles.makeVisible(true);
     }
 </script>
 
@@ -1073,6 +1148,8 @@
 <h3>{equation1}</h3>
 <h3>{equation2}</h3>
 <h3>{problem}</h3>
+
+<Possibles bind:this={possibles}></Possibles>
 
 <McqDiv bind:this={mcqdiv}></McqDiv>
 <OpenResponse bind:this={openResponse}></OpenResponse>
