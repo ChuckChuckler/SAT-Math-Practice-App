@@ -12,14 +12,13 @@
     let openResponse:any=$state();
     let possibles:any=$state();
     let imageVisible:boolean=$state(false);
+    let fraction:any=$state();
 
     let checkAnswerVisible:boolean=$state(true);
     let makeQuestionVisible:boolean=$state(true);
 
     let problem:string=$state("");
     let solutions:number[]=[];
-    let pos:boolean=$state(true)
-    let userAnswer:string=$state("");
 
     let equation1:string=$state("");
     let equation2:string=$state("");
@@ -44,7 +43,8 @@
             "Type J":typeJ,
             "Type F":typeF,
             "Type N":typeN,
-            "Type O":typeO
+            "Type O":typeO,
+            "Type R":typeR
         },
         "Advanced Math":{
             "Type E":typeE,
@@ -70,15 +70,18 @@
     function makeQuestion():void{
         makeQuestionVisible=false;
         checkAnswerVisible=true;
+        imageVisible=false;
+        possibles.makeVisible(false);
+        openResponse.reset();
+
         feedback="";
-        userAnswer="";
         equation1="";
         equation2="";
 
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeR();
+        typeS();
     }
 
     function submitAnswer():void{
@@ -1072,71 +1075,57 @@
         
         let m:number=randint(-10,10);
         let b:number=randint(-10,10);
-        let choice:number=randint(1,4);
-        choice=1;
-        if(choice==1){
-            equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
-            equation2=`y = a(x + b)`;
-            let mustOrCould:number=randint(1,2);
-            mustOrCould=1;
-            if(mustOrCould==1){ //which of the following MUST be true
-                problem=`If the above system has no solutions, which of the following must be true?`;
-                let randomB:number=randint(-20,20);
-                let randomA:number=randint(-10,10);
-                while(randomA==m){
-                    randomA=randint(-10,10);
-                }
-                let possibleCorrects:string[]=[];
-                //`a = ${m}`, `b ≠ ${b}/${m}`
-                if(b%m==0){
-                    possibleCorrects=[`a = ${m}`, `b ≠ ${b/m}`];
-                }else if(!(b<0&&m>0)){
-                    possibleCorrects=[`a = ${m}`, `b ≠ ${-b}/${-m}`];
-                }else{
-                    possibleCorrects=[`a = ${m}`, `b ≠ ${b}/${m}`];
-                }
-                let possibleIncorrects:string[]=[`a ≠ 0`, `a ≠ ${m}`, `b = ${b}`, `b ≠ ${randomB}`, `a = ${randomA}`];
-                let howManyCorrects:number=randint(1,2);
-                howManyCorrects=2;
-                if(howManyCorrects==1){ //1 correct answer
-                    let i:number=randint2(0,possibleCorrects.length-1);
-                    unrandomized[0]=possibleCorrects[i];
-                    corrects.push(possibleCorrects[i]);
-                    possibleCorrects.splice(i,1);
-
-                    i=randint2(0,possibleIncorrects.length-1);
-                    unrandomized[1]=possibleIncorrects[i];
-                    possibleIncorrects.splice(i,1);
-
-                    i=randint2(0,possibleIncorrects.length-1);
-                    unrandomized[2]=possibleIncorrects[i];
-                    possibleIncorrects.splice(i,1);
-                }else{
-                    let i:number=randint2(0,possibleCorrects.length-1);
-                    unrandomized[0]=possibleCorrects[i];
-                    corrects.push(possibleCorrects[i]);
-                    possibleCorrects.splice(i,1);
-
-                    i=randint2(0,possibleCorrects.length-1);
-                    unrandomized[1]=possibleCorrects[i];
-                    corrects.push(possibleCorrects[i]);
-                    possibleCorrects.splice(i,1);
-
-                    i=randint2(0,possibleIncorrects.length-1);
-                    unrandomized[2]=possibleIncorrects[i];
-                    possibleIncorrects.splice(i,1);
-                }
-                console.log(unrandomized[0],unrandomized[1],unrandomized[2]);
-            }else if(mustOrCould==2){ //which of the following COULD be true
-                problem=`If the above system has no solutions, which of the following could be true?`;
-                let randomNumber:number=randint(-20,20);
-                let possibleCorrects:string[]=[`a = ${m}`, `b ≠ ${b}/${m}`, `b = ${randomNumber}`];
+        equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
+        equation2=`y = a(x + b)`;
+        let mustOrCould:number=randint(1,2);
+        mustOrCould=1;
+        if(mustOrCould==1){ //which of the following MUST be true
+            problem=`If the above system has no solutions, which of the following must be true?`;
+            let randomB:number=randint(-20,20);
+            let randomA:number=randint(-10,10);
+            while(randomA==m){
+                randomA=randint(-10,10);
             }
-        }else if(choice==2){
-            equation1=`y = mx `+((b<0)?`- ${-b}`:`+ ${b}`);
-            equation2=`y = a(x + b)`;
-        }else if(choice==3){
-            equation2=`y = a(cx + b)`;
+            let possibleCorrects:string[]=[];
+            //`a = ${m}`, `b ≠ ${b}/${m}`
+            if(b%m==0){
+                possibleCorrects=[`a = ${m}`, `b ≠ ${b/m}`];
+            }else if(b<0&&m>0 || b<0&&m<0){
+                possibleCorrects=[`a = ${m}`, `b ≠ ${-b}/${-m}`];
+            }else{
+                possibleCorrects=[`a = ${m}`, `b ≠ ${b}/${m}`];
+            }
+            let possibleIncorrects:string[]=[`a ≠ 0`, `a ≠ ${m}`, `b = ${b}`, `b ≠ ${randomB}`, `a = ${randomA}`];
+            let howManyCorrects:number=randint(1,2);
+
+            if(howManyCorrects==1){ //1 correct answer
+                let i:number=randint2(0,possibleCorrects.length-1);
+                unrandomized[0]=possibleCorrects[i];
+                corrects.push(possibleCorrects[i]);
+                possibleCorrects.splice(i,1);
+
+                i=randint2(0,possibleIncorrects.length-1);
+                unrandomized[1]=possibleIncorrects[i];
+                possibleIncorrects.splice(i,1);
+
+                i=randint2(0,possibleIncorrects.length-1);
+                unrandomized[2]=possibleIncorrects[i];
+                possibleIncorrects.splice(i,1);
+            }else{
+                let i:number=randint2(0,possibleCorrects.length-1);
+                unrandomized[0]=possibleCorrects[i];
+                corrects.push(possibleCorrects[i]);
+                possibleCorrects.splice(i,1);
+
+                i=randint2(0,possibleCorrects.length-1);
+                unrandomized[1]=possibleCorrects[i];
+                corrects.push(possibleCorrects[i]);
+                possibleCorrects.splice(i,1);
+
+                i=randint2(0,possibleIncorrects.length-1);
+                unrandomized[2]=possibleIncorrects[i];
+                possibleIncorrects.splice(i,1);
+            }
         }
     
         possibles.makeVisible(true);
@@ -1212,8 +1201,82 @@
         possibles.set(randomized[0],randomized[1],randomized[2]);
     }   
 
-    function typeS():void{
-        
+    function typeS():void{ //function g defined, x and y intercept, what is b
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
+        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        equation1=`g(x) = `
+        fraction.makeVisible(true);
+        let letter1:string=alphabet[randint2(0,alphabet.length-1)];
+        let letter2:string=alphabet[randint2(0,alphabet.length-1)];
+
+        let a:number=0;
+        let b:number=0;
+
+        while(letter2==letter1){
+            letter2=alphabet[randint2(0,alphabet.length-1)];
+        }
+        let xIntercept:number=randint(-30,30);
+        /*
+            numerator: x^2 - x - a, x^2 + x - a, x^2 - x + a, or x^2 + x + a
+        */
+        let numerator:string="";
+        let formatChoice:number=randint(1,4);
+        if(formatChoice==1){ //x^2 - x - a
+            numerator=`x² - x - ${letter1}`;
+            a=Math.pow(xIntercept,2)-xIntercept;
+        }else if(formatChoice==2){
+            numerator=`x² + x + ${letter1}`;
+            a=-(Math.pow(xIntercept,2)+xIntercept);
+        }else if(formatChoice==3){
+            numerator=`x² + x - ${letter1}`;
+            a=Math.pow(xIntercept,2)+xIntercept;
+        }else{
+            numerator=`x² - x + ${letter1}`;
+            a=-(Math.pow(xIntercept,2)-xIntercept);
+        }
+        console.log(xIntercept, a);
+        let possibleFactors:number[]=[];
+        for(let i=-Math.abs(a);i<-Math.ceil(a/30);i++){
+            if(a%i==0 && i!=-1 && a/i!=1){
+                possibleFactors.push(i);
+            }
+        }
+        for(let i=Math.ceil(a/30);i<Math.abs(a);i++){
+            if(a%i==0 && i!=1 && a/i!=1){
+                possibleFactors.push(i);
+            }
+        }
+
+        b=possibleFactors[randint2(0,possibleFactors.length-1)];
+
+        let yIntercept:number=0;
+        let denominator:string="";
+        formatChoice=randint(1,4);
+        if(formatChoice==1){
+            denominator=`x³ - x - ${letter2}`;
+            yIntercept=(-a/b);
+        }else if(formatChoice==2){
+            denominator=`x³ + x - ${letter2}`;
+            yIntercept=(-a/b);
+        }else if(formatChoice==3){
+            denominator=`x³ - x + ${letter2}`;
+            yIntercept=a/b;
+        }else{
+            denominator=`x³ + x + ${letter2}`;
+            yIntercept=a/b;
+        }
+        fraction.updateFrac(numerator,denominator);
+        problem=`The function g is defined by the given equation, where ${letter1} and ${letter2} are constants. In the xy-plane, the graph of y = g(x) passes through the point `;
+        problem+=(randint(1,2)==1)?`(${xIntercept}, 0) and g(0) = ${yIntercept}. `:`(0, ${yIntercept}) and g(${xIntercept}) = 0. `;
+        let whatToFind:number=randint(1,2);
+        if(whatToFind==1){
+            problem+=`What is the value of ${letter1}?`;
+            solutions.push(a);
+        }else{
+            problem+=`What is the value of ${letter2}?`;
+            solutions.push(b);
+        }
     }
 </script>
 
@@ -1222,7 +1285,7 @@
     <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
     <p>Image is not to scale.</p>
 </div>
-<h3>{equation1}</h3>
+<h3>{equation1}<Fraction bind:this={fraction}></Fraction></h3>
 <h3>{equation2}</h3>
 <h3>{problem}</h3>
 
@@ -1233,5 +1296,4 @@
 <button style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>Check answer</button>
 <h1>{feedback}</h1>
 <br>
-<!--<h1><Fraction n=4 d=5></Fraction><div class="inline-block relative bottom-2 left-1">x + 3</div></h1>-->
 <button onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>make question</button>

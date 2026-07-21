@@ -21,6 +21,10 @@
     export function makeVisible(visible:boolean){
         answerInterfaceVisible=visible;
     }
+
+    export function reset(){
+        userAnswer="";
+    }
 </script>
 
 <div id="answerInputContainer" style={answerInterfaceVisible?`display:block`:`display:none`}>
