@@ -59,7 +59,8 @@
             "Type S":typeS
         },
         "Problem-Solving and Data Analysis":{
-            "Type I":typeI
+            "Type I":typeI,
+            "Type U":typeU
         },
         "Geometry and Trigonometry":{
             "Type K":typeK,
