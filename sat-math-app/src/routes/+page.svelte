@@ -55,7 +55,8 @@
             "Type H":typeH,
             "Type K":typeK,
             "Type P":typeP,
-            "Type Q":typeQ
+            "Type Q":typeQ,
+            "Type S":typeS
         },
         "Problem-Solving and Data Analysis":{
             "Type I":typeI
@@ -72,6 +73,7 @@
         checkAnswerVisible=true;
         imageVisible=false;
         possibles.makeVisible(false);
+        fraction.makeVisible(false);
         openResponse.reset();
 
         feedback="";
@@ -81,7 +83,7 @@
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeS();
+        typeU();
     }
 
     function submitAnswer():void{
@@ -1277,6 +1279,42 @@
             problem+=`What is the value of ${letter2}?`;
             solutions.push(b);
         }
+    }
+
+    function typeT():void{ //vertex given, what could be a + b + c OR js c?
+        mcqdiv.makeVisible(true);
+        openResponse.makeVisible(false);
+        let h:number=randint(-10,10);
+        let k:number=randint(-15,15);
+        problem+=`In the xy-plane, a parabola has vertex (${h}, ${k}) and `;
+        let intersects:number=randint(1,2);
+        intersects=1;
+        if(intersects==1){
+            problem+=`intersects the x-axis at two points. `
+        }
+    }
+
+    function typeU():void{ //data set consists of integers...what is the value of the largest..
+        let number=randint(10,15);
+        problem+=`Data set A consists of ${number} integers less than `;
+        let averageWithout:number=randint(2,5)*10;
+        let dataSet:number[]=[];
+        let balance=0;
+
+        for(let i=0;i<number-1;i++){
+            let increment:number=randint(-7,7);
+            dataSet.push(averageWithout+increment);
+            balance+=increment;
+        }
+        
+        while(balance!=0){
+            let index:number=randint2(0,number-1);
+            dataSet[index]=dataSet[index]-Math.round(balance/2);
+            balance-=Math.round(balance/2);
+        }
+
+        /*
+        */
     }
 </script>
 
