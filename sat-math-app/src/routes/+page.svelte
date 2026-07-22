@@ -1295,26 +1295,52 @@
     }
 
     function typeU():void{ //data set consists of integers...what is the value of the largest..
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
         let number=randint(10,15);
-        problem+=`Data set A consists of ${number} integers less than `;
-        let averageWithout:number=randint(2,5)*10;
+        problem=`Data set A consists of ${number} integers less than `;
+        let averageWithout:number=randint(20,50);
         let dataSet:number[]=[];
         let balance=0;
 
-        for(let i=0;i<number-1;i++){
+        for(let i=0;i<(number-1);i++){
             let increment:number=randint(-7,7);
             dataSet.push(averageWithout+increment);
             balance+=increment;
         }
         
-        while(balance!=0){
-            let index:number=randint2(0,number-1);
-            dataSet[index]=dataSet[index]-Math.round(balance/2);
-            balance-=Math.round(balance/2);
+        if(balance>0){
+            while(balance!=0){
+                let index:number=randint2(0,number-2);
+                dataSet[index]=dataSet[index]-(balance-Math.floor(balance/2));
+                balance=Math.floor(balance/2);
+            }
+        }else if(balance<0){
+            balance=Math.abs(balance);
+            while(balance!=0){
+                let index:number=randint2(0,number-2);
+                dataSet[index]=dataSet[index]+(balance-Math.floor(balance/2));
+                balance=Math.floor(balance/2);
+            }
         }
 
         /*
+        mean of full data set must be greater than meanWithout
         */
+
+        let baseDividend:number=averageWithout*(number-1)
+        let add:number=averageWithout+1;
+        while((baseDividend+add)%number!=0){
+            add++;
+        }
+
+        solutions.push(add);
+        
+        for(let i of dataSet){
+            equation1+=`${i}, `;
+        }
+        equation1=equation1.substring(0,equation1.length-2);
+        problem+=`${(Math.floor(add/10)+1)*10}. The list above shows ${number-1} of the integers from data set A. The mean of these ${number-1} integers is ${averageWithout}. If the mean of data set A is an integer greater than ${averageWithout}, what is the value of the largest integer from data set A?`;
     }
 </script>
 
