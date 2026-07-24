@@ -7,6 +7,7 @@
 
     //imgs
     import typemImg from "$lib/images/typeM.png";
+    import { onMount } from "svelte";
 
     let mcqdiv:any=$state();
     let openResponse:any=$state();
@@ -20,6 +21,7 @@
     let problem:string=$state("");
     let solutions:number[]=[];
 
+    let type:string=$state("");
     let equation1:string=$state("");
     let equation2:string=$state("");
 
@@ -39,35 +41,40 @@
 
     let questionsSorted:Record<string, Record<string,()=>void>>={
         "Algebra":{
-            "Type G":typeG,
-            "Type J":typeJ,
-            "Type F":typeF,
-            "Type N":typeN,
-            "Type O":typeO,
-            "Type R":typeR
+            "type G":typeG,
+            "type J":typeJ,
+            "type F":typeF,
+            "type N":typeN,
+            "type O":typeO,
+            "type R":typeR
         },
         "Advanced Math":{
-            "Type E":typeE,
-            "Type A":typeA,
-            "Type B":typeB,
-            "Type C":typeC,
-            "Type D":typeD,
-            "Type H":typeH,
-            "Type K":typeK,
-            "Type P":typeP,
-            "Type Q":typeQ,
-            "Type S":typeS
+            "type E":typeE,
+            "type A":typeA,
+            "type B":typeB,
+            "type C":typeC,
+            "type D":typeD,
+            "type H":typeH,
+            "type K":typeK,
+            "type P":typeP,
+            "type Q":typeQ,
+            "type S":typeS,
+            "type T":typeT
         },
         "Problem-Solving and Data Analysis":{
-            "Type I":typeI,
-            "Type U":typeU
+            "type I":typeI,
+            "type U":typeU
         },
         "Geometry and Trigonometry":{
-            "Type K":typeK,
-            "Type L":typeL,
-            "Type M":typeM
+            "type K":typeK,
+            "type L":typeL,
+            "type M":typeM
         }
     }
+
+    onMount(()=>{
+        makeQuestion();
+    })
 
     function makeQuestion():void{
         makeQuestionVisible=false;
@@ -81,10 +88,13 @@
         equation1="";
         equation2="";
 
-        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
-        domain[Object.keys(domain)[index]]();*/
-        typeT();
+        domain[Object.keys(domain)[index]]();
+        type=Object.keys(domain)[index];
+
+        /*typeR();
+        type="type R";*/
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -728,11 +738,7 @@
             optionsUnrandomized[3]=`${dpg}/${mpg} * m = ${dtr}`;
             let correct:string=optionsUnrandomized[2];
             let optionsRandomized:string[]=[];
-            for(let i=0;i<4;i++){
-                let index:number=randint2(0,optionsUnrandomized.length-1);
-                optionsRandomized.push(optionsUnrandomized[index]);
-                optionsUnrandomized.splice(index,1);
-            }
+            optionsUnrandomized=createRandomAnswers(optionsRandomized);
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
         }else if(whatToSolve==3){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will save on gas next week?`;
@@ -918,11 +924,7 @@
             correct=optionsUnrandomized[1];
         }
         
-        for(let i=0;i<4;i++){
-            let index:number=randint2(0,optionsUnrandomized.length-1);
-            optionsRandomized.push(optionsUnrandomized[index]);
-            optionsUnrandomized.splice(index,1);
-        }
+        optionsRandomized=createRandomAnswers(optionsUnrandomized);
 
         mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
     }
@@ -1396,22 +1398,37 @@
         equation1=equation1.substring(0,equation1.length-2);
         problem+=`${(Math.floor(add/10)+1)*10}. The list above shows ${number-1} of the integers from data set A. The mean of these ${number-1} integers is ${averageWithout}. If the mean of data set A is an integer greater than ${averageWithout}, what is the value of the largest integer from data set A?`;
     }
+
+    function typeV():void{ //
+        
+    }
 </script>
 
-<h1>SAT MATHHH AHH AHH AHH</h1>
-<div style={(imageVisible)?`display:block`:`display:none`}>
-    <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
-    <p>Image is not to scale.</p>
+<div class="w-[100vw] h-[100vh] bg-blue-200 overflow-auto">
+    <h1 class="text-center text-[30px]">math.SAT</h1>
+    <div class="bg-blue-300 w-[95%] m-auto">
+        <div class="flex justify-around w-[100%] box-border p-[10px] m-auto">
+            <div class="bg-blue-100 w-[49%] box-border p-[10px]">
+                <h4>Problem {type}</h4>
+                <div style={(imageVisible)?`display:block`:`display:none`}>
+                    <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
+                    <p>Image is not to scale.</p>
+                </div>
+                <h3>{equation1}<Fraction bind:this={fraction}></Fraction></h3>
+                <h3>{equation2}</h3>
+                <h3>{problem}</h3>
+                <Possibles bind:this={possibles}></Possibles>
+            </div>
+            <div class="bg-blue-100 w-[49%] box-border p-[10px]">
+                <McqDiv bind:this={mcqdiv}></McqDiv>
+                <OpenResponse bind:this={openResponse}></OpenResponse>
+                <br>
+                <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto" style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>check answer</button>
+                <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto"  onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>next question &gt;&gt;&gt;</button>
+            </div>
+        </div>
+        <div style={(feedback=="")?`display:none`:`display:block`} class="pb-[10px]">
+            <h1 class="text-center">{feedback}</h1>
+        </div>
+    </div>
 </div>
-<h3>{equation1}<Fraction bind:this={fraction}></Fraction></h3>
-<h3>{equation2}</h3>
-<h3>{problem}</h3>
-
-<Possibles bind:this={possibles}></Possibles>
-
-<McqDiv bind:this={mcqdiv}></McqDiv>
-<OpenResponse bind:this={openResponse}></OpenResponse>
-<button style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>Check answer</button>
-<h1>{feedback}</h1>
-<br>
-<button onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>make question</button>

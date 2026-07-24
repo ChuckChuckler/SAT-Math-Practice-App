@@ -74,7 +74,7 @@
     }
 </script>
 
-<div class="bg-blue-200 box-border p-[15px] w-[50vw]" style={visible?`display:block`:`display:none`}>
+<div class="box-border p-[15px]" style={visible?`display:block`:`display:none`}>
     <div class="grid grid-rows-4 h-[300px] gap-3">
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionA}>
             <div class="w-[18%] bg-white">A</div>
