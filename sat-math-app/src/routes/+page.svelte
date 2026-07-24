@@ -84,7 +84,18 @@
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();*/
-        typeU();
+        typeT();
+    }
+
+    function createRandomAnswers(unrandomizedPassed:any[]):any[]{
+        let unrandomized=[...unrandomizedPassed];
+        let randomized:any[]=[];
+        for(let i=0;i<4;i++){
+            let index:number=randint2(0,unrandomized.length-1);
+            randomized.push(unrandomized[index]);
+            unrandomized.splice(index,1);
+        }
+        return randomized;
     }
 
     function submitAnswer():void{
@@ -1287,11 +1298,53 @@
         openResponse.makeVisible(false);
         let h:number=randint(-10,10);
         let k:number=randint(-15,15);
-        problem+=`In the xy-plane, a parabola has vertex (${h}, ${k}) and `;
+        problem=`In the xy-plane, a parabola has vertex (${h}, ${k}) and `;
         let intersects:number=randint(1,2);
-        intersects=1;
+        intersects=2;
         if(intersects==1){
-            problem+=`intersects the x-axis at two points. `
+            problem+=`intersects the x-axis at two points. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
+            let unrandomized:number[]=[];
+            let randomized:number[]=[];
+            unrandomized[0]=k;
+            if(k>0){ //k is positive
+                unrandomized[1]=k-randint(2,10);
+                unrandomized[2]=k+randint(2,10);
+                unrandomized[3]=k+randint(2,10);
+                while(unrandomized[3]==unrandomized[2]){
+                    unrandomized[3]=k+randint(2,10);
+                }
+            }else{
+                unrandomized[1]=k+randint(2,10);
+                unrandomized[2]=k-randint(2,10);
+                unrandomized[3]=k-randint(2,10);
+                while(unrandomized[3]==unrandomized[2]){
+                    unrandomized[3]=k-randint(2,10);
+                }
+            }
+            randomized=createRandomAnswers(unrandomized);
+            mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+        }else{
+            problem+=`does not intersect the x-axis. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
+            let unrandomized:number[]=[];
+            let randomized:number[]=[];
+            unrandomized[0]=k;
+            if(k>0){ //k is positive
+                unrandomized[1]=k+randint(2,10);
+                unrandomized[2]=k-randint(2,10);
+                unrandomized[3]=k-randint(2,10);
+                while(unrandomized[3]==unrandomized[2]){
+                    unrandomized[3]=k-randint(2,10);
+                }
+            }else{
+                unrandomized[1]=k-randint(2,10);
+                unrandomized[2]=k+randint(2,10);
+                unrandomized[3]=k+randint(2,10);
+                while(unrandomized[3]==unrandomized[2]){
+                    unrandomized[3]=k+randint(2,10);
+                }
+            }
+            randomized=createRandomAnswers(unrandomized);
+            mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
         }
     }
 
