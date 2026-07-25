@@ -68,7 +68,8 @@
         "Geometry and Trigonometry":{
             "type K":typeK,
             "type L":typeL,
-            "type M":typeM
+            "type M":typeM,
+            "type V":typeV
         }
     }
 
@@ -88,13 +89,13 @@
         equation1="";
         equation2="";
 
-        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];
+        type=Object.keys(domain)[index];*/
 
-        /*typeR();
-        type="type R";*/
+        typeV();
+        type="type V";
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -1251,9 +1252,9 @@
             numerator=`x² - x + ${letter1}`;
             a=-(Math.pow(xIntercept,2)-xIntercept);
         }
-        console.log(xIntercept, a);
+
         let possibleFactors:number[]=[];
-        for(let i=-Math.abs(a);i<-Math.ceil(a/30);i++){
+        for(let i=-Math.abs(a);i<-Math.ceil(Math.abs(a)/30);i++){
             if(a%i==0 && i!=-1 && a/i!=1){
                 possibleFactors.push(i);
             }
@@ -1399,8 +1400,51 @@
         problem+=`${(Math.floor(add/10)+1)*10}. The list above shows ${number-1} of the integers from data set A. The mean of these ${number-1} integers is ${averageWithout}. If the mean of data set A is an integer greater than ${averageWithout}, what is the value of the largest integer from data set A?`;
     }
 
-    function typeV():void{ //
-        
+    function typeV():void{ //xy plane, there are these points...what angle
+        openResponse.makeVisible(false);
+        mcqdiv.makeVisible(true);
+
+        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let startIndex:number=randint2(0,alphabet.length-3);
+        problem=`Point ${alphabet[startIndex].toUpperCase()} lies on the xy-plane and has coordinates `;
+
+        let unrandomized:string[]=[];
+        let randomized:string[]=[];
+        let aCoords:string="";
+        let cCoords:string="";
+
+        let coordUnknowns:number=randint(1,3);
+        coordUnknowns=2;
+        if(coordUnknowns==1){ //no coordinate unknown. angle will e π/2, π, 3π/2, or 2π
+            let a:number=randint(1,4);
+            a=1;
+            
+            let scale:number=randint(15,40)*2;
+            let denominator:number=randint(2,5)*2;
+
+            unrandomized[0]=`${scale*denominator}π/${denominator}`;
+            unrandomized[1]=`${scale*denominator+(denominator/2)}π/${denominator}`;
+            unrandomized[2]=`${(scale+1)*denominator}π/${denominator}`;
+            unrandomized[3]=`${scale*denominator+((denominator/2)*3)}π/${denominator}`;
+            randomized=createRandomAnswers(unrandomized);
+
+            let possibleCoords:string[]=["(1,0)","(0,1)","(-1,0)","(0,-1)"];
+            aCoords=possibleCoords[randint2(0,3)];
+            cCoords=possibleCoords[randint2(0,3)];
+            while(cCoords==aCoords){
+                cCoords=possibleCoords[randint2(0,3)];
+            }
+
+            problem+=`${aCoords}. Point ${alphabet[startIndex+1].toUpperCase()} has coordinates (0,0), and point ${alphabet[startIndex+2].toUpperCase()} has coordinates ${cCoords}. Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
+
+            if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(0,1)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(-1,0)")&&[aCoords,cCoords].includes("(0,-1)")) || ([aCoords,cCoords].includes("(0,-1)")&&[aCoords,cCoords].includes("(1,0)"))){
+                mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+            }else if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(0,-1)"))){
+                mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
+            }
+        }else if(coordUnknowns==2){
+
+        }
     }
 </script>
 
