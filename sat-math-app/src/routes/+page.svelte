@@ -95,7 +95,6 @@
         type=Object.keys(domain)[index];*/
 
         typeV();
-        type="type V";
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -1413,38 +1412,69 @@
         let aCoords:string="";
         let cCoords:string="";
 
-        let coordUnknowns:number=randint(1,3);
-        coordUnknowns=2;
+        let scale:number=randint(15,40)*2;
+        let denominator:number=randint(2,5)*2;
+        unrandomized[0]=`${scale*denominator}π/${denominator}`;
+        unrandomized[1]=`${scale*denominator+(denominator/2)}π/${denominator}`;
+        unrandomized[2]=`${(scale+1)*denominator}π/${denominator}`;
+        unrandomized[3]=`${scale*denominator+((denominator/2)*3)}π/${denominator}`;
+        randomized=createRandomAnswers(unrandomized);
+
+        let possibleCoords:string[]=["(1,0)","(0,1)","(-1,0)","(0,-1)"];
+        let coordUnknowns:number=randint(1,2);
+
         if(coordUnknowns==1){ //no coordinate unknown. angle will e π/2, π, 3π/2, or 2π
-            let a:number=randint(1,4);
-            a=1;
-            
-            let scale:number=randint(15,40)*2;
-            let denominator:number=randint(2,5)*2;
-
-            unrandomized[0]=`${scale*denominator}π/${denominator}`;
-            unrandomized[1]=`${scale*denominator+(denominator/2)}π/${denominator}`;
-            unrandomized[2]=`${(scale+1)*denominator}π/${denominator}`;
-            unrandomized[3]=`${scale*denominator+((denominator/2)*3)}π/${denominator}`;
-            randomized=createRandomAnswers(unrandomized);
-
-            let possibleCoords:string[]=["(1,0)","(0,1)","(-1,0)","(0,-1)"];
             aCoords=possibleCoords[randint2(0,3)];
             cCoords=possibleCoords[randint2(0,3)];
             while(cCoords==aCoords){
                 cCoords=possibleCoords[randint2(0,3)];
             }
 
-            problem+=`${aCoords}. Point ${alphabet[startIndex+1].toUpperCase()} has coordinates (0,0), and point ${alphabet[startIndex+2].toUpperCase()} has coordinates ${cCoords}. Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
+            problem+=`${aCoords}. Point ${alphabet[startIndex+1].toUpperCase()} has coordinates (0,0), and point ${alphabet[startIndex+2].toUpperCase()} has coordinates ${cCoords}. `;
 
             if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(0,1)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(-1,0)")&&[aCoords,cCoords].includes("(0,-1)")) || ([aCoords,cCoords].includes("(0,-1)")&&[aCoords,cCoords].includes("(1,0)"))){
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
             }else if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(0,-1)"))){
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
             }
-        }else if(coordUnknowns==2){
+        }else if(coordUnknowns==2){ //x and y are unknown, but we know their signs (pos/neg)
+            let index:number=randint2(0,3);
+            let signs:number=randint(1,2);
+            let aCoords:string=possibleCoords[index];
+            problem+=`${aCoords}. Point ${alphabet[startIndex+1].toUpperCase()} has coordinates (0,0). Point ${alphabet[startIndex+2].toUpperCase()} has coordinates `;
+            if(index==0){ //aCoords = (1,0)
+                if(signs==1){ //(0,y) where y is a positive constant
+                    problem+=`(0,y), where y is a positive constant. `;
+                }else if(signs==2){ //(x, 0) where x is a negative constant
+                    problem+=`(x,0), where x is a negative constant. `;
+                }
+            }else if(index==1){ //aCoords = (0,1)
+                if(signs==1){
+                    problem+=`(x,0), where x is a negative constant. `;
+                }else if(signs==2){
+                    problem+=`(0,y), where y is a negative constant. `;
+                }
+            }else if(index==2){ // aCoords = (0,-1)
+                if(signs==1){
+                    problem+=`(0,y), where y is a negative constant. `;
+                }else if(signs==2){
+                    problem+=`(x,0), where x is a positive constant. `;
+                }
+            }else{
+                if(signs==1){
+                    problem+=`(x,0), where x is a positive constant. `;
+                }else if(signs==2){
+                    problem+=`(0,y), where y is a positive constant. `;
+                }
+            }
 
+            if(signs==1){
+                mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+            }else{
+                mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
+            }
         }
+        problem+=`Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
     }
 </script>
 
