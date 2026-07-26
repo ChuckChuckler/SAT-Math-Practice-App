@@ -94,7 +94,7 @@
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
 
-        typeV();
+        typeG();
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -106,6 +106,16 @@
             unrandomized.splice(index,1);
         }
         return randomized;
+    }
+
+    function reduceFraction(numerator:number,denominator:number):number[]{
+        for(let i=2;i<((denominator>numerator)?denominator:numerator);i++){
+            if(denominator%i==0&&numerator%i==0){
+                denominator/=i;
+                numerator/=i;
+            }
+        }
+        return [numerator, denominator];
     }
 
     function submitAnswer():void{
@@ -594,61 +604,80 @@
     function typeG():void{ //r, no solutions
         openResponse.makeVisible(true);
         mcqdiv.makeVisible(false);
-        //no solutions...what is r?
-        /*
-            x + y1 = y2 + c
-            a + b = d
-        */
-        let x:number=randint(1,20);
-        let y1:number=randint(-20,20);
-        let y2:number=randint(-20,20);
-        while(y1-y2==0){
-            y2=randint(-20,20);
+
+        let xNumerator:number=randint(2,11);
+        let xDenominator:number=randint(2,11);
+
+        while(xNumerator%xDenominator==0){
+            xDenominator=randint(2,11);
         }
 
-        let c:number=randint(-30,30);
-        let d:number=randint(-30,30);
-        while(c==d){
-            d=randint(-30,30);
+        let yNumerator:number=randint(2,11);
+        let yDenominator:number=randint(2,11);
+
+        while(yDenominator==xDenominator || yNumerator%yDenominator==0){
+            yDenominator=randint(2,11);
         }
 
-        let scale:number=randint(2,7);
-        let a:number=0;
-        let b:number=0;
-        if(x%scale==0){
-            a=x/scale;
-            b=(y1-y2)/scale;
-        }else{
-            a=x*scale;
-            b=(y1-y2)*scale;
+        let xFracs:number[]=reduceFraction(xNumerator, xDenominator);
+        xNumerator=xFracs[0];
+        xDenominator=xFracs[1];
+
+        let yFracs:number[]=reduceFraction(yNumerator,yDenominator);
+        yNumerator=yFracs[0];
+        yDenominator=yFracs[1];
+
+        equation1=`(${xNumerator}/${xDenominator})x + (${yNumerator}/${yDenominator})y = -(${yNumerator}/${yDenominator})y + `;
+        let cNumerator:number=randint(2,11);
+        let cDenominator:number=randint(2,11);
+
+        while(cDenominator%cNumerator==0){
+            cDenominator=randint(2,11);
         }
 
-        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let cFracs:number[]=reduceFraction(cNumerator,cDenominator);    
+        cNumerator=cFracs[0];
+        cDenominator=cFracs[1];
+        
+        equation1+=`(${cNumerator}/${cDenominator})`;
 
-        let equation1Format:number=randint(1,5); //5 different formats for equation 1, just because it's cool to have multiple formats
-        if(equation1Format==1){
-            equation1=`${x}x `;
-            equation1+=(y1<0)?`- ${-y1}y = ${y2}y `:`+ ${y1}y = ${y2}y `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-        }else if(equation1Format==2){
-            equation1=`${x}x = ${y2-y1}y `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-        }else if(equation1Format==3){
-            equation1=`${y1-y2}y = ${-x}x `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-        }else if(equation1Format==4){
-            equation1=`${x}x `;
-            equation1+=((y1-y2)<0)?`- ${-(y1-y2)}y = ${c}`:`+ ${y1-y2}y = ${c}`;
-        }else if(equation1Format==5){
-            equation1=`${x}x `;
-            equation1+=((y1-y2)<0)?`- ${-(y1-y2)}y `:`+ ${y1-y2}y `;
-            equation1+=(-c<0)?`- ${c} = 0`:`+ ${-c} = 0`;
+        let xNumerator2:number=randint(1,11);
+        let xDenominator2:number=randint(2,11);
+
+        while(xNumerator2%xDenominator2==0 || xDenominator2==xDenominator){
+            xDenominator2=randint(2,11);
         }
 
-        let chosenLetter:number=randint(0,alphabet.length-1);
-        equation2=`${a}x + ${alphabet[chosenLetter]}y = ${d}`;
-        problem=`In the given system of equations, ${alphabet[chosenLetter]} is a constant. If the system has no solution, what is the value of ${alphabet[chosenLetter]}?`;
-        solutions.push(b);
+        let xFracs2:number[]=reduceFraction(xNumerator2, xDenominator2);
+        while(xFracs2[1]==xDenominator){
+            xDenominator2=randint(2,11);
+            xFracs2=reduceFraction(xNumerator2, xDenominator2);
+        }
+
+        xNumerator2=xFracs2[0];
+        xDenominator2=xFracs2[1];
+
+        equation2=`(${xNumerator2}/${xDenominator2})x + ky = `;
+        
+        let cNumerator2:number=randint(2,11);
+        let cDenominator2:number=randint(2,11);
+
+        while(cNumerator2%cDenominator2==0){
+            cDenominator2=randint(2,11);
+        }
+
+        let xScale:number=(xNumerator2/xDenominator2)*(xDenominator/xNumerator);
+        while((cNumerator/cDenominator)*xScale==(cNumerator2/cDenominator2)){
+            let cNumerator2:number=randint(2,11);
+            let cDenominator2:number=randint(2,11);
+            while(cNumerator2%cDenominator2==0){
+                cDenominator2=randint(2,11);
+            }
+        }
+
+        equation2+=`${reduceFraction(cNumerator2, cDenominator2)[0]}/${reduceFraction(cNumerator2, cDenominator2)[1]}`;
+        solutions.push(Math.round((((yNumerator*2)/yDenominator)*(xScale))*1000)/1000);
+
     }
 
     function typeH():void{ //has a factor of (x + 2b), what could be the equation...
@@ -1475,6 +1504,10 @@
             }
         }
         problem+=`Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
+    }
+
+    function typeW():void{
+        
     }
 </script>
 
