@@ -94,7 +94,7 @@
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
 
-        typeG();
+        typeW();
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -1506,8 +1506,24 @@
         problem+=`Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
     }
 
-    function typeW():void{
-        
+    function typeW():void{ //prism with square base, find surface area of triangle face
+        openResponse.makeVisible(true);
+        mcqdiv.makeVisible(false);
+        let triples:number[][]=[[3,4,5],[5,12,13],[7,24,25],[8,15,17],[9,40,41],[11,60,61],[12,35,37],[20,21,29],[28,45,53]];
+        let chosenTriple:number[]=triples[randint2(0,triples.length-1)]; //[side1, side2, hypotenuse]
+        let choice:number=randint2(0,1);
+        let s1:number=(choice==0)?chosenTriple[0]:chosenTriple[1];
+        let s2:number=(choice==0)?chosenTriple[1]:chosenTriple[0];
+        problem=`A rectangular pyramid has a square base with an area of ${Math.pow(s1*2,2)} square units. What is the surface area, in square units, of `;
+        choice=randint(1,2);
+        if(choice==1){ //find surface area of js triangular side
+            problem+=`one of the triangular faces `;
+            solutions.push(chosenTriple[2]*s1);
+        }else if(choice==2){
+            problem+=`the rectangular pyramid `;
+            solutions.push(((chosenTriple[2]*s1)*4)+Math.pow(s1*2,2));
+        }
+        problem+=`if the rectangular pyramid has a volume of ${(Math.pow(s1*2,2)*s2)/3} cubic units?`;
     }
 </script>
 
@@ -1538,4 +1554,5 @@
             <h1 class="text-center">{feedback}</h1>
         </div>
     </div>
+    <button class="bg-[#EBF4FF]">Settings</button>
 </div>
