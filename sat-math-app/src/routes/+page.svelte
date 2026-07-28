@@ -1,7 +1,9 @@
 <script lang="ts">
+    import Equation from "$lib/comps/Equation.svelte";
+
     //comps
-    import Fraction from "$lib/comps/Fraction.svelte";
     import McqDiv from "$lib/comps/McqDiv.svelte";
+    import Number from "$lib/comps/Number.svelte";
     import OpenResponse from "$lib/comps/OpenResponse.svelte";
     import Possibles from "$lib/comps/Possibles.svelte";
 
@@ -22,8 +24,8 @@
     let solutions:number[]=[];
 
     let type:string=$state("");
-    let equation1:string=$state("");
-    let equation2:string=$state("");
+    let equation1:any=$state("");
+    let equation2:any=$state("");
 
     let feedback:string=$state("");
 
@@ -69,7 +71,8 @@
             "type K":typeK,
             "type L":typeL,
             "type M":typeM,
-            "type V":typeV
+            "type V":typeV,
+            "type W":typeW
         }
     }
 
@@ -82,19 +85,16 @@
         checkAnswerVisible=true;
         imageVisible=false;
         possibles.makeVisible(false);
-        fraction.makeVisible(false);
         openResponse.reset();
 
         feedback="";
-        equation1="";
-        equation2="";
 
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
 
-        typeW();
+        typeC();
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -133,6 +133,43 @@
         }else{
             feedback="Incorrect...Try again!!!"
         }
+    }
+
+    function makeEquationArr(eq1:string):any[][]{
+        let equation1Arr:any[][]=[];
+        for(let i of eq1.split(" ")){
+            if(i.includes("/")){ //is a fraction
+                console.log("is a fraction");
+            }else{ //is not a fraction
+                for(let j=0;j<i.length;j++){
+                    if(isNaN(parseFloat(i[j]))){
+                        equation1Arr.push([3,[i[j]]]);
+                    }else{
+                        if(i[j]=="1" || i[j]=="-1"){
+                            if(!isNaN(parseInt(i[j+1])) || !isNaN(parseInt(i[j-1]))){
+                                equation1Arr.push([2,[i[j]]]);
+                            }else{
+                                console.log("this 1 has been terminated");
+                            }
+                        }else if(i[j]=="0" && j==0){
+                            if(i[j+1]=="." || i[j-1]=="."){
+                                console.log("i am a decimal");
+                                equation1Arr.push([3,[i[j]]]);
+                            }else{
+                                console.log("wrong 0. bad 0. bad bad bad 0");
+                                equation1Arr.push([3,[i[j]]]);
+                                console.log(equation1Arr.splice(equation1Arr.length-4,4));
+                                break;
+                            }
+                        }else{
+                            equation1Arr.push([2,[i[j]]]);
+                        }
+                    }
+                }
+            }
+            equation1Arr.push([3,[" "]]);
+        }
+        return equation1Arr;
     }
 
     function typeA():void{ //smallest possible value of ab?
@@ -431,6 +468,11 @@
         let m:number=randint(-5,5);
         let e:number=-((Math.pow(b-m,2)/(4*a))-c);
         while(e.toString().length>6){
+            w=randint(1,5);
+            x=randint(-10,10);
+            y=randint(1,5);
+            z=randint(-10,10);
+
             a=w*y;
             b=(w*z)+(x*y);
             c=x*z;
@@ -450,14 +492,19 @@
         - e
         */
         let whichUnknown:number=randint(1,5);
+        whichUnknown=1;
         let chosenUnknownName:string=``;
         if(whichUnknown==1){ //a
             chosenUnknownName=`a`;
-            equation1=`y = ax² `;
-            (b<0)?equation1+=`- ${-b}x `:equation1+=`+ ${b}x `;
-            (c<0)?equation1+=`- ${-c}x `:equation1+=` + ${c}x`;
-            equation2=`y = ${m}x `;
-            (e<0)?equation2+=`- ${-e}`:equation2+=`+ ${e}`;
+            let eq1:string="";
+            let eq2:string="";
+            eq1=`y = ax² `;
+            (b<0)?eq1+=`- ${-b}x `:eq1+=`+ ${b}x `;
+            (c<0)?eq1+=`- ${-c}x `:eq1+=`+ ${c}x`;
+            eq2=`y = ${m}x `;
+            (e<0)?eq2+=`- ${-e}`:eq2+=`+ ${e}`;
+            equation1.updateEquation(makeEquationArr(eq1));
+            equation2.updateEquation(makeEquationArr(eq2));
         }else if(whichUnknown==2){ //b
             chosenUnknownName=`b`;
             equation1=`y = ${a}x² + bx `;
@@ -1506,7 +1553,7 @@
         problem+=`Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
     }
 
-    function typeW():void{ //prism with square base, find surface area of triangle face
+    function typeW():void{ //pyramid with square base, find surface area of triangle face
         openResponse.makeVisible(true);
         mcqdiv.makeVisible(false);
         let triples:number[][]=[[3,4,5],[5,12,13],[7,24,25],[8,15,17],[9,40,41],[11,60,61],[12,35,37],[20,21,29],[28,45,53]];
@@ -1525,6 +1572,10 @@
         }
         problem+=`if the rectangular pyramid has a volume of ${(Math.pow(s1*2,2)*s2)/3} cubic units?`;
     }
+
+    function typeX():void{ //
+
+    }
 </script>
 
 <div class="w-[100vw] h-[100vh] bg-blue-200 overflow-auto">
@@ -1537,8 +1588,11 @@
                     <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
                     <p>Image is not to scale.</p>
                 </div>
-                <h3>{equation1}<Fraction bind:this={fraction}></Fraction></h3>
-                <h3>{equation2}</h3>
+                <br>
+                <Equation bind:this={equation1}></Equation>
+                <br>
+                <Equation bind:this={equation2}></Equation>
+                <br>
                 <h3>{problem}</h3>
                 <Possibles bind:this={possibles}></Possibles>
             </div>
