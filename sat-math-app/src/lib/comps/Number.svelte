@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-
     let {type, args}=$props();
 
     //inner text
@@ -14,7 +12,7 @@
     let numVis:boolean=$state(false);
     let stringVis:boolean=$state(false);
 
-    onMount(()=>{
+    $effect(()=>{
         if(type==1){
             createFraction(args);
         }else if(type==2){
@@ -24,7 +22,7 @@
         }
     });
 
-    export function createFraction(args:any[]){
+    function createFraction(args:any[]){
         fracVis=true;
         numVis=false;
         stringVis=false;
@@ -32,14 +30,14 @@
         d=args[1];
     }
 
-    export function createNonfraction(args:any[]){
+    function createNonfraction(args:any[]){
         fracVis=false;
         numVis=true;
         stringVis=false;
         num=args[0];
     }
 
-    export function createString(args:any[]){ //can be variable or symbol
+    function createString(args:any[]){ //can be variable or symbol
         fracVis=false;
         numVis=false;
         stringVis=true;

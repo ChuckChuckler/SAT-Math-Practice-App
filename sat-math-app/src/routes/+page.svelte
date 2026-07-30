@@ -17,6 +17,8 @@
     let imageVisible:boolean=$state(false);
     let fraction:any=$state();
 
+    let eq1Visible:boolean=$state(false);
+    let eq2Visible:boolean=$state(false);
     let checkAnswerVisible:boolean=$state(true);
     let makeQuestionVisible:boolean=$state(true);
 
@@ -24,8 +26,8 @@
     let solutions:number[]=[];
 
     let type:string=$state("");
-    let equation1:any=$state("");
-    let equation2:any=$state("");
+    let equation1:any=$state();
+    let equation2:any=$state();
 
     let feedback:string=$state("");
 
@@ -86,7 +88,6 @@
         imageVisible=false;
         possibles.makeVisible(false);
         openResponse.reset();
-
         feedback="";
 
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
@@ -94,7 +95,10 @@
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
 
-        typeC();
+        typeG();
+
+        eq1Visible=(equation1.getNumbers().length==0)?false:true;
+        eq2Visible=(equation2.getNumbers().length==0)?false:true;
     }
 
     function createRandomAnswers(unrandomizedPassed:any[]):any[]{
@@ -146,19 +150,12 @@
                         equation1Arr.push([3,[i[j]]]);
                     }else{
                         if(i[j]=="1" || i[j]=="-1"){
-                            if(!isNaN(parseInt(i[j+1])) || !isNaN(parseInt(i[j-1]))){
+                            if(!isNaN(parseInt(i[j+1])) || !isNaN(parseInt(i[j-1])) || j==i.length-1 || i[j+1]=="."){
                                 equation1Arr.push([2,[i[j]]]);
-                            }else{
-                                console.log("this 1 has been terminated");
                             }
                         }else if(i[j]=="0" && j==0){
-                            if(i[j+1]=="." || i[j-1]=="."){
-                                console.log("i am a decimal");
-                                equation1Arr.push([3,[i[j]]]);
-                            }else{
-                                console.log("wrong 0. bad 0. bad bad bad 0");
-                                equation1Arr.push([3,[i[j]]]);
-                                console.log(equation1Arr.splice(equation1Arr.length-4,4));
+                            if(!(i[j+1]=="." || i[j-1]==".")){
+                                equation1Arr.splice(equation1Arr.length-4,4);
                                 break;
                             }
                         }else{
@@ -492,45 +489,46 @@
         - e
         */
         let whichUnknown:number=randint(1,5);
-        whichUnknown=1;
+
+        let eq1:string="";
+        let eq2:string="";
         let chosenUnknownName:string=``;
         if(whichUnknown==1){ //a
             chosenUnknownName=`a`;
-            let eq1:string="";
-            let eq2:string="";
             eq1=`y = ax² `;
             (b<0)?eq1+=`- ${-b}x `:eq1+=`+ ${b}x `;
-            (c<0)?eq1+=`- ${-c}x `:eq1+=`+ ${c}x`;
+            (c<0)?eq1+=`- ${-c}`:eq1+=`+ ${c}`;
             eq2=`y = ${m}x `;
             (e<0)?eq2+=`- ${-e}`:eq2+=`+ ${e}`;
-            equation1.updateEquation(makeEquationArr(eq1));
-            equation2.updateEquation(makeEquationArr(eq2));
         }else if(whichUnknown==2){ //b
             chosenUnknownName=`b`;
-            equation1=`y = ${a}x² + bx `;
-            (c<0)?equation1+=`- ${-c}`:equation1+=`+ ${c};`
-            equation2=`y = ${m}x `;
-            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
+            eq1=`y = ${a}x² + bx `;
+            (c<0)?eq1+=`- ${-c}`:eq1+=`+ ${c}`;
+            eq2=`y = ${m}x `;
+            eq2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==3){ //c
             chosenUnknownName=`c`;
-            equation1=`y = ${a}x² `;
-            equation1+=(b<0)?`- ${-b}x + c`:`+ ${b}x + c`;
-            equation2=`y = ${m}x `;
-            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
+            eq1=`y = ${a}x² `;
+            eq1+=(b<0)?`- ${-b}x + c`:`+ ${b}x + c`;
+            eq2=`y = ${m}x `;
+            eq2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==4){ //d
             chosenUnknownName=`d`;
-            equation1=`y = ${a}x² `;
-            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-            equation2=`y = mx `;
-            equation2+=(e<0)?`- ${-e}`:`+ ${e}`;
+            eq1=`y = ${a}x² `;
+            eq1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
+            eq1+=(c<0)?`- ${-c}`:`+ ${c}`;
+            eq2=`y = mx `;
+            eq2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==5){ //e
             chosenUnknownName=`e`;
-            equation1=`y = ${a}x² `;
-            equation1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
-            equation1+=(c<0)?`- ${-c}`:`+ ${c}`;
-            equation2=`y = ${m}x + e`;
+            eq1=`y = ${a}x² `;
+            eq1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
+            eq1+=(c<0)?`- ${-c}`:`+ ${c}`;
+            eq2=`y = ${m}x + e`;
         }
+
+        equation1.updateEquation(makeEquationArr(eq1));
+        equation2.updateEquation(makeEquationArr(eq2));
 
         let xOrY:number=randint(1,2);
         let chosenForSolution:string=``;
@@ -560,7 +558,7 @@
         console.log("if jx+k factor, what is ac")
         let alphabet:string[]=["a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let b:number=randint(1,150)*2;
-        equation1=`ax² + ${b}x + c`;
+        equation1.updateEquation(makeEquationArr(`ax² + ${b}x + c`));
         let letter1=randint(0,alphabet.length-1);
         let letter2=randint(0,alphabet.length-1);
         while(letter1==letter2){
@@ -630,9 +628,19 @@
             letter2=randint(0,alphabet.length-1);
         } 
 
-        equation1=`${a}x `;
-        equation1+=(b<0)?`- ${-b}y = ${c}`:`+ ${b}y = ${c}`;
-        equation2=`${alphabet[letter1]}x + ${alphabet[letter2]}y = ${d}`;
+        let eq1:string="";
+        let eq2:string="";
+
+        eq1=`${a}x `;
+        eq1+=(b<0)?`- ${-b}y = ${c}`:`+ ${b}y = ${c}`;
+        eq2=`${alphabet[letter1]}x + ${alphabet[letter2]}y = ${d}`;
+        let eq1Arr:any[][]=makeEquationArr(eq1);
+        let eq2Arr:any[][]=makeEquationArr(eq2);
+        /*console.log(eq1Arr);
+        console.log(eq2Arr);*/
+        equation1.updateEquation(eq1Arr);
+        equation2.updateEquation(eq2Arr);
+        
         problem=`In the given system of equations, ${alphabet[letter1]} and ${alphabet[letter2]} are constants. The system has infinitely many solutions. What is `;
 
         let solutionFormat = randint(1,3);
@@ -674,7 +682,7 @@
         yNumerator=yFracs[0];
         yDenominator=yFracs[1];
 
-        equation1=`(${xNumerator}/${xDenominator})x + (${yNumerator}/${yDenominator})y = -(${yNumerator}/${yDenominator})y + `;
+        let eq1:string=`(${xNumerator}/${xDenominator})x + (${yNumerator}/${yDenominator})y = -(${yNumerator}/${yDenominator})y + `;
         let cNumerator:number=randint(2,11);
         let cDenominator:number=randint(2,11);
 
@@ -686,7 +694,8 @@
         cNumerator=cFracs[0];
         cDenominator=cFracs[1];
         
-        equation1+=`(${cNumerator}/${cDenominator})`;
+        eq1+=`(${cNumerator}/${cDenominator})`;
+        equation1.updateEquation(makeEquationArr(eq1));
 
         let xNumerator2:number=randint(1,11);
         let xDenominator2:number=randint(2,11);
@@ -704,7 +713,7 @@
         xNumerator2=xFracs2[0];
         xDenominator2=xFracs2[1];
 
-        equation2=`(${xNumerator2}/${xDenominator2})x + ky = `;
+        let eq2:string=`(${xNumerator2}/${xDenominator2})x + ky = `;
         
         let cNumerator2:number=randint(2,11);
         let cDenominator2:number=randint(2,11);
@@ -722,7 +731,8 @@
             }
         }
 
-        equation2+=`${reduceFraction(cNumerator2, cDenominator2)[0]}/${reduceFraction(cNumerator2, cDenominator2)[1]}`;
+        eq2+=`${reduceFraction(cNumerator2, cDenominator2)[0]}/${reduceFraction(cNumerator2, cDenominator2)[1]}`;
+        equation2.updateEquation(makeEquationArr(eq2));
         solutions.push(Math.round((((yNumerator*2)/yDenominator)*(xScale))*1000)/1000);
 
     }
@@ -1589,10 +1599,14 @@
                     <p>Image is not to scale.</p>
                 </div>
                 <br>
-                <Equation bind:this={equation1}></Equation>
-                <br>
-                <Equation bind:this={equation2}></Equation>
-                <br>
+                <div style={eq1Visible?`display:block`:`display:none`}>
+                    <Equation bind:this={equation1}></Equation>
+                    <br>
+                </div>
+                <div style={eq2Visible?`display:block`:`display:none`}>
+                    <Equation bind:this={equation2}></Equation>
+                    <br>
+                </div>
                 <h3>{problem}</h3>
                 <Possibles bind:this={possibles}></Possibles>
             </div>
