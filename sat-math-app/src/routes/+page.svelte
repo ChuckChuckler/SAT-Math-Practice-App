@@ -95,7 +95,7 @@
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
 
-        typeG();
+        typeX();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -113,13 +113,14 @@
     }
 
     function reduceFraction(numerator:number,denominator:number):number[]{
-        for(let i=2;i<((denominator>numerator)?denominator:numerator);i++){
+        let gcf:number=1;
+        for(let i=2;i<=((Math.abs(denominator)<Math.abs(numerator))?Math.abs(denominator):Math.abs(numerator));i++){
+            console.log(numerator, denominator, i);
             if(denominator%i==0&&numerator%i==0){
-                denominator/=i;
-                numerator/=i;
+                gcf=i;
             }
         }
-        return [numerator, denominator];
+        return [numerator/gcf, denominator/gcf];
     }
 
     function submitAnswer():void{
@@ -141,30 +142,44 @@
 
     function makeEquationArr(eq1:string):any[][]{
         let equation1Arr:any[][]=[];
-        for(let i of eq1.split(" ")){
-            if(i.includes("/")){ //is a fraction
-                console.log("is a fraction");
-            }else{ //is not a fraction
-                for(let j=0;j<i.length;j++){
-                    if(isNaN(parseFloat(i[j]))){
-                        equation1Arr.push([3,[i[j]]]);
-                    }else{
-                        if(i[j]=="1" || i[j]=="-1"){
-                            if(!isNaN(parseInt(i[j+1])) || !isNaN(parseInt(i[j-1])) || j==i.length-1 || i[j+1]=="."){
+        if(eq1.includes("[fracfunc]")){
+            eq1=eq1.replace("[fracfunc]","");
+            let eq1arr:string[]=eq1.split("=");
+            for(let i of eq1arr[0].split("")){
+                equation1Arr.push([3,[i]]);
+            }
+            equation1Arr.push([3,["="]]);
+            equation1Arr.push([3,[" "]]);
+            equation1Arr.push([1,[eq1arr[1].split("/")[0],eq1arr[1].split("/")[1]]]);
+        }else{
+            for(let i of eq1.split(" ")){
+                if(i.includes("/")){ //is a fraction
+                    let fracAndVar:string[]=i.split(")");
+                    equation1Arr.push([1,[fracAndVar[0].split("/")[0].replace("(",""),fracAndVar[0].split("/")[1]]]);
+                    equation1Arr.push([3," "]);
+                    equation1Arr.push([3,[fracAndVar[1]]]);
+                }else{ //is not a fraction
+                    for(let j=0;j<i.length;j++){
+                        if(isNaN(parseFloat(i[j]))){
+                            equation1Arr.push([3,[i[j]]]);
+                        }else{
+                            if(i[j]=="1" || i[j]=="-1"){
+                                if(!isNaN(parseInt(i[j+1])) || !isNaN(parseInt(i[j-1])) || j==i.length-1 || i[j+1]=="."){
+                                    equation1Arr.push([2,[i[j]]]);
+                                }
+                            }else if(i[j]=="0" && j==0){
+                                if(!(i[j+1]=="." || i[j-1]==".")){
+                                    equation1Arr.splice(equation1Arr.length-4,4);
+                                    break;
+                                }
+                            }else{
                                 equation1Arr.push([2,[i[j]]]);
                             }
-                        }else if(i[j]=="0" && j==0){
-                            if(!(i[j+1]=="." || i[j-1]==".")){
-                                equation1Arr.splice(equation1Arr.length-4,4);
-                                break;
-                            }
-                        }else{
-                            equation1Arr.push([2,[i[j]]]);
                         }
                     }
                 }
+                equation1Arr.push([3,[" "]]);
             }
-            equation1Arr.push([3,[" "]]);
         }
         return equation1Arr;
     }
@@ -682,6 +697,9 @@
         yNumerator=yFracs[0];
         yDenominator=yFracs[1];
 
+        yNumerator=reduceFraction(yNumerator,yDenominator)[0];
+        yDenominator=reduceFraction(yNumerator,yDenominator)[1];
+
         let eq1:string=`(${xNumerator}/${xDenominator})x + (${yNumerator}/${yDenominator})y = -(${yNumerator}/${yDenominator})y + `;
         let cNumerator:number=randint(2,11);
         let cDenominator:number=randint(2,11);
@@ -734,13 +752,13 @@
         eq2+=`${reduceFraction(cNumerator2, cDenominator2)[0]}/${reduceFraction(cNumerator2, cDenominator2)[1]}`;
         equation2.updateEquation(makeEquationArr(eq2));
         solutions.push(Math.round((((yNumerator*2)/yDenominator)*(xScale))*1000)/1000);
-
+        problem=`In the given system of equations, k is a constant. If the system has no solution, what is the value of k?`;
     }
 
     function typeH():void{ //has a factor of (x + 2b), what could be the equation...
         //factor of x + 2b
-        openResponse.makeVisible(true);
-        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(false);
+        mcqdiv.makeVisible(true);
         let a:number=1;
         let bCoefficient:number=randint(2,5);
         let c:number=randint(2,5);
@@ -943,7 +961,8 @@
             let xCoeff:number=randint(2,25);
             let constant:number=randint(2,25);
             let chosenLetter:number=randint(0,alphabet.length-1);
-            equation1=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            let eq1:string=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(toDistribute);
         }else if(whatToSolve==2){ //var outside, no solutions
@@ -955,7 +974,8 @@
                 constantRight=randint(2*toDistribute, constant*toDistribute);
             }
             let chosenLetter:number=randint(0,alphabet.length-1);
-            equation1=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            let eq1:string=`${alphabet[chosenLetter]}(${xCoeff}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(toDistribute);
         }else if(whatToSolve==3){ //var inside, infinite solutions
@@ -963,7 +983,8 @@
             let xCoeff:number=randint(2,25);
             let constant:number=randint(2,25);
             let chosenLetter:number=randint(0,alphabet.length-1);
-            equation1=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            let eq1:string=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constant*toDistribute}`;
+            equation1.updateEquation(makeEquationArr(eq1));
             solutions.push(xCoeff);
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
         }else if(whatToSolve==4){ //var inside, no solutions
@@ -975,7 +996,8 @@
                 constantRight=randint(2*toDistribute, constant*toDistribute);
             }
             let chosenLetter:number=randint(0,alphabet.length-1);
-            equation1=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            let eq1:string=`${toDistribute}(${alphabet[chosenLetter]}x + ${constant}) = ${xCoeff*toDistribute}x + ${constantRight}`;
+            equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(xCoeff);
         }
@@ -988,9 +1010,10 @@
         let yCoeff:number=randint(2,10);
         let c:number=randint(1,10);
         let scale:number=randint(3,6);
-        equation1=`${xCoeff}x `;
-        equation1+=(yCoeff<0)?`- ${-yCoeff}y = ${c}`:`+ ${yCoeff}y = ${c}`;
-        equation2=`${xCoeff*scale}x + ${yCoeff*scale}y = ${c*scale}`;
+        let eq1:string=`${xCoeff}x + ${yCoeff}y = ${c}`;
+        equation1.updateEquation(makeEquationArr(eq1));
+        let eq2:string=`${xCoeff*scale}x + ${yCoeff*scale}y = ${c*scale}`;
+        equation2.updateEquation(makeEquationArr(eq2));
         problem=`For each real number r, which of the following points lies on the graph of each equation in the xy-plane for the given equation?`;
         let xOrY=randint(1,2);
         //xOrY=1;
@@ -1029,7 +1052,8 @@
         let factor1:number=factors[factorsChosen][0];
         let factor2:number=factors[factorsChosen][1];
         let factorsNegative:number=randint(1,2);
-        equation1=factorsNegative==1?`${product}x² + (${factor1}a + ${factor2}b)x + ab`:`${product}x² - (${factor1}a + ${factor2}b)x + ab`;
+        let eq1:string=factorsNegative==1?`${product}x² + (${factor1}a + ${factor2}b)x + ab`:`${product}x² - (${factor1}a + ${factor2}b)x + ab`;
+        equation1.updateEquation(makeEquationArr(eq1));
         let whatToFind:number=randint(1,4);
         whatToFind=4;
         problem=`In the given equation, a and b are positive constants. The `;
@@ -1041,7 +1065,6 @@
             }else if(factor2>factor1){
                 factorsNegative==1?kDenom=-factor2:kDenom=factor2;
             }
-            console.log(`1/${kDenom}(${Math.abs(kDenom)}/${factor2}a + ${Math.abs(kDenom)}/${factor1}b)`);
             problem+=`k(`;
             problem+=(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`${Math.abs(kDenom)}/${factor2}a `;
             problem+=(whatToFind==2)?` - `:` + `;
@@ -1177,8 +1200,10 @@
         
         let m:number=randint(-10,10);
         let b:number=randint(-10,10);
-        equation1=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
-        equation2=`y = a(x + b)`;
+        let eq1:string=`y = ${m}x `+((b<0)?`- ${-b}`:`+ ${b}`);
+        let eq2:string=`y = a(x + b)`;
+        equation1.updateEquation(makeEquationArr(eq1));
+        equation2.updateEquation(makeEquationArr(eq2));
         let mustOrCould:number=randint(1,2);
         mustOrCould=1;
         if(mustOrCould==1){ //which of the following MUST be true
@@ -1307,8 +1332,7 @@
         openResponse.makeVisible(true);
         mcqdiv.makeVisible(false);
         let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
-        equation1=`g(x) = `
-        fraction.makeVisible(true);
+        let eq1:string=`g(x) = `;
         let letter1:string=alphabet[randint2(0,alphabet.length-1)];
         let letter2:string=alphabet[randint2(0,alphabet.length-1)];
 
@@ -1368,7 +1392,7 @@
             denominator=`x³ + x + ${letter2}`;
             yIntercept=a/b;
         }
-        fraction.updateFrac(numerator,denominator);
+        equation1.updateEquation(makeEquationArr(`${eq1}${numerator}/${denominator}[fracfunc]`));
         problem=`The function g is defined by the given equation, where ${letter1} and ${letter2} are constants. In the xy-plane, the graph of y = g(x) passes through the point `;
         problem+=(randint(1,2)==1)?`(${xIntercept}, 0) and g(0) = ${yIntercept}. `:`(0, ${yIntercept}) and g(${xIntercept}) = 0. `;
         let whatToFind:number=randint(1,2);
@@ -1477,11 +1501,12 @@
         }
 
         solutions.push(add);
-        
+        let eq1:string="";
         for(let i of dataSet){
-            equation1+=`${i}, `;
+            eq1+=`${i},`;
         }
-        equation1=equation1.substring(0,equation1.length-2);
+        eq1=eq1.substring(0,eq1.length-2);
+        equation1.updateEquation(makeEquationArr(eq1));
         problem+=`${(Math.floor(add/10)+1)*10}. The list above shows ${number-1} of the integers from data set A. The mean of these ${number-1} integers is ${averageWithout}. If the mean of data set A is an integer greater than ${averageWithout}, what is the value of the largest integer from data set A?`;
     }
 
@@ -1509,7 +1534,7 @@
         let possibleCoords:string[]=["(1,0)","(0,1)","(-1,0)","(0,-1)"];
         let coordUnknowns:number=randint(1,2);
 
-        if(coordUnknowns==1){ //no coordinate unknown. angle will e π/2, π, 3π/2, or 2π
+        if(coordUnknowns==1){ //no coordinate unknown
             aCoords=possibleCoords[randint2(0,3)];
             cCoords=possibleCoords[randint2(0,3)];
             while(cCoords==aCoords){
@@ -1560,7 +1585,7 @@
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
             }
         }
-        problem+=`Which of the following could be a possible measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
+        problem+=`Which of the following could be the positive measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
     }
 
     function typeW():void{ //pyramid with square base, find surface area of triangle face
@@ -1583,8 +1608,88 @@
         problem+=`if the rectangular pyramid has a volume of ${(Math.pow(s1*2,2)*s2)/3} cubic units?`;
     }
 
-    function typeX():void{ //
+    function typeX():void{ //what is the value of k or m?
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
 
+        let x1:number=randint(-15,15);
+        let y1:number=randint(-15,15);
+        let c1:number=randint(-50,50);
+
+        let x2:number=randint(-15,15);
+        let y2:number=randint(-15,15);
+        let c2:number=randint(-50,50);
+
+        while((y2/(x1/x2)==y1) || (y1/(x2/x1)==y2)){
+            x2=randint(-15,15);
+            y2=randint(-15,15);
+            c2=randint(-50,50);
+        }
+
+        let eq1:string=`${x1}ax `;
+        eq1+=(y1<0)?`- ${-y1}by = ${c1}`:`+ ${y1}by = ${c1}`
+        equation1.updateEquation(makeEquationArr(eq1));
+
+        let eq2:string=`${x2}ax `;
+        eq2+=(y2<0)?`- ${-y2}by = ${c2}`:`+ ${y2}by = ${c2}`
+        equation2.updateEquation(makeEquationArr(eq2));
+
+        problem=`In the given system of equations, a and b are constants. The system has a solution of `;
+
+        let aOrB:number=randint(1,2);
+       // aOrB=2;
+        if(aOrB==1){ //user finds a
+            let a:number=randint(-15,15);
+            while(a==-1 || a==1){
+                a=randint(-15,15);
+            }
+            solutions.push(a);
+
+            if((y1>0&&y2>0)||(y1<0&&y2<0)){
+                x1*=y2;
+                c1*=y2;
+                x2*=-y1;
+                c2*=-y1;
+            }else if((y1>0&&y2<0)||(y1<0&&y2>0)){
+                x1*=Math.abs(y2);
+                c1*=Math.abs(y2);
+                x2*=Math.abs(y1);
+                c2*=Math.abs(y1);
+            }
+
+            let axNumerator:number=(c1+c2);
+            let axDenominator:number=(x1+x2)*a;
+            let axFracsReduced:number[]=reduceFraction(axNumerator,axDenominator);
+            if((axFracsReduced[0]<0 && axFracsReduced[1]<0) || (axFracsReduced[0]>0 && axFracsReduced[1]<0)){
+                problem+=`(${-axFracsReduced[0]}/${-axFracsReduced[1]}, y). What is the value of a?`;
+            }else{
+                problem+=`(${axFracsReduced[0]}/${axFracsReduced[1]}, y). What is the value of a?`;
+            }
+        }else{ //user finds b
+            let b:number=randint(-15,15);
+            solutions.push(b);
+            console.log(b);
+            if((x1>0&&x2>0)||(x1<0&&x2<0)){
+                y1*=x2;
+                c1*=x2;
+                y2*=-x1;
+                c2*=-x1;
+            }else if((x1>0&&x2<0)||(x1<0&&x2>0)){
+                y1*=Math.abs(x2);
+                c1*=Math.abs(x2);
+                y2*=Math.abs(x1);
+                c2*=Math.abs(x1);
+            }
+
+            let byNumerator:number=(c1+c2);
+            let byDenominator:number=(y1+y2)*b;
+            let byFracsReduced:number[]=reduceFraction(byNumerator,byDenominator);
+            if((byFracsReduced[0]<0 && byFracsReduced[1]<0) || (byFracsReduced[0]>0 && byFracsReduced[1]<0)){
+                problem+=`(x, ${-byFracsReduced[0]}/${-byFracsReduced[1]}). What is the value of b?`;
+            }else{
+                problem+=`(x, ${byFracsReduced[0]}/${byFracsReduced[1]}). What is the value of b?`;
+            }
+        }
     }
 </script>
 

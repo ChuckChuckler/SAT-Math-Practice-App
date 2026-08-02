@@ -48,7 +48,7 @@
 <div id="fraction" class="mr-[-5px]" style={fracVis?`display:inline-block`:`display:none`}>
     <h1 class="text-center">{n}</h1>
     <hr>
-    <h1>{d}</h1>
+    <h1 class="text-center">{d}</h1>
 </div>
 
 <div id="nonFraction" class="relative" style={numVis?`display:inline-block`:`display:none`}>
