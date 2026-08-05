@@ -45,7 +45,7 @@
     }
 </script>
 
-<div id="fraction" class="mr-[-5px]" style={fracVis?`display:inline-block`:`display:none`}>
+<div id="fraction" class="mr-[2px] ml-[2px]" style={fracVis?`display:inline-block`:`display:none`}>
     <h1 class="text-center">{n}</h1>
     <hr>
     <h1 class="text-center">{d}</h1>

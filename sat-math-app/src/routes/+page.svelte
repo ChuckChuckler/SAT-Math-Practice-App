@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+
     import Equation from "$lib/comps/Equation.svelte";
 
     //comps
@@ -9,13 +11,15 @@
 
     //imgs
     import typemImg from "$lib/images/typeM.png";
-    import { onMount } from "svelte";
+    import typeyImg from "$lib/images/typeY.png";
+    import { scale } from "svelte/transition";
 
     let mcqdiv:any=$state();
     let openResponse:any=$state();
     let possibles:any=$state();
     let imageVisible:boolean=$state(false);
     let fraction:any=$state();
+    let imgBind:any=$state();
 
     let eq1Visible:boolean=$state(false);
     let eq2Visible:boolean=$state(false);
@@ -50,7 +54,8 @@
             "type F":typeF,
             "type N":typeN,
             "type O":typeO,
-            "type R":typeR
+            "type R":typeR,
+            "type X":typeX
         },
         "Advanced Math":{
             "type E":typeE,
@@ -74,7 +79,8 @@
             "type L":typeL,
             "type M":typeM,
             "type V":typeV,
-            "type W":typeW
+            "type W":typeW,
+            "type Y":typeY
         }
     }
 
@@ -90,12 +96,12 @@
         openResponse.reset();
         feedback="";
 
-        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];*/
+        type=Object.keys(domain)[index];
 
-        typeX();
+        //typeY();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -115,12 +121,21 @@
     function reduceFraction(numerator:number,denominator:number):number[]{
         let gcf:number=1;
         for(let i=2;i<=((Math.abs(denominator)<Math.abs(numerator))?Math.abs(denominator):Math.abs(numerator));i++){
-            console.log(numerator, denominator, i);
             if(denominator%i==0&&numerator%i==0){
                 gcf=i;
             }
         }
         return [numerator/gcf, denominator/gcf];
+    }
+
+    function getFactors(product:number):number[][]{
+        let factors:number[][]=[];
+        for(let i=1;i<=product;i++){
+            if(product%i==0){
+                factors.push([i,product/i]);
+            }
+        }
+        return factors;
     }
 
     function submitAnswer():void{
@@ -154,10 +169,17 @@
         }else{
             for(let i of eq1.split(" ")){
                 if(i.includes("/")){ //is a fraction
+                    let twoParentheses=i.includes("))");
                     let fracAndVar:string[]=i.split(")");
-                    equation1Arr.push([1,[fracAndVar[0].split("/")[0].replace("(",""),fracAndVar[0].split("/")[1]]]);
-                    equation1Arr.push([3," "]);
-                    equation1Arr.push([3,[fracAndVar[1]]]);
+                    if(fracAndVar[0].includes("((")){
+                        equation1Arr.push([3,["("]]);
+                    }
+                    equation1Arr.push([1,[fracAndVar[0].split("/")[0].replaceAll("(",""),fracAndVar[0].split("/")[1]]]);
+                    if(fracAndVar[1]!=""){
+                        equation1Arr.push([3," "]);
+                        equation1Arr.push([3,[fracAndVar[1]]]);
+                    }
+                    if(twoParentheses) equation1Arr.push([3,[")"]]);
                 }else{ //is not a fraction
                     for(let j=0;j<i.length;j++){
                         if(isNaN(parseFloat(i[j]))){
@@ -821,10 +843,10 @@
         if(whatToSolve==1){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many fewer miles, m, Joe Banana should drive each week?`;
             let optionsUnrandomized:string[]=["","","",""];
-            optionsUnrandomized[0]=`${mpg}/${dpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
-            optionsUnrandomized[1]=`${mpg}/${dpg} * m = ${dtr}`;
-            optionsUnrandomized[2]=`${dpg}/${mpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
-            optionsUnrandomized[3]=`${dpg}/${mpg} * m = ${dtr}`;
+            optionsUnrandomized[0]=`(${mpg}/${dpg})* m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[1]=`(${mpg}/${dpg})* m = ${dtr}`;
+            optionsUnrandomized[2]=`(${dpg}/${mpg})* m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[3]=`(${dpg}/${mpg})* m = ${dtr}`;
             let correct:string=optionsUnrandomized[3];
             let optionsRandomized:string[]=[];
             for(let i=0;i<4;i++){
@@ -836,21 +858,21 @@
         }else if(whatToSolve==2){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many miles, m, Joe Banana should drive each week?`;
             let optionsUnrandomized:string[]=["","","",""];
-            optionsUnrandomized[0]=`${mpg}/${dpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
-            optionsUnrandomized[1]=`${mpg}/${dpg} * m = ${dtr}`;
-            optionsUnrandomized[2]=`${dpg}/${mpg} * m = ${((mpw/mpg)*dpg)-dtr}`;
-            optionsUnrandomized[3]=`${dpg}/${mpg} * m = ${dtr}`;
+            optionsUnrandomized[0]=`(${mpg}/${dpg})* m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[1]=`(${mpg}/${dpg})* m = ${dtr}`;
+            optionsUnrandomized[2]=`(${dpg}/${mpg})* m = ${((mpw/mpg)*dpg)-dtr}`;
+            optionsUnrandomized[3]=`(${dpg}/${mpg})* m = ${dtr}`;
             let correct:string=optionsUnrandomized[2];
             let optionsRandomized:string[]=[];
-            optionsUnrandomized=createRandomAnswers(optionsRandomized);
+            optionsRandomized=createRandomAnswers(optionsUnrandomized);
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
         }else if(whatToSolve==3){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will save on gas next week?`;
             let optionsUnrandomized:string[]=["","","",""];
-            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})(${dpg}) = d`;
-            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})(${dpg}) = d`;
-            optionsUnrandomized[2]=`(${mpg}/${mtr})(${dpg}) = d`;
-            optionsUnrandomized[3]=`(${mtr}/${mpg})(${dpg}) = d`;
+            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})[${dpg}] = d`;
+            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})[${dpg}] = d`;
+            optionsUnrandomized[2]=`(${mpg}/${mtr})[${dpg}] = d`;
+            optionsUnrandomized[3]=`(${mtr}/${mpg})[${dpg}] = d`;
             let correct:string=optionsUnrandomized[3];
             let optionsRandomized:string[]=[];
             for(let i=0;i<4;i++){
@@ -862,10 +884,10 @@
         }else{
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will pay for gas next week?`;
             let optionsUnrandomized:string[]=["","","",""];
-            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})(${dpg}) = d`;
-            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})(${dpg}) = d`;
-            optionsUnrandomized[2]=`(${mpg}/${mtr})(${dpg}) = d`;
-            optionsUnrandomized[3]=`(${mtr}/${mpg})(${dpg}) = d`;
+            optionsUnrandomized[0]=`(${(mpg)}/${mpw-mtr})[${dpg}] = d`;
+            optionsUnrandomized[1]=`(${(mpw-mtr)}/${mpg})[${dpg}] = d`;
+            optionsUnrandomized[2]=`(${mpg}/${mtr})[${dpg}] = d`;
+            optionsUnrandomized[3]=`(${mtr}/${mpg})[${dpg}] = d`;
             let correct:string=optionsUnrandomized[1];
             let optionsRandomized:string[]=[];
             for(let i=0;i<4;i++){
@@ -905,6 +927,7 @@
         mcqdiv.makeVisible(false);
         openResponse.makeVisible(true);
         imageVisible=true;
+        imgBind=typemImg;
         problem=`In the figure above, tan`;
         let ac:number=randint(3,15);
         let ba:number=randint(3,15);
@@ -1020,16 +1043,17 @@
         let optionsUnrandomized:string[]=["","","",""];
         let optionsRandomized:string[]=[];
         let correct:string="";
-        optionsUnrandomized[0]=`(r/${scale} + ${c}, r/${scale} + ${c*scale})`;
+        optionsUnrandomized[0]=`((r/${scale})+ ${c}, (r/${scale})+ ${c*scale})`;
         if(xOrY==1){ //x = r, y = whatever whatever r
-            optionsUnrandomized[1]=`(r, (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff})`;
+            console.log("h");
+            optionsUnrandomized[1]=`(r, (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}))`;
             optionsUnrandomized[2]=`((${yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
             optionsUnrandomized[3]=`((${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}, r)`;
             correct=optionsUnrandomized[1];
         }else{
             optionsUnrandomized[1]=`((${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
-            optionsUnrandomized[2]=`(r, (${xCoeff}/${yCoeff})r + ${c}/${yCoeff})`;
-            optionsUnrandomized[3]=`(r, (${-yCoeff}/${xCoeff})r + ${c}/${xCoeff})`;
+            optionsUnrandomized[2]=`(r, (${xCoeff}/${yCoeff})r + ${c}/${yCoeff}))`;
+            optionsUnrandomized[3]=`(r, (${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}))`;
             correct=optionsUnrandomized[1];
         }
         
@@ -1042,12 +1066,7 @@
         mcqdiv.makeVisible(false);
         openResponse.makeVisible(true);
         let product:number=randint(20,72);
-        let factors:number[][]=[];
-        for(let i=1;i<=product;i++){
-            if(product%i==0){
-                factors.push([i,product/i]);
-            }
-        }
+        let factors:number[][]=getFactors(product);
         let factorsChosen:number=randint2(0,factors.length-1);
         let factor1:number=factors[factorsChosen][0];
         let factor2:number=factors[factorsChosen][1];
@@ -1182,13 +1201,8 @@
 
         correct=optionsUnrandomized[1];
 
-        for(let i:number=0;i<4;i++){
-            let index=randint2(0,optionsUnrandomized.length-1);
-            optionsRandomized.push(optionsUnrandomized[index]);
-            optionsUnrandomized.splice(index, 1);
-        }
-
-        mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+        optionsRandomized=createRandomAnswers(optionsUnrandomized);
+        mcqdiv.updateOptions(optionsRandomized[0].toString(), optionsRandomized[1].toString(), optionsRandomized[2].toString(), optionsRandomized[3].toString(), correct.toString());
     }
 
     function typeR():void{ //the equation blah is given as blah, no solutions, what must be true..
@@ -1412,7 +1426,7 @@
         let k:number=randint(-15,15);
         problem=`In the xy-plane, a parabola has vertex (${h}, ${k}) and `;
         let intersects:number=randint(1,2);
-        intersects=2;
+       // intersects=2;
         if(intersects==1){
             problem+=`intersects the x-axis at two points. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
             let unrandomized:number[]=[];
@@ -1434,7 +1448,7 @@
                 }
             }
             randomized=createRandomAnswers(unrandomized);
-            mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+            mcqdiv.updateOptions(randomized[0].toString(),randomized[1].toString(),randomized[2].toString(),randomized[3].toString(),unrandomized[1].toString());
         }else{
             problem+=`does not intersect the x-axis. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
             let unrandomized:number[]=[];
@@ -1456,7 +1470,7 @@
                 }
             }
             randomized=createRandomAnswers(unrandomized);
-            mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+            mcqdiv.updateOptions(randomized[0].toString(),randomized[1].toString(),randomized[2].toString(),randomized[3].toString(),unrandomized[1].toString());
         }
     }
 
@@ -1691,6 +1705,66 @@
             }
         }
     }
+
+    function typeY():void{
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        
+        imageVisible=true;
+        imgBind=typeyImg;
+        problem=`In the given figure, BC is the diameter of the circle. If the length of `;
+        let given1:number=randint(1,5);
+        given1=3;
+        if(given1==1){ //bc given
+            let bc:number=randint(7,50)*3;
+            let factors:number[][]=getFactors(Math.floor(Math.pow(bc,2)/3));
+            let chosenScale:number=factors[randint2(1,factors.length-2)][0]; //this is in sqrt
+            problem+=`BC is equal to ${bc} and the length of AB is equal to `;
+            problem+=(Math.sqrt(Math.pow(bc,2)/chosenScale).toString().includes("."))?`√${Math.pow(bc,2)/chosenScale}, `:`${Math.sqrt(Math.pow(bc,2)/chosenScale)}, `;
+            problem+=`what is the value of `;
+            let whatToFind:number=randint(1,2);
+            //whatToFind=2;
+            if(whatToFind==1){ //find ad...?
+                problem+=`AD?`;
+                let ca:number=Math.pow(bc,2)-(Math.pow(bc,2)/chosenScale);
+                solutions.push(Math.sqrt(ca/chosenScale));
+            }else if(whatToFind==2){ //find bd
+                problem+=`BD?`;
+                let bd:number=(Math.pow(bc,2)/chosenScale)/chosenScale;
+                solutions.push(Math.sqrt(bd));
+            }
+        }else if(given1==2){ //bd given
+            let ab:number=randint(7,50)*3;
+            let factors:number[][]=getFactors(Math.floor(Math.pow(ab,2)/3));
+            let chosenScale:number=factors[randint2(2,factors.length-4)][0]; //this is in sqrt
+            let bd:number=(Math.pow(ab,2)/chosenScale);
+            ab=Math.pow(ab,2);
+            problem+=`BD is equal to `;
+            problem+=(Math.sqrt(bd).toString().includes("."))?`√${bd} and the length of AB is equal to `:`${Math.sqrt(bd)} and the length of AB is equal to `
+            problem+=(Math.sqrt(ab).toString().includes("."))?`√${ab}`:`${Math.sqrt(ab)}`;
+            problem+=`, what is the value of `;
+            let whatToFind:number=randint(1,3);
+            //whatToFind=3;
+            if(whatToFind==1){ //find BC
+                problem+=`BC, to the nearest whole number?`;
+                solutions.push(Math.round(Math.sqrt(ab*chosenScale)));
+            }else if(whatToFind==2){ //find CD
+                problem+=`CD, to the nearest whole number?`;
+                let ad:number=Math.sqrt(ab-bd);
+                let bigSmallScale:number=ad/Math.sqrt(bd);
+                console.log(Math.round(ad*bigSmallScale));
+                solutions.push(Math.round(ad*bigSmallScale));
+            }else if(whatToFind==3){ //find AC
+                problem+=`AC, to the nearest whole number?`;
+                let ad:number=Math.sqrt(ab-bd);
+                solutions.push(Math.round(ad*Math.sqrt(chosenScale)));
+            }
+        }
+    }
+
+    function typeZ(){ //one x intercept + vertex or points to find vertex given; what is other x intercept
+        
+    }
 </script>
 
 <div class="w-[100vw] h-[100vh] bg-blue-200 overflow-auto">
@@ -1700,7 +1774,7 @@
             <div class="bg-blue-100 w-[49%] box-border p-[10px]">
                 <h4>Problem {type}</h4>
                 <div style={(imageVisible)?`display:block`:`display:none`}>
-                    <img src={typemImg} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
+                    <img src={imgBind} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
                     <p>Image is not to scale.</p>
                 </div>
                 <br>
@@ -1716,7 +1790,7 @@
                 <Possibles bind:this={possibles}></Possibles>
             </div>
             <div class="bg-blue-100 w-[49%] box-border p-[10px]">
-                <McqDiv bind:this={mcqdiv}></McqDiv>
+                <McqDiv equationConversion={makeEquationArr} bind:this={mcqdiv}></McqDiv>
                 <OpenResponse bind:this={openResponse}></OpenResponse>
                 <br>
                 <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto" style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>check answer</button>

@@ -1,5 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Equation from "./Equation.svelte";
+
+    let {equationConversion}=$props();
 
     let a:string=$state("");
     let b:string=$state("");
@@ -7,6 +10,11 @@
     let d:string=$state("");
     let correct:string=$state("");
     let selected:string=$state("");
+
+    let aEquation:any=$state();
+    let bEquation:any=$state();
+    let cEquation:any=$state();
+    let dEquation:any=$state();
 
     let optionA:any=$state();
     let optionB:any=$state();
@@ -55,6 +63,11 @@
         c=newC;
         d=newD;
         correct=newCorrect;
+        //console.log(newA);
+        aEquation.updateEquation(equationConversion(newA));
+        bEquation.updateEquation(equationConversion(newB));
+        cEquation.updateEquation(equationConversion(newC));
+        dEquation.updateEquation(equationConversion(newD));
     }
 
     export function makeVisible(newVisible:boolean){
@@ -78,19 +91,27 @@
     <div class="grid grid-rows-4 h-[300px] gap-3">
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionA}>
             <div class="w-[18%] bg-white">A</div>
-            <div class="w-[79%] bg-white">{a}</div>
+            <div class="w-[79%] bg-white">
+                <Equation bind:this={aEquation}></Equation>
+            </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionB}>
             <div class="w-[18%] bg-white">B</div>
-            <div class="w-[79%] bg-white">{b}</div>
+            <div class="w-[79%] bg-white">
+                <Equation bind:this={bEquation}></Equation>
+            </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionC}>
             <div class="w-[18%] bg-white">C</div>
-            <div class="w-[79%] bg-white">{c}</div>
+            <div class="w-[79%] bg-white">
+                <Equation bind:this={cEquation}></Equation>
+            </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionD}>
             <div class="w-[18%] bg-white">D</div>
-            <div class="w-[79%] bg-white">{d}</div>
+            <div class="w-[79%] bg-white">
+                <Equation bind:this={dEquation}></Equation>
+            </div>
         </div>
     </div>
 </div>
