@@ -90,27 +90,43 @@
 <div class="box-border p-[15px]" style={visible?`display:block`:`display:none`}>
     <div class="grid grid-rows-4 h-[300px] gap-3">
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionA}>
-            <div class="w-[18%] bg-white">A</div>
-            <div class="w-[79%] bg-white">
-                <Equation bind:this={aEquation}></Equation>
+            <div class="w-[15%] bg-white relative">
+                <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">A</div>
+            </div>
+            <div class="w-[82%] bg-white relative">
+                <div class="absolute top-[50%] translate-y-[-50%] left-2">
+                    <Equation bind:this={aEquation}></Equation>
+                </div>
             </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionB}>
-            <div class="w-[18%] bg-white">B</div>
-            <div class="w-[79%] bg-white">
-                <Equation bind:this={bEquation}></Equation>
+            <div class="w-[15%] bg-white relative">
+                <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">B</div>
+            </div>
+            <div class="w-[82%] bg-white relative">
+                <div class="absolute top-[50%] translate-y-[-50%] left-2">
+                    <Equation bind:this={bEquation}></Equation>
+                </div>
             </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionC}>
-            <div class="w-[18%] bg-white">C</div>
-            <div class="w-[79%] bg-white">
-                <Equation bind:this={cEquation}></Equation>
+            <div class="w-[15%] bg-white relative">
+                <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">C</div>
+            </div>
+            <div class="w-[82%] bg-white relative">
+                <div class="absolute top-[50%] translate-y-[-50%] left-2">
+                    <Equation bind:this={cEquation}></Equation>
+                </div>
             </div>
         </div>
         <div class="bg-blue-400 rounded-[15px] flex justify-around box-border p-[5px]" bind:this={optionD}>
-            <div class="w-[18%] bg-white">D</div>
-            <div class="w-[79%] bg-white">
-                <Equation bind:this={dEquation}></Equation>
+            <div class="w-[15%] bg-white relative">
+                <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">D</div>
+            </div>
+            <div class="w-[82%] bg-white relative">
+                <div class="absolute top-[50%] translate-y-[-50%] left-2">
+                    <Equation bind:this={dEquation}></Equation>
+                </div>
             </div>
         </div>
     </div>

@@ -96,12 +96,10 @@
         openResponse.reset();
         feedback="";
 
-        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];*/
-
-        typeZ();
+        type=Object.keys(domain)[index];
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
