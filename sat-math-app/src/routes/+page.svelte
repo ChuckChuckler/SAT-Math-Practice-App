@@ -96,12 +96,12 @@
         openResponse.reset();
         feedback="";
 
-        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];
+        type=Object.keys(domain)[index];*/
 
-        //typeY();
+        typeZ();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1763,7 +1763,26 @@
     }
 
     function typeZ(){ //one x intercept + vertex or points to find vertex given; what is other x intercept
-        
+        mcqdiv.makeVisible(false);
+        openResponse.makeVisible(true);
+        problem=`The graph of the quadratic function y = f(x) in the xy-plane intersects the x intercept at `;
+        let xintercept1:number=randint(-25,25);
+        let xintercept2:number=randint(-25,25);
+        solutions.push(xintercept2);
+        problem+=`(${xintercept1},0) and (k,0), where k is a constant. `;
+
+        let b:number=xintercept1+xintercept2;
+        let c:number=xintercept1*xintercept2;
+        let h:number=(-b/2);
+
+        let given:number=randint(1,2);
+        given=2;
+        if(given==1){ //vertex directly given
+            problem+=`The maximum value of f(x) occurs at the point (${h},m), where m is a constant. What is the value of k?`;
+        }else if(given==2){ //symmetrical points given
+            let step:number=randint(5,20);
+            problem+=`If f(${h+step}) = f(${h-step}), what is the value of k?`;
+        }
     }
 </script>
 
