@@ -12,7 +12,6 @@
     //imgs
     import typemImg from "$lib/images/typeM.png";
     import typeyImg from "$lib/images/typeY.png";
-    import { scale } from "svelte/transition";
 
     let mcqdiv:any=$state();
     let openResponse:any=$state();
@@ -25,6 +24,8 @@
     let eq2Visible:boolean=$state(false);
     let checkAnswerVisible:boolean=$state(true);
     let makeQuestionVisible:boolean=$state(true);
+
+    let desmosVisible:boolean=$state(false);
 
     let problem:string=$state("");
     let solutions:number[]=[];
@@ -96,10 +97,11 @@
         openResponse.reset();
         feedback="";
 
-        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];
+        type=Object.keys(domain)[index];*/
+        typeA();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -134,6 +136,22 @@
             }
         }
         return factors;
+    }
+
+    function getGCF(a:number,b:number):number{
+        let gcf=1;
+        let aFactors:number[][]=getFactors(a);
+        let bFactors:number[][]=getFactors(b);
+        for(let i of aFactors){
+            for(let j of bFactors){
+                if(i[0]==j[0]){
+                    if(i[0]>gcf){
+                        gcf=i[0];
+                    }
+                }
+            }
+        }
+        return gcf;
     }
 
     function submitAnswer():void{
@@ -208,6 +226,8 @@
         openResponse.makeVisible(true);
         mcqdiv.makeVisible(false);
 
+        let steps:string[]=[];
+
         problem="The ";
 
         var exponent1:string;
@@ -219,42 +239,69 @@
         let c:number=randint(1,5);
         let d:number=randint(-10,10);
 
-        let k:number=randint(1,5);
-
         var quadOrQuart=randint(1,2);
 
         if(quadOrQuart==1){ //quadratic
             problem+="quadratic ";
             exponent1="²";
             exponent2="";
+            steps.push("This is a quadratic function with a, b, and c given.");
         }else{ //quartic
             problem+="quartic ";
             exponent1="⁴";
             exponent2="²";
+            steps.push("The given function is a quartic, but its factored form uses x² with a and c. So we can simply factor the quartic as if it were a quadratic, using x² instead of x.")
         }
 
+        steps.push("Let's factor the function!");
+
+        let k:number=0;
+        if(getGCF(a,b)!=1){
+            k=getGCF(a,b);
+        }else{
+            k=getGCF(c,d);
+        }
+        console.log(k);
+        let eq:string="";
         if(k==1){
             if(a*c<0){
-                problem+=`${a*c*-1}x${exponent1} `;
-                ((a*d + c*b)*-1 < 0)?problem+=`- ${(a*d + c*b)}x${exponent2}`:problem+=`+ ${(a*d + c*b)*-1}x${exponent2} `;
-                (b*d*-1 < 0)?problem+=`- ${b*d}`:problem+=`+ ${b*d*-1}`
+                eq=`${a*c*-1}x${exponent1} `;
+                ((a*d + c*b)*-1 < 0)?eq+=`- ${(a*d + c*b)}x${exponent2}`:eq+=`+ ${(a*d + c*b)*-1}x${exponent2} `;
+                (b*d*-1 < 0)?eq+=`- ${b*d}`:eq+=`+ ${b*d*-1}`
             }else{
-                problem+=`${a*c}x${exponent1} `;
-                ((a*d + c*b) < 0)?problem+=`- ${(a*d + c*b)*-1}x${exponent2}`:problem+=`+ ${(a*d + c*b)}x${exponent2} `;
-                (b*d < 0)?problem+=`- ${b*d*-1}`:problem+=`+ ${b*d}`;
+                eq=`${a*c}x${exponent1} `;
+                ((a*d + c*b) < 0)?eq+=`- ${(a*d + c*b)*-1}x${exponent2}`:eq+=`+ ${(a*d + c*b)}x${exponent2} `;
+                (b*d < 0)?eq+=`- ${b*d*-1}`:eq+=`+ ${b*d}`;
             }
+            problem+=eq;
             problem+=` can be factored as (ax${exponent2} + b)(cx${exponent2} + d), where a, b, c, and d are integers. `;
         }else{
             if(a*c<0){
-                problem+=`${a*c*-1*k}x${exponent1} `;
-                ((a*d + c*b)*-1 < 0)?problem+=`- ${(a*d + c*b)*k}x${exponent2} `:problem+=`+ ${(a*d + c*b)*k*-1}x${exponent2} `;
-                (b*d*-1 < 0)?problem+=`- ${b*d*k}`:problem+=`+ ${b*d*k*-1}`;
+                eq=`${a*c*-1*k}x${exponent1} `;
+                ((a*d + c*b)*-1 < 0)?eq+=`- ${(a*d + c*b)*k}x${exponent2} `:eq+=`+ ${(a*d + c*b)*k*-1}x${exponent2} `;
+                (b*d*-1 < 0)?eq+=`- ${b*d*k}`:eq+=`+ ${b*d*k*-1}`;
             }else{
-                problem+=`${a*c}x${exponent1} `;
-                ((a*d + c*b) < 0)?problem+=`- ${(a*d + c*b)*-1}x${exponent2} `:problem+=`+ ${(a*d + c*b)}x${exponent2} `;
-                (b*d < 0)?problem+=`- ${b*d*-1}`:problem+=`+ ${b*d}`
+                eq=`${a*c}x${exponent1} `;
+                ((a*d + c*b) < 0)?eq+=`- ${(a*d + c*b)*-1}x${exponent2} `:eq+=`+ ${(a*d + c*b)}x${exponent2} `;
+                (b*d < 0)?eq+=`- ${b*d*-1}`:eq+=`+ ${b*d}`
             }
+            problem+=eq;
             problem+=` can be factored as (k)(ax${exponent2} + b)(cx${exponent2} + d), where a, b, c, d, and k are integers. `;
+        }
+        steps.push(`Our function ${eq} can be factored as (${a}x${exponent2} + ${b})(${c}x${exponent2} + ${d}).`);
+        let step:string="";
+
+        if(k!=1){
+            steps.push(`But wait! Our question asks for something more. According to the question, we should be able to factor this equation as k(ax${exponent2} + b)(cx${exponent2} + d). Right now, we just have (ax${exponent2} + b)(cx${exponent2} + d).`);
+            step=`Let's look at our first factor, (${a}x${exponent2} + ${b}). `
+            if(a%k==0&&b%k==0){
+                step+=`It looks like ${a} and ${b}, both share a common factor. They have a gcf of ${k}!`;
+                step+=`That means that we can take ${k} out of the factor and place it in front of our factored equation to get ${k}(${a/k}x${exponent2} + ${b/k})(${c}x${exponent2} + ${d})-- the form the question asks for.`;
+            }else{
+                step+=`Seems like ${a} and ${b} do not share any common factors. On the other hand, in our second factor (${c}x${exponent2} + ${d}), ${c} and ${d} both have a gcf of ${k}!`;
+                step+=`That means that we can take ${k} out of the factor and place it in front of our factored equation to get ${k}(${a}x${exponent2} + ${b})(${c/k}x${exponent2} + ${d/k})-- the form the question asks for.`;
+            }
+            steps.push(step);
         }
 
         var smallest:boolean=false;
@@ -262,9 +309,11 @@
         if(smallOrLarge==1){
             problem+=`What is the smallest possible value of `;
             smallest=true;
+            step=`We are looking for the smallest value of `;
         }else{
             problem+=`What is the largest possible value of `;
             smallest=false;
+            step=`We are looking for the largest value of `;
         }
 
         /*
@@ -275,140 +324,129 @@
         */
 
         let abOrCd:number=randint(1,2);
-
-        console.log(a, b, c, d);
-
+        let operation:number=randint(1,4);
         if(abOrCd==1){
-            let operation:number=randint(1,4);
             if(operation==1){
                 problem+=`a + b?`;
-                if(smallest){
-                    if(a+b<c+d){
-                        solutions.push(a+b);
-                    }else{
-                        solutions.push(c+d);
-                    }
-                }else{
-                    if(a+b>c+d){
-                        solutions.push(a+b);
-                    }else{
-                        solutions.push(c+d);
-                    }
-                }
+                step+=`a + b.`;
+                steps.push(step);
             }else if(operation==2){
                 problem+=`a - b?`;
-                if(smallest){
-                    if(a-b<c-d){
-                        solutions.push(a-b);
-                    }else{
-                        solutions.push(c-d);
-                    }
-                }else{
-                    if(a-b>c-d){
-                        solutions.push(a-b);
-                    }else{
-                        solutions.push(c-d);
-                    }
-                }
+                step+=`a - b.`;
+                steps.push(step);
             }else if(operation==3){
                 problem+=`ab?`;
-                if(smallest){
-                    if(a*b<c*d){
-                        solutions.push(a*b);
-                    }else{
-                        solutions.push(c*d);
-                    }
-                }else{
-                    if(a*b>c*d){
-                        solutions.push(a*b);
-                    }else{
-                        solutions.push(c*d);
-                    }
-                }
+                step+=`ab.`;
+                steps.push(step);
             }else if(operation==4){
                 problem+=`a/b?`;
-                if(smallest){
-                    if(a/b<c/d){
-                        solutions.push(a/b);
-                    }else{
-                        solutions.push(c/d);
-                    }
-                }else{
-                    if(a/b>c/d){
-                        solutions.push(a/b);
-                    }else{
-                        solutions.push(c/d);
-                    }
-                }
+                step+=`a/b.`;
+                steps.push(step);
             }
         }else{
-            let operation:number=randint(1,4);
             if(operation==1){
                 problem+=`c + d?`;
-                if(smallest){
-                    if(a+b<c+d){
-                        solutions.push(a+b);
-                    }else{
-                        solutions.push(c+d);
-                    }
-                }else{
-                    if(a+b>c+d){
-                        solutions.push(a+b);
-                    }else{
-                        solutions.push(c+d);
-                    }
-                }
+                step+=`c + d.`;
+                steps.push(step);
             }else if(operation==2){
                 problem+=`c - d?`;
-                if(smallest){
-                    if(a-b<c-d){
-                        solutions.push(a-b);
-                    }else{
-                        solutions.push(c-d);
-                    }
-                }else{
-                    if(a-b>c-d){
-                        solutions.push(a-b);
-                    }else{
-                        solutions.push(c-d);
-                    }
-                }
+                step+=`c - d.`;
+                steps.push(step);
             }else if(operation==3){
                 problem+=`cd?`;
-                if(smallest){
-                    if(a*b<c*d){
-                        solutions.push(a*b);
-                    }else{
-                        solutions.push(c*d);
-                    }
-                }else{
-                    if(a*b>c*d){
-                        solutions.push(a*b);
-                    }else{
-                        solutions.push(c*d);
-                    }
-                }
+                step+=`cd.`;
+                steps.push(step);
             }else if(operation==4){
                 problem+=`c/d?`;
-                if(smallest){
-                    if(a/b<c/d){
-                        solutions.push(a/b);
-                    }else{
-                        solutions.push(c/d);
-                    }
+                step+=`c/d.`;
+                steps.push(step);
+            }
+        }
+
+        if(operation==1){
+            if(smallest){
+                if(a+b<c+d){
+                    step=`Since ${a} + ${((b<0)?`(${b}) (= ${a+b}) is smaller than ${c} + `:`${b} (= ${a+b}) is smaller than ${c} + `)}${(d<0)?`${d} (= ${c+d}), we can determine that ${a} + `:`(${d}) (= ${c+d}), we can determine that ${a} + `}${(b<0)?`(${b}), or ${a+b}, is the solution to this question.`:`${b}, or ${a+b}, is the solution to this question.`}`;
+                    // step+=(b<0)?`(${b}) (= ${a+b}) is smaller than ${c} + `:`${b} (= ${a+b}) is smaller than ${c} + `;
+                    //step+=`${b}, or ${a+b}, is the solution to this question.`;
+                    solutions.push(a+b);
                 }else{
-                    if(a/b>c/d){
-                        solutions.push(a/b);
-                    }else{
-                        solutions.push(c/d);
-                    }
+                    step=`Since ${c} + ${((d<0)?`(${d}) (= ${c+d}) is smaller than ${c} + `:`${d} (= ${c+d}) is smaller than ${a} + `)}${(b<0)?`${b} (= ${a+b}), we can determine that ${c} + `:`(${b}) (= ${a+b}), we can determine that ${c} + `}${(d<0)?`(${d}), or ${c+d}, is the solution to this question.`:`${d}, or ${c+d}, is the solution to this question.`}`;
+                    solutions.push(c+d);
+                }
+            }else{
+                if(a+b>c+d){
+                    //step=`Since ${a} + ${b} (${a+b}) is larger than ${c} + ${d} (${c+d}), we can determine that ${a} + ${b}, or ${a+b}, is the solution to this question.`;
+                    step=`Since ${a} + ${((b<0)?`(${b}) (= ${a+b}) is larger than ${c} + `:`${b} (= ${a+b}) is larger than ${c} + `)}${(d<0)?`${d} (= ${c+d}), we can determine that ${a} + `:`(${d}) (= ${c+d}), we can determine that ${a} + `}${(b<0)?`(${b}), or ${a+b}, is the solution to this question.`:`${b}, or ${a+b}, is the solution to this question.`}`;
+                    solutions.push(a+b);
+                }else{
+                    //step=`Since ${c} + ${d} (${c+d}) is larger than ${a} + ${b} (${a+b}), we can determine that ${c} + ${d}, or ${c+d}, is the solution to this question.`;
+                    step=`Since ${c} + ${((d<0)?`(${d}) (= ${c+d}) is larger than ${c} + `:`${d} (= ${c+d}) is larger than ${a} + `)}${(b<0)?`${b} (= ${a+b}), we can determine that ${c} + `:`(${b}) (= ${a+b}), we can determine that ${c} + `}${(d<0)?`(${d}), or ${c+d}, is the solution to this question.`:`${d}, or ${c+d}, is the solution to this question.`}`;
+                    solutions.push(c+d);
+                }
+            }
+        }else if(operation==2){
+            if(smallest){
+                if(a-b<c-d){
+                    step=`Since ${a} - ${((b<0)?`(${b}) (= ${a-b}) is smaller than ${c} - `:`${b} (= ${a-b}) is smaller than ${c} - `)}${(d<0)?`${d} (= ${c-d}), we can determine that ${a} - `:`(${d}) (= ${c-d}), we can determine that ${a} - `}${(b<0)?`(${b}), or ${a-b}, is the solution to this question.`:`${b}, or ${a-b}, is the solution to this question.`}`;
+                    solutions.push(a-b);
+                }else{
+                    step=`Since ${c} - ${((d<0)?`(${d}) (= ${c-d}) is smaller than ${c} - `:`${d} (= ${c-d}) is smaller than ${a} - `)}${(b<0)?`${b} (= ${a-b}), we can determine that ${c} - `:`(${b}) (= ${a-b}), we can determine that ${c} - `}${(d<0)?`(${d}), or ${c-d}, is the solution to this question.`:`${d}, or ${c-d}, is the solution to this question.`}`;
+                    solutions.push(c-d);
+                }
+            }else{
+                if(a-b>c-d){
+                    step=`Since ${a} - ${((b<0)?`(${b}) (= ${a-b}) is larger than ${c} - `:`${b} (= ${a-b}) is larger than ${c} - `)}${(d<0)?`${d} (= ${c-d}), we can determine that ${a} - `:`(${d}) (= ${c-d}), we can determine that ${a} - `}${(b<0)?`(${b}), or ${a-b}, is the solution to this question.`:`${b}, or ${a-b}, is the solution to this question.`}`;
+                    solutions.push(a-b);
+                }else{
+                    step=`Since ${c} - ${((d<0)?`(${d}) (= ${c-d}) is larger than ${c} - `:`${d} (= ${c-d}) is larger than ${a} - `)}${(b<0)?`${b} (= ${a-b}), we can determine that ${c} - `:`(${b}) (= ${a-b}), we can determine that ${c} - `}${(d<0)?`(${d}), or ${c-d}, is the solution to this question.`:`${d}, or ${c-d}, is the solution to this question.`}`;
+                    solutions.push(c-d);
+                }
+            }
+        }else if(operation==3){
+            steps.push(step);
+            if(smallest){
+                if(a*b<c*d){
+                    step=`Since ${a} * ${b} (= ${a*b}) is smaller than ${c} * ${d} (= ${c*d}), we can determine that ${a} * ${b}, or ${a*b}, is the solution to this question.`;
+                    solutions.push(a*b);
+                }else{
+                    step=`Since ${c} * ${d} (= ${c*d}) is smaller than ${a} * ${b} (= ${a*b}), we can determine that ${c} * ${d}, or ${c*d}, is the solution to this question.`;
+                    solutions.push(c*d);
+                }
+            }else{
+                if(a*b>c*d){
+                    step=`Since ${a} * ${b} (= ${a*b}) is larger than ${c} * ${d} (= ${c*d}), we can determine that ${a} * ${b}, or ${a*b}, is the solution to this question.`;
+                    solutions.push(a*b);
+                }else{
+                    step=`Since ${c} * ${d} (= ${c*d}) is larger than ${a} * ${b} (= ${a*b}), we can determine that ${c} * ${d}, or ${c*d}, is the solution to this question.`;
+                    solutions.push(c*d);
+                }
+            }
+        }else if(operation==4){
+            if(smallest){
+                if(a/b<c/d){
+                    step=`Since ${a}/${((b<0)?`(${b}) (≈ ${Math.round(a/b*10)/10}) is smaller than ${c} / `:`${b} (≈ ${Math.round(a/b*10)/10}) is smaller than ${c} / `)}${(d<0)?`${d} (≈ ${Math.round(c/d*10)/10}), we can determine that ${a} / `:`(${d}) (≈ ${Math.round(c/d*10)/10}), we can determine that ${a} / `}${(b<0)?`(${b}) is the solution to this question.`:`${b} is the solution to this question.`}`;
+                    solutions.push(a/b);
+                }else{
+                    step=`Since ${c}/${((d<0)?`(${d}) (≈ ${Math.round(c/d*10)/10}) is smaller than ${a} / `:`${d} (≈ ${Math.round(c/d*10)/10}) is smaller than ${a} / `)}${(b<0)?`${b} (≈ ${Math.round(a/b*10)/10}), we can determine that ${c} / `:`(${b}) (≈ ${Math.round(a/b*10)/10}), we can determine that ${c} / `}${(d<0)?`(${d}) is the solution to this question.`:`${d} is the solution to this question.`}`;
+                    solutions.push(c/d);
+                }
+            }else{
+                if(a/b>c/d){
+                    step=`Since ${a}/${((b<0)?`(${b}) (≈ ${Math.round(a/b*10)/10}) is larger than ${c} / `:`${b} (≈ ${Math.round(a/b*10)/10}) is larger than ${c} / `)}${(d<0)?`${d} (≈ ${Math.round(c/d*10)/10}), we can determine that ${a} / `:`(${d}) (≈ ${Math.round(c/d*10)/10}), we can determine that ${a} / `}${(b<0)?`(${b}) is the solution to this question.`:`${b} is the solution to this question.`}`;
+                    solutions.push(a/b);
+                }else{
+                    step=`Since ${c}/${((d<0)?`(${d}) (≈ ${Math.round(c/d*10)/10}) is larger than ${a} / `:`${d} (≈ ${Math.round(c/d*10)/10}) is larger than ${a} / `)}${(b<0)?`${b} (≈ ${Math.round(a/b*10)/10}), we can determine that ${c} / `:`(${b}) (≈ ${Math.round(a/b*10)/10}), we can determine that ${c} / `}${(d<0)?`(${d}) is the solution to this question.`:`${d} is the solution to this question.`}`;
+                    solutions.push(c/d);
                 }
             }
         }
 
+        steps.push(`Recall that we know the factors, but we do not know which factor corresponds to (ax${exponent2} + b) and which corresponds to (cx${exponent2} + d). In other words, we do not know which numbers specifically correspond to a, b, c, and d.`);
+        console.log(step);
+        steps.push(step);
+        console.log(steps);
         solutions[0]=Math.round(solutions[0]*1000)/1000;
-
-        console.log(solutions[0]);
     }
 
     function typeB():void{ //ab integers cd nonintegers
@@ -1784,39 +1822,48 @@
     }
 </script>
 
-<div class="w-[100vw] h-[100vh] bg-blue-200 overflow-auto">
-    <h1 class="text-center text-[30px]">math.SAT</h1>
-    <div class="bg-blue-300 w-[95%] m-auto">
-        <div class="flex justify-around w-[100%] box-border p-[10px] m-auto">
-            <div class="bg-blue-100 w-[49%] box-border p-[10px]">
-                <h4>Problem {type}</h4>
-                <div style={(imageVisible)?`display:block`:`display:none`}>
-                    <img src={imgBind} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
-                    <p>Image is not to scale.</p>
-                </div>
-                <br>
-                <div style={eq1Visible?`display:block`:`display:none`}>
-                    <Equation bind:this={equation1}></Equation>
+<div class="w-[100vw] h-[100vh] overflow-auto flex justify-around">
+    <div class="bg-blue-200 overflow-auto">
+        <h1 class="text-center text-[30px]">math.SAT</h1>
+        <div class="bg-blue-300 w-[95%] m-auto">
+            <div class="flex justify-around w-[100%] box-border p-[10px] m-auto">
+                <div class="bg-blue-100 w-[49%] box-border p-[10px]">
+                    <h4>Problem {type}</h4>
+                    <div style={(imageVisible)?`display:block`:`display:none`}>
+                        <img src={imgBind} alt="model of a triangle ABC, where A is a right angle. Point D lies on line BA and point E lies on line AC such that line DE is perpendicular to line BA.">
+                        <p>Image is not to scale.</p>
+                    </div>
                     <br>
+                    <div style={eq1Visible?`display:block`:`display:none`}>
+                        <Equation bind:this={equation1}></Equation>
+                        <br>
+                    </div>
+                    <div style={eq2Visible?`display:block`:`display:none`}>
+                        <Equation bind:this={equation2}></Equation>
+                        <br>
+                    </div>
+                    <h3>{problem}</h3>
+                    <Possibles bind:this={possibles}></Possibles>
                 </div>
-                <div style={eq2Visible?`display:block`:`display:none`}>
-                    <Equation bind:this={equation2}></Equation>
+                <div class="bg-blue-100 w-[49%] box-border p-[10px]">
+                    <McqDiv equationConversion={makeEquationArr} bind:this={mcqdiv}></McqDiv>
+                    <OpenResponse bind:this={openResponse}></OpenResponse>
                     <br>
+                    <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto" style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>check answer</button>
+                    <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto"  onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>next question &gt;&gt;&gt;</button>
                 </div>
-                <h3>{problem}</h3>
-                <Possibles bind:this={possibles}></Possibles>
             </div>
-            <div class="bg-blue-100 w-[49%] box-border p-[10px]">
-                <McqDiv equationConversion={makeEquationArr} bind:this={mcqdiv}></McqDiv>
-                <OpenResponse bind:this={openResponse}></OpenResponse>
-                <br>
-                <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto" style={checkAnswerVisible?`display:block`:`display:none`} onclick={submitAnswer}>check answer</button>
-                <button class="bg-[#EBF4FF] border-blue-300 border-[2px] w-[70%] m-auto"  onclick={makeQuestion} style={makeQuestionVisible?`display:block`:`display:none`}>next question &gt;&gt;&gt;</button>
+            <div style={(feedback=="")?`display:none`:`display:block`} class="pb-[10px]">
+                <h1 class="text-center">{feedback}</h1>
             </div>
         </div>
-        <div style={(feedback=="")?`display:none`:`display:block`} class="pb-[10px]">
-            <h1 class="text-center">{feedback}</h1>
-        </div>
+        <!--<button class="bg-[#EBF4FF]">Settings</button>-->
+        <button onclick={function(){
+            desmosVisible=!desmosVisible;
+        }}>open desmos</button>
     </div>
-    <button class="bg-[#EBF4FF]">Settings</button>
+    <div style={desmosVisible?`display:flex`:`display:none`} class="justify-around w-[100%]">
+
+        <iframe title="desmos" src="https://www.desmos.com/testing/collegeboard/graphing" class="w-[100%]"></iframe>
+    </div>
 </div>
