@@ -36,6 +36,10 @@
 
     let feedback:string=$state("");
 
+    let steps:string[]=$state([]);
+    let displayedSteps:string[]=$state([]);
+    let stepsIndex=0;
+
     function randint(min:number, max:number):number{ //for when 0 is unwanted
         let x:number=Math.floor(Math.random()*(max-min+1)+min);
         while(x==0){
@@ -96,12 +100,15 @@
         possibles.makeVisible(false);
         openResponse.reset();
         feedback="";
+        steps=[];
+        displayedSteps=[];
+        stepsIndex=0;
 
         /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
-        typeA();
+        typeB();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -226,8 +233,6 @@
         openResponse.makeVisible(true);
         mcqdiv.makeVisible(false);
 
-        let steps:string[]=[];
-
         problem="The ";
 
         var exponent1:string;
@@ -238,6 +243,10 @@
 
         let c:number=randint(1,5);
         let d:number=randint(-10,10);
+
+        while((a*c)+(b*d)==0){
+            d=randint(-10,10);
+        }
 
         var quadOrQuart=randint(1,2);
 
@@ -325,43 +334,38 @@
 
         let abOrCd:number=randint(1,2);
         let operation:number=randint(1,4);
+
         if(abOrCd==1){
             if(operation==1){
                 problem+=`a + b?`;
                 step+=`a + b.`;
-                steps.push(step);
             }else if(operation==2){
                 problem+=`a - b?`;
                 step+=`a - b.`;
-                steps.push(step);
             }else if(operation==3){
                 problem+=`ab?`;
                 step+=`ab.`;
-                steps.push(step);
             }else if(operation==4){
                 problem+=`a/b?`;
                 step+=`a/b.`;
-                steps.push(step);
             }
         }else{
             if(operation==1){
                 problem+=`c + d?`;
                 step+=`c + d.`;
-                steps.push(step);
             }else if(operation==2){
                 problem+=`c - d?`;
                 step+=`c - d.`;
-                steps.push(step);
             }else if(operation==3){
                 problem+=`cd?`;
                 step+=`cd.`;
-                steps.push(step);
             }else if(operation==4){
                 problem+=`c/d?`;
                 step+=`c/d.`;
-                steps.push(step);
             }
         }
+
+        steps.push(step);
 
         if(operation==1){
             if(smallest){
@@ -404,7 +408,6 @@
                 }
             }
         }else if(operation==3){
-            steps.push(step);
             if(smallest){
                 if(a*b<c*d){
                     step=`Since ${a} * ${b} (= ${a*b}) is smaller than ${c} * ${d} (= ${c*d}), we can determine that ${a} * ${b}, or ${a*b}, is the solution to this question.`;
@@ -443,9 +446,8 @@
         }
 
         steps.push(`Recall that we know the factors, but we do not know which factor corresponds to (ax${exponent2} + b) and which corresponds to (cx${exponent2} + d). In other words, we do not know which numbers specifically correspond to a, b, c, and d.`);
-        console.log(step);
+        steps.push(`That means that, since we want the ${(smallest)?`smallest`:`largest`} possible value, we want the factor with the two numbers that will give us the ${(smallest)?`smaller`:`larger`} value.`);
         steps.push(step);
-        console.log(steps);
         solutions[0]=Math.round(solutions[0]*1000)/1000;
     }
 
@@ -480,6 +482,9 @@
         let c:number=0;
         let d:number=0;
 
+        steps.push("We're given a quadratic in factored form. This means that whatever a and b, or c and d, are, they will be the x-intercepts/roots of our function.");
+        steps.push("Use any method to solve the expression for y = 0 and find your roots.");
+
         let ya:number=((r1*b)+(r2*a) + Math.sqrt(Math.pow((r1*b)+(r2*a),2)-(4*r1*(a*b*r2))))/(2*r1);
         let yb:number=((r1*b)+(r2*a) - Math.sqrt(Math.pow((r1*b)+(r2*a),2)-(4*r1*(a*b*r2))))/(2*r1);
 
@@ -491,6 +496,14 @@
             c=(a*b)/yb;
         }
 
+        let reducedSolution1:number[]=reduceFraction((-(r1*b+r2*a) + Math.sqrt(Math.pow(r1*b+r2*a,2)-4*(r1*r2)*(a*b))),(2*r1*r2));
+        let reducedSolution2:number[]=reduceFraction((-(r1*b+r2*a) - Math.sqrt(Math.pow(r1*b+r2*a,2)-4*(r1*r2)*(a*b))),(2*r1*r2));
+        let reducedSolutionsStepForm:string=`${(reducedSolution1[1]==1)?`${reducedSolution1[0]}`:`${reducedSolution1[0]}/${reducedSolution1[1]}`} and ${(reducedSolution2[1]==1)?`${reducedSolution2[0]}`:`${reducedSolution2[0]}/${reducedSolution2[1]}`}`;
+        steps.push(`The roots of the expression given here are ${reducedSolutionsStepForm}.`);
+        steps.push(`Now, looking at our factored form, we can see that the x coefficients of each factor are ${r1} and ${r2} respectively. The question states that for one pair of factors, constants a and b will be integers; for the other pair, constants c and d will be nonintegers.`);
+        steps.push(`We can get our values for a, b, c, and d by plugging in the roots we calculated for into x in the factored forms and solving for 0. Whether we find a and b or c and d depends on which coefficients we pair our roots with.`);
+        steps.push(`In other words, plugging ${reducedSolutionsStepForm} into the given factored form in one order will result in our solutions being integers (a and b), while plugging them in the opposite order will result in our solutions being nonintegers (c and d).`);
+        steps.push();
         problem=`The expression ${r1*r2}x² `;
         ((r1*b)+(r2*a)<0)?problem+=`- ${-((r1*b)+(r2*a))}x `:problem+=`+ ${(r1*b)+(r2*a)}x `;
         (a*b<0)?problem+=`- ${a*b*-1}`:problem+=`+ ${a*b}`;
@@ -1858,12 +1871,33 @@
             </div>
         </div>
         <!--<button class="bg-[#EBF4FF]">Settings</button>-->
-        <button onclick={function(){
-            desmosVisible=!desmosVisible;
-        }}>open desmos</button>
+        <br>
+        <div class="flex justify-around w-[90%] h-[40px] m-auto">
+            <button class="w-[49%] bg-orange-200" onclick={function(){
+                if(stepsIndex!=steps.length){
+                    displayedSteps.push(steps[stepsIndex]);
+                    stepsIndex+=1;
+                }
+            }}>Help!</button>
+            <button class={`${(desmosVisible)?`bg-red-300`:`bg-green-300`} w-[49%]`} onclick={function(){
+                desmosVisible=!desmosVisible;
+            }}>{(desmosVisible)?`close desmos`:`open desmos`}</button>
+        </div>
+        <br>
+        <div class={`w-[70%] max-h-[40vh] overflow-auto box-border p-[10px] border-[2px] border-white scrollbar ${(displayedSteps.length==0)?`hidden`:`block`}`}>
+            {#each displayedSteps as step,i}
+                <h3>{i+1}. {step}</h3>
+            {/each}
+        </div>
     </div>
     <div style={desmosVisible?`display:flex`:`display:none`} class="justify-around w-[100%]">
-
         <iframe title="desmos" src="https://www.desmos.com/testing/collegeboard/graphing" class="w-[100%]"></iframe>
     </div>
 </div>
+
+<style>
+    .scrollbar{
+        scrollbar-width:thin;
+        scrollbar-color: rgb(137, 182, 255) rgb(182, 211, 248);
+    }
+</style>
