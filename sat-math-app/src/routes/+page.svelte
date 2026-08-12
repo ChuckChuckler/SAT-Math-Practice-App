@@ -503,7 +503,8 @@
         steps.push(`Now, looking at our factored form, we can see that the x coefficients of each factor are ${r1} and ${r2} respectively. The question states that for one pair of factors, constants a and b will be integers; for the other pair, constants c and d will be nonintegers.`);
         steps.push(`We can get our values for a, b, c, and d by plugging in the roots we calculated for into x in the factored forms and solving for 0. Whether we find a and b or c and d depends on which coefficients we pair our roots with.`);
         steps.push(`In other words, plugging ${reducedSolutionsStepForm} into the given factored form in one order will result in our solutions being integers (a and b), while plugging them in the opposite order will result in our solutions being nonintegers (c and d).`);
-        steps.push();
+        steps.push(`Multiplying ${reducedSolutionsStepForm.split(" and ")[0]} by ${r1} gives us ${Math.round((reducedSolution1[0]*r1)/reducedSolution1[1]*100)/100}, and multiplying ${reducedSolutionsStepForm.split(" and ")[1]} by ${r2} gives us ${Math.round((reducedSolution2[0]*r2)/reducedSolution2[1])*100/100}. ${(((reducedSolution2[0]*r2)/reducedSolution2[1]).toString().includes("."))?`Neither of these are integers, which means we've found c and d:`:`Both of these are integers, which means we've found a and b:`} ${-(reducedSolution1[0]*r1)/reducedSolution1[1]} and ${-(reducedSolution2[0]*r2)/reducedSolution2[1]} respectively.`);
+        steps.push(`Then, ${(((reducedSolution2[0]*r2)/reducedSolution2[1]).toString().includes("."))?`a and b, the integers, `:`c and d, the nonintegers, `}can be found by plugging in the roots in the opposite order: ${reducedSolutionsStepForm.split(" and ")[1]} by ${r1} to get ${Math.round((reducedSolution2[0]*r1)/reducedSolution2[1]*100)/100} and ${reducedSolutionsStepForm.split(" and ")[0]} by ${r2} to get ${Math.round((reducedSolution1[0]*r2)/reducedSolution1[1]*100)/100}.`);
         problem=`The expression ${r1*r2}x² `;
         ((r1*b)+(r2*a)<0)?problem+=`- ${-((r1*b)+(r2*a))}x `:problem+=`+ ${(r1*b)+(r2*a)}x `;
         (a*b<0)?problem+=`- ${a*b*-1}`:problem+=`+ ${a*b}`;
@@ -520,15 +521,19 @@
         let whatToFind:number=randint(1,4);
         if(whatToFind==1){ //a+c
             problem+=`a + c?`;
+            steps.push(`We're looking for a + c, so we simply add the values we've calculated for a and c together.`);
             solutions.push(a+c);
         }else if(whatToFind==2){ //a+d
             problem+=`a + d?`;
+            steps.push(`We're looking for a + d, so we simply add the values we've calculated for a and c together.`);
             solutions.push(a+d);
         }else if(whatToFind==3){ //b+c
             problem+=`b + c?`;
+            steps.push(`We're looking for b + c, so we simply add the values we've calculated for a and c together.`);
             solutions.push(b+c);
         }else{
             problem+=`b + d?`;
+            steps.push(`We're looking for b + d, so we simply add the values we've calculated for a and c together.`);
             solutions.push(b+d);
         }
 
