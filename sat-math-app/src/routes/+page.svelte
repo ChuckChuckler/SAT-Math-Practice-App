@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
-        typeB();
+        typeD();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -604,7 +604,7 @@
             eq2=`y = ${m}x `;
             eq2+=(e<0)?`- ${-e}`:`+ ${e}`;
         }else if(whichUnknown==4){ //d
-            chosenUnknownName=`d`;
+            chosenUnknownName=`m`;
             eq1=`y = ${a}x² `;
             eq1+=(b<0)?`- ${-b}x `:`+ ${b}x `;
             eq1+=(c<0)?`- ${-c}`:`+ ${c}`;
@@ -640,6 +640,53 @@
             chosenForSolution="y";
         }
 
+        steps.push("Although we don't know one of the values of this system, we do know that the system will have exactly one solution. This is a bigger clue than you might think.");
+        steps.push("Since we know the system will have exactly one solution, we can utilize the discriminant formula to help us find the unknown value in the two equations. To do that, we need to get one equation out of the two here.");
+        steps.push("Since both equations equal y, we can set both equations equal to each other and move terms so that all terms are on one side with an equation equaling 0.")
+        let step:string=`The equation for 0 we get after combining ${eq1} and ${eq2} is: `;
+        if(chosenUnknownName=="a"){
+            step+=`ax² ${(b-m<0)?`- ${-(b-m)}x`:`+ ${b-m}x`}  ${(c-e<0)?`- ${-(c-e)}`:`+ ${c-e}`} = 0.`;
+        }else if(chosenUnknownName=="b"){
+            step+=`${a}x² + (b - ${m})x  ${(c-e<0)?`- ${-(c-e)}`:`+ ${c-e}`} = 0.`;
+        }else if(chosenUnknownName=="c"){
+            step+=`${a}x² ${(b-m<0)?`- ${-(b-m)}x`:`+ ${b-m}x`} + (c - (${e})) = 0.`;
+        }else if(chosenUnknownName=="m"){
+            step+=`${a}x² + (${b} - m)x ${(c-e<0)?`- ${-(c-e)}`:`+ ${c-e}`} = 0.`;
+        }else{
+            step+=`${a}x² ${(b-m<0)?`- ${-(b-m)}x`:`+ ${b-m}x`} + (${c} - e) = 0.`;
+        }
+        steps.push(step);
+        steps.push(`We know that this combined equation will only have one correct solution, so we can plug it into the discriminant formula and solve for 0 (as when the discriminant is 0, the quadratic has one solution).`);
+        step=`In the discriminant formula, this will be `;
+        if(chosenUnknownName=="a"){
+            step+`(${b-m})² - 4(a)(${c-e}).`;
+            steps.push(step);
+            steps.push(`After solving this for a, we can determine that a = ${a}.`);
+        }else if(chosenUnknownName=="b"){
+            step+=`(b ${(m<0)?`+ ${-m}`:`- ${m}`})² - 4(${a})(${c-e}).`;
+            steps.push(step);
+            steps.push(`After solving this for b, we can determine that b = ${b}`);
+        }else if(chosenUnknownName=="c"){
+            step+=`(${b-m})² - 4(${a})(c ${(e<0)?`+ ${-e}`:`- ${e}`}).`;
+            steps.push(step);
+            steps.push(`After solving this for c, we can determine that c = ${c}`);
+        }else if(chosenUnknownName=="m"){
+            step+=`(${b} - m)² - 4(${a})(${c-e}).`;
+            steps.push(step);
+            steps.push(`After solving this for m, we can determine that m = ${m}`);
+        }else{
+            step+=`(${b-m})² - 4(${a})(${c} - e).`;
+            steps.push(step);
+            steps.push(`After solving this for e, we can determine that e = ${e}`);
+        }
+        steps.push(`But wait, this isn't our answer! Don't get ahead of yourself! Our question is asking for the ${chosenForSolution} coordinate of the point of intersection, NOT the value of ${chosenUnknownName}!`);
+        steps.push(`Now that we know the value of ${chosenUnknownName}, we can plug it back into the original system and solve the system to find our point of intersection, aka solution.`);
+        if(solutions.length==2){
+            steps.push(`The ${chosenForSolution} coordinate of our solution can be ${solutions[0]} or ${solutions[1]}.`);
+        }else{
+            steps.push(`The ${chosenForSolution} coordinate of our solution is ${solutions[0]}.`);
+        }
+
         (chosenUnknownName=="b")?problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is one possible value of ${chosenForSolution}?`:problem=`In the given system of equations, ${chosenUnknownName} is a constant. The graphs of the equations in the given system interact at exactly one point, (x, y), in the xy-plane. What is the value of ${chosenForSolution}?`;
     }
 
@@ -655,8 +702,14 @@
         while(letter1==letter2){
             letter2=randint(0,alphabet.length-1);
         }
-        problem=`In the given expression, a and c are positive integer constants. If (${alphabet[letter1]}x + ${alphabet[letter2]}) is a factor of the expression, where j and k are positive constants, what is a possible value of ac?`
         solutions.push(Math.pow(b,2)/4);
+        problem=`In the given expression, a and c are positive integer constants. If (${alphabet[letter1]}x + ${alphabet[letter2]}) is a factor of the expression, where ${alphabet[letter1]} and ${alphabet[letter2]} are positive constants, what is the greatest possible value of ac?`;
+        steps.push(`The fact that we are given a factor of the quadratic means that the quadratic has at least one real solution or root.`);
+        steps.push(`That means we can use the discriminant formula to determine the value of ac.`);
+        steps.push(`Since we want the greatest possible value, we have to find the value of ac that makes the discriminant equal 0. Anything greater would make the discriminant negative, thus signaling that the system has no solutions.`);
+        steps.push(`Recall that the discriminant formula is b² - 4ac.`);
+        steps.push(`Since ac is already present in the discriminant formula, we can simply plug in ${b} for b and solve for ac together.`);
+        steps.push(`After solving the discriminant, we end up with ac = ${solutions[0]}.`);
     }
 
     function typeE():void{ //horizontal line intersects a parabola at 1 point
