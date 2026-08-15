@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
-        typeE();
+        typeF();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -803,18 +803,38 @@
         equation1.updateEquation(eq1Arr);
         equation2.updateEquation(eq2Arr);
         
+        steps.push(`The system has infinite solutions. This means that both functions will be identical.`);
+        steps.push(`In a linear system like this, one equation will usually be a scaled version of the other; e.g. all coefficients and constants of the second equation will be the same as the first equation's, but perhaps all multiplied by the exact same scale.`);
+        steps.push(`As we can see, for the second equation in this system, we don't know our x and y coefficients, but we DO know our constant, ${d}.`);
+        steps.push(`Since the two equations must factor out to be identical, it follows that whatever the constant of our first equation (${c}) was multiplied by to get the constant of our second equation (${d}) will be what the entire second equation was hypothetically multiplied by.`);
+        steps.push(`We can set up our two constants ${c} and ${d} in an equation: ${c}x = ${d}.`);
+        let scaleFraction:string=`${(d%c==0)?`${d/c}`:`${((c>0&&d<0||c<0&&d>0)?`${-Math.abs(reduceFraction(d,c)[0])}/${Math.abs(reduceFraction(d,c)[1])}`:`${Math.abs(reduceFraction(d,c)[0])}/${Math.abs(reduceFraction(d,c)[1])}`)}`}`;
+        steps.push(`Solving this out gets us ${scaleFraction}.`);
+        steps.push(`We now know that our first equation was multiplied by ${scaleFraction} to get our second. As such, we can multiply the x and y coefficients of the first equation by that same number to get ${alphabet[letter1]} and ${alphabet[letter2]}.`);
+        let gFraction:string=`${(d*a%c==0)?`${d*a/c}`:`${((c>0&&d*a<0||c<0&&d*a>0)?`${-Math.abs(d*a)}/${Math.abs(c)}`:`${Math.abs(d*a)}/${Math.abs(c)}`)}`}`;
+        let kFraction:string=`${(d*b%c==0)?`${d*b/c}`:`${((c>0&&d*b<0||c<0&&d*b>0)?`${-Math.abs(d*b)}/${Math.abs(c)}`:`${Math.abs(d*b)}/${Math.abs(c)}`)}`}`;
+        steps.push(`${alphabet[letter1]} = ${a}(${scaleFraction}), or ${gFraction}.`);
+        steps.push(`${alphabet[letter2]} = ${b}(${scaleFraction}), or ${kFraction}.`);
         problem=`In the given system of equations, ${alphabet[letter1]} and ${alphabet[letter2]} are constants. The system has infinitely many solutions. What is `;
-
+        
         let solutionFormat = randint(1,3);
+        solutionFormat=1;
         if(solutionFormat==1){ //g+k
             problem+=`${alphabet[letter1]} + ${alphabet[letter2]}?`;
-            solutions.push(Math.round((g+k)*1000)/1000);
+            steps.push(`The question wants us to find the value of ${alphabet[letter1]} + ${alphabet[letter2]}.`);
+            //console.log(Math.round((g+k)*(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)));
+            solutions.push(Math.round((g+k)*(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)));
+            steps.push(`We'll add ${gFraction} and ${kFraction} to get ${(d*(a+b)%c==0)?`${(d*(a+b)/c)}`:`${((d*(a+b)>0&&c<0)||(d*(a+b)<0&&c>0))?`-`:``}${Math.abs(reduceFraction(d*(a+b),c)[0])}/${Math.abs(reduceFraction(d*(a+b),c)[1])}, or ~${solutions[0]}`}.`);
         }else if(solutionFormat==2){ //g-k
             problem+=`${alphabet[letter1]} - ${alphabet[letter2]}?`;
-            solutions.push(Math.round((g-k)*1000)/1000);
+            steps.push(`The question wants us to find the value of ${alphabet[letter1]} - ${alphabet[letter2]}.`);
+            solutions.push(Math.round((g-k)*(Math.pow(10,4-(g-k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g-k).toString().split(".")[0].replace("-","").length)));
+            steps.push(`We'll subtract ${gFraction} by ${kFraction} to get ${(d*(a-b)%c==0)?`${(d*(a-b)/c)}`:`${((d*(a-b)>0&&c<0)||(d*(a-b)<0&&c>0))?`-`:``}${Math.abs(reduceFraction(d*(a-b),c)[0])}/${Math.abs(reduceFraction(d*(a-b),c)[1])}, or ~${solutions[0]}`}.`);
         }else if(solutionFormat==3){ //gk
             problem+=`${alphabet[letter1]}${alphabet[letter2]}?`;
-            solutions.push(Math.round((g*k)*1000)/1000);
+            steps.push(`The question wants us to find the value of ${alphabet[letter1]} * ${alphabet[letter2]}.`);
+            solutions.push(Math.round((g*k)*(Math.pow(10,4-(g*k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g*k).toString().split(".")[0].replace("-","").length)));
+             steps.push(`We'll multiply ${gFraction} and ${kFraction} to get ${((d*d*a*b)%(c*c)==0)?`${((d*d*a*b)/(c*c))}`:`${(((d*d*a*b)>0&&(c*c)<0)||((d*d*a*b)<0&&(c*c)>0))?`-`:``}${Math.abs(reduceFraction(d*(a+b),(c*c))[0])}/${Math.abs(reduceFraction(d*d*a*b,(c*c))[1])}, or ~${solutions[0]}`}.`);
         }
     }
 
