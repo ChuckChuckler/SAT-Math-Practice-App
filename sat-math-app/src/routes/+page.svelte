@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
-        typeD();
+        typeE();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -732,18 +732,36 @@
         if(bOrC==1){ //b is unknown
             let coeffY=randint(1,3)*2;
             problem+=`${coeffY}y = ${Math.round(c*coeffY*10000)/10000} intersects a parabola at exactly one point. If the parabola has equation y = ${a}x² + bx, where b is a `;
+            steps.push(`The first thing we should do is isolate the y side of the linear equation.`);
+            steps.push(`We'll rewrite ${coeffY}y = ${Math.round(c*coeffY*10000)/10000} as y = ${Math.round(c*1000)/1000}.`);
+            steps.push(`Now both of the equations in our system are rewritten to be equal to y.`);
+            steps.push(`Since one of the equations of the system is a quadratic, we can combine the two parts of the system to make one equation, then use the discriminant to find our unknown b. (That's why we rewrote that other equation to isolate y!)`);
+            steps.push(`We'll combine our equations on one side and have 0 on the other side. We'll get ${a}x² + bx ${(c>0)?`- ${Math.round(c*1000)/1000}`:`+ ${-Math.round(c*1000)/1000}`} = 0.`);
+            steps.push(`The question defines that the system has exactly one solution, so our discriminant should equal exactly 0.`);
+            steps.push(`Plug a (${a}), our unknown b, and ${-Math.round(c*1000)/1000} into the discriminant to get: b² - 4(${a})(-${Math.round(c*1000)/1000}) = 0.`);
+            steps.push(`After solving this, we'll get two possible values for b: ${b} and ${-b}.`); 
             let posOrNeg:number=randint(1,2);
             if(posOrNeg==1){ //pos
                 problem+=`positive constant, what is the value of b?`;
                 solutions.push(b);
+                steps.push(`Since our question states that b is a POSITIVE constant, it follows that b must be ${b}.`);
             }else{
                 problem+=`negative constant, what is the value of b?`;
                 solutions.push(-b);
+                steps.push(`Since our question NEGATIVE constant, it follows that b must be ${-b}.`);
             }
         }else{ //c is unknown
             let coeffY:number=randint(1,3)*2;
             problem+=`${coeffY}y = c for some constant c intersects a parabola at exactly one point. If the parabola has equation y = ${a}x² + ${b}x, what is the value of c?`;
-            solutions.push(c*coeffY);
+            solutions.push(Math.round(c*coeffY*1000)/1000);
+            steps.push(`The first thing we should do is rewrite the equation with our constant c for y.`);
+            steps.push(`We'll rewrite ${coeffY}y = c as y = c/${coeffY}.`);
+            steps.push(`Now both of the equations in our system are rewritten to be equal to y.`);
+            steps.push(`Since one of the equations of the system is a quadratic, we can combine the two parts of the system to make one equation, then use the discriminant to find our unknown c. (That's why we rewrote that other equation to isolate y!)`);
+            steps.push(`We'll combine our equations on one side and have 0 on the other side. We'll get ${a}x² ${(b<0)?`- ${-b}`:`+ ${b}`}x ${(coeffY<0)?`+ c/${-coeffY}`:`- c/${coeffY}`} = 0.`);
+            steps.push(`The question defines that the system has exactly one solution, so our discriminant should equal exactly 0.`);
+            steps.push(`Plug a (${a}), b (${b}), and our unknown ${(coeffY<0)?`-c/${coeffY}`:`c/${coeffY}`} into the discriminant to get: (${b})² - 4(${a})(${(coeffY<0)?`c/${coeffY}`:`-c/${coeffY}`}) = 0.`);
+            steps.push(`Finally, we'll solve for c using the discriminant formula; c = ${Math.round(c*coeffY*1000)/1000}.`);
         }
     }
 
