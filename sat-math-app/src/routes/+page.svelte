@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeH();
+        //typeI();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -995,6 +995,19 @@
         let s = regularCost*(1-(salePricePercentOff/100));
         let c = s*(100/(100+salePricePercentGreater));
         solutions.push(Math.round(c*100)/100);
+
+        steps.push(`Let's ignore the given regular cost of the item so we don't confuse ourselves. For now, let's try to first set up an equation that will help us find the store cost of the item.`);
+        steps.push(`We know that the sale price is ${salePricePercentOff}% LESS than the regular price, which will mean the sale price is the regular price minus ${salePricePercentOff}% of the regular price.`);
+        steps.push(`In other words, if we let r = regular price and s = sale price, then s = r - ${salePricePercentOff/100}r, or, s = ${(100-salePricePercentOff)/100}r.`);
+        steps.push(`We also know that the sale price is ${salePricePercentGreater}% greater than the store's cost, which means that the the sale price = the store cost + ${salePricePercentGreater}% of the store cost.`);
+        steps.push(`If we define c = store cost and continue to use s = sale price, then c + ${salePricePercentGreater/100}c = s, or ${(100+salePricePercentGreater)/100}c = s.`);
+        steps.push(`Since we're solving for c (store cost), we should isolate c; dividing both sides by ${(100+salePricePercentGreater)/100} gets us c = (1/${(100+salePricePercentGreater)/100})s.`);
+        steps.push(`Recall that s = ${(100-salePricePercentOff)/100}r.`);
+        steps.push(`In that case, we can replace s in the equation for store cost (c) with ${(100-salePricePercentOff)/100}r.`);
+        steps.push(`The equation for store cost, c, now becomes c = (1/${(100+salePricePercentGreater)/100})(${(100-salePricePercentOff)/100}r).`);
+        steps.push(`Since the question has provided us with our regular price, $${regularCost}, we can substitute that number into our equation for c.`);
+        steps.push(`We can now solve c = (1/${(100+salePricePercentGreater)/100})(${(100-salePricePercentOff)/100}*${regularCost}).`);
+        steps.push(`c ≈ ${solutions[0]}. The store cost of the item is $${solutions[0]}.`)
     }
 
     function typeJ():void{ //how many fewer miles? how many fewer gallons?
@@ -1964,7 +1977,7 @@
 </script>
 
 <div class="w-[100vw] h-[100vh] overflow-auto flex justify-around">
-    <div class="bg-blue-200 overflow-auto">
+    <div class="bg-blue-200 overflow-auto w-[100%]">
         <h1 class="text-center text-[30px]">math.SAT</h1>
         <div class="bg-blue-300 w-[95%] m-auto">
             <div class="flex justify-around w-[100%] box-border p-[10px] m-auto">
