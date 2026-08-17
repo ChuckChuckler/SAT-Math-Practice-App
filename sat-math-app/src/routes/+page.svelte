@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];*/
-        typeF();
+        typeG();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -227,6 +227,10 @@
             }
         }
         return equation1Arr;
+    }
+
+    function round(number:number):number{
+        return Math.round((number)*(Math.pow(10,4-(number).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(number).toString().split(".")[0].replace("-","").length));
     }
 
     function typeA():void{ //smallest possible value of ab?
@@ -823,18 +827,18 @@
             problem+=`${alphabet[letter1]} + ${alphabet[letter2]}?`;
             steps.push(`The question wants us to find the value of ${alphabet[letter1]} + ${alphabet[letter2]}.`);
             //console.log(Math.round((g+k)*(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)));
-            solutions.push(Math.round((g+k)*(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g+k).toString().split(".")[0].replace("-","").length)));
+            solutions.push(g+k);
             steps.push(`We'll add ${gFraction} and ${kFraction} to get ${(d*(a+b)%c==0)?`${(d*(a+b)/c)}`:`${((d*(a+b)>0&&c<0)||(d*(a+b)<0&&c>0))?`-`:``}${Math.abs(reduceFraction(d*(a+b),c)[0])}/${Math.abs(reduceFraction(d*(a+b),c)[1])}, or ~${solutions[0]}`}.`);
         }else if(solutionFormat==2){ //g-k
             problem+=`${alphabet[letter1]} - ${alphabet[letter2]}?`;
             steps.push(`The question wants us to find the value of ${alphabet[letter1]} - ${alphabet[letter2]}.`);
-            solutions.push(Math.round((g-k)*(Math.pow(10,4-(g-k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g-k).toString().split(".")[0].replace("-","").length)));
+            solutions.push(round(g-k));
             steps.push(`We'll subtract ${gFraction} by ${kFraction} to get ${(d*(a-b)%c==0)?`${(d*(a-b)/c)}`:`${((d*(a-b)>0&&c<0)||(d*(a-b)<0&&c>0))?`-`:``}${Math.abs(reduceFraction(d*(a-b),c)[0])}/${Math.abs(reduceFraction(d*(a-b),c)[1])}, or ~${solutions[0]}`}.`);
         }else if(solutionFormat==3){ //gk
             problem+=`${alphabet[letter1]}${alphabet[letter2]}?`;
             steps.push(`The question wants us to find the value of ${alphabet[letter1]} * ${alphabet[letter2]}.`);
-            solutions.push(Math.round((g*k)*(Math.pow(10,4-(g*k).toString().split(".")[0].replace("-","").length)))/(Math.pow(10,4-(g*k).toString().split(".")[0].replace("-","").length)));
-             steps.push(`We'll multiply ${gFraction} and ${kFraction} to get ${((d*d*a*b)%(c*c)==0)?`${((d*d*a*b)/(c*c))}`:`${(((d*d*a*b)>0&&(c*c)<0)||((d*d*a*b)<0&&(c*c)>0))?`-`:``}${Math.abs(reduceFraction(d*(a+b),(c*c))[0])}/${Math.abs(reduceFraction(d*d*a*b,(c*c))[1])}, or ~${solutions[0]}`}.`);
+            solutions.push(round(g*k));
+            steps.push(`We'll multiply ${gFraction} and ${kFraction} to get ${((d*d*a*b)%(c*c)==0)?`${((d*d*a*b)/(c*c))}`:`${(((d*d*a*b)>0&&(c*c)<0)||((d*d*a*b)<0&&(c*c)>0))?`-`:``}${Math.abs(reduceFraction(d*(a+b),(c*c))[0])}/${Math.abs(reduceFraction(d*d*a*b,(c*c))[1])}, or ~${solutions[0]}`}.`);
         }
     }
 
@@ -918,8 +922,22 @@
 
         eq2+=`${reduceFraction(cNumerator2, cDenominator2)[0]}/${reduceFraction(cNumerator2, cDenominator2)[1]}`;
         equation2.updateEquation(makeEquationArr(eq2));
-        solutions.push(Math.round((((yNumerator*2)/yDenominator)*(xScale))*1000)/1000);
         problem=`In the given system of equations, k is a constant. If the system has no solution, what is the value of k?`;
+
+        steps.push(`Since this is a system of linear equations with no solution, it follows that the two lines must be parallel.`);
+        steps.push(`Let's change the format of the second equation to make it the same as the first equation's format.`);
+        steps.push(`We'll move (${-yNumerator}/${yDenominator})y to the left side of the equation so that both equations in the system are in Ax + By = C format.`);
+        steps.push(`The first equation will become (${xNumerator}/${xDenominator})x + (${yNumerator*2}/${yDenominator})y = ${cNumerator}/${cDenominator}.`);
+        steps.push(`Recall that the two lines must be parallel. In other words, they must have the same slope-- by extension, same coefficients-- but different constants.`);
+        steps.push(`We have two different x coefficients, ${xNumerator}/${xDenominator} and ${xNumerator2}/${xDenominator2}.`);
+        steps.push(`Since the two equations must have the same slope, it follows that whatever was done to one x coefficient to get the second one must have been done to the relative y coefficient.`);
+        steps.push(`Therefore, our next step is figuring out what the x coefficient of our first equation was multiplied by to get the x coefficient of our second equation.`);
+        steps.push(`We can set this up as (${xNumerator}/${xDenominator})a = ${xNumerator2}/${xDenominator2}, where a is what the first x coefficient was multiplied by to get the second one.`);
+        let a:string=`${reduceFraction(xNumerator2*xDenominator,xNumerator*xDenominator2)[0]}/${reduceFraction(xNumerator2*xDenominator,xNumerator*xDenominator2)[1]}`;
+        steps.push(`After doing this out, we can determine that a is ${a}.`);
+        steps.push(`Again, we know that the slopes for both equations must be equal, and so we can find k by multiplying our first y coefficient ${yNumerator}/${yDenominator} by ${a}.`);
+        steps.push(`The value of k equals ${reduceFraction(xNumerator2*xDenominator*yNumerator,xNumerator*xDenominator2*yDenominator)[0]}/${reduceFraction(xNumerator2*xDenominator*yNumerator,xNumerator*xDenominator2*yDenominator)[1]}.`);
+        solutions.push(round((xNumerator2*xDenominator*yNumerator)/(xNumerator*xDenominator2*yDenominator)));
     }
 
     function typeH():void{ //has a factor of (x + 2b), what could be the equation...
