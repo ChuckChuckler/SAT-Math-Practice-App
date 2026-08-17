@@ -104,11 +104,11 @@
         displayedSteps=[];
         stepsIndex=0;
 
-        /*let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
+        let domain=questionsSorted[Object.keys(questionsSorted)[randint2(0,3)]];
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
-        type=Object.keys(domain)[index];*/
-        typeG();
+        type=Object.keys(domain)[index];
+        //typeH();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -961,10 +961,24 @@
         }
         let chosenCorrect=randint(0,3);
         options[chosenCorrect]=(bCoefficient*randint(3,10))+d;
-        let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
+        let alphabet:string[]=["d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let chosenLetter:number=randint(0,alphabet.length-1);
         problem=`Which of the following has a factor of (x + ${bCoefficient}${alphabet[chosenLetter]}), where b is a positive integer constant?`;
         mcqdiv.updateOptions(`${a*c}x² + ${options[0]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[1]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[2]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[3]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`, `${a*c}x² + ${options[chosenCorrect]}x + ${bCoefficient*d}${alphabet[chosenLetter]}`);
+
+        steps.push(`The first thing that we can notice is that for every option, assuming the format ax² + bx + c, a is ${a*c} and c is ${bCoefficient*d}${alphabet[chosenLetter]}.`);
+        steps.push(`We know that our correct option WILL have the factor (x + ${bCoefficient}${alphabet[chosenLetter]}).`);
+        steps.push(`Our next step should be finding the other factor that will give us a = ${a*c} and c = ${bCoefficient*d}${alphabet[chosenLetter]}.`);
+        steps.push(`Since the coefficient before x in our given factor (x + ${bCoefficient}${alphabet[chosenLetter]}) is just one, we know that the coefficient of x in the second factor MUST be ${a*c} as ${a*c} * 1 is ${a*c}.`);
+        steps.push(`Okay, so now we have (${a*c}x + an unknown constant)(x + ${bCoefficient}${alphabet[chosenLetter]}) = ${a*c}x² + (another unknown)x + ${bCoefficient*d}${alphabet[chosenLetter]}. By logic of expanding factored form, we should be able to find that unknown constant in our factor.`);
+        steps.push(`What number, when multiplied by ${bCoefficient}${alphabet[chosenLetter]}, gives us ${bCoefficient*d}${alphabet[chosenLetter]}?`);
+        steps.push(`The constant in our second factor must be ${d}.`);
+        steps.push(`We now know that the factored form of our equation HAS to be (${a*c}x + ${d})(x + ${bCoefficient}${alphabet[chosenLetter]}).`);
+        steps.push(`When we expand this, we get ${a*c}x² + (${a*bCoefficient}${alphabet[chosenLetter]} + ${d})x + ${bCoefficient*d}${alphabet[chosenLetter]}.`);
+        steps.push(`Recall from the question that ${alphabet[chosenLetter]} must be an integer.`);
+        steps.push(`Between the four options we have, the only thing that changes is that b value. So, we need to compare the four potential b values we are given and decide which one, when set equal to (${a*bCoefficient}${alphabet[chosenLetter]} + ${d}) to solve for ${alphabet[chosenLetter]}, will result in ${alphabet[chosenLetter]} being an integer.`);
+        steps.push(`Out of the four potential b values, ${options[chosenCorrect]} is the only one where ${alphabet[chosenLetter]} would be an integer in ${a*bCoefficient}${alphabet[chosenLetter]} + ${d} = ${options[chosenCorrect]} (${alphabet[chosenLetter]} = ${(options[chosenCorrect]-d)/(a*bCoefficient)}).`)
+
     }
 
     function typeI():void{ //find the store cost of an item?
