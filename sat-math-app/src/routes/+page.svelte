@@ -541,7 +541,7 @@
             solutions.push(b+d);
         }
 
-        solutions[0]=Math.round(solutions[0]*1000)/1000;
+        solutions[0]=round(solutions[0]);
     }
 
     function typeC():void{ //non-horizontal line intersects parabola at 1 point
@@ -629,17 +629,17 @@
         let chosenForSolution:string=``;
 
         if(xOrY==1){ //x
-            solutions.push((Math.round(-(b-m))/(2*a)*1000)/1000);
+            solutions.push(round(-(b-m))/(2*a));
             if(chosenUnknownName=="b"){
-                solutions.push(-((Math.round(-(b-m))/(2*a)*1000)/1000));
+                solutions.push(round(-(-(b-m))/(2*a)));
             }
             chosenForSolution="x";
         }else{
             x = (-(b-m))/(2*a);
-            solutions.push(Math.round((m*x + e)*1000)/1000);
+            solutions.push(round(m*x + e));
             if(chosenUnknownName=="b"){
                 x = -(-(b-m))/(2*a);
-                solutions.push(Math.round((m*x + e)*1000)/1000);
+                solutions.push(round(m*x + e));
             }
             chosenForSolution="y";
         }
