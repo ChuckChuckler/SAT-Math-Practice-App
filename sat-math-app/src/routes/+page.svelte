@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeL();
+        //typeM();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1191,12 +1191,25 @@
         problem+=`B = ${ac}/${ba}. If BC = `;
         let bc:number=Math.pow(ac,2)+Math.pow(ba,2);
         let scale:number=randint(3,5);
+        let bcInString:string=``;
         if(Math.sqrt(bc*Math.pow(scale,2)).toString().includes(".")){ //not a perfect square
             problem+=`√(${bc*Math.pow(scale,2)})`;
+            bcInString=`√(${bc*Math.pow(scale,2)})`;
         }else{
             problem+=`${Math.sqrt(bc*Math.pow(scale,2))}`;
+            bcInString=`${Math.sqrt(bc*Math.pow(scale,2))}`;
         }
 
+        steps.push(`When a segment is drawn in a triangle that is perpendicular to one of the legs, the resulting smaller triangle within the original triangle is actually similar to the original triangle.`);
+        steps.push(`DE is perpendicular to BA, which means that triangle BDE is actually similar to triangle BAC.`);
+        steps.push(`That means that we can find the sides of △BDE to find those of △BAC, and vice versa.`);
+        steps.push(`We're given BC, ${bcInString}, and tanB, ${ac}/${ba}. We can use tanB to find the other two sides of △BAC.`);
+        steps.push(`We can't know what AC and BA are using just tanB. However, we do know that tanB will ultimately simplify to ${ac}/${ba}.`);
+        steps.push(`That means that AC and BA, if not ${ac} and ${ba}, have to share some common factor that cancels out when the two are divided.`);
+        steps.push(`We can use x to represent this common factor, and use pythagorean theorem to find the value of x.`);
+        steps.push(`We know our hypotenuse, BC, is ${bcInString}. So we can set our equation for x up as (${ba}x)² + (${ac}x)² = ${bcInString}.`);
+        steps.push(`x = ${scale}. Our scale factor is ${scale}. Side AC = ${ac} * ${scale} = ${ac*scale}, and side BA = ${ba} * ${scale} = ${ba*scale}.`)
+        
         let toFind:number=randint(1,3);
         //toFind=3;
         if(toFind==1){ //de
@@ -1206,7 +1219,16 @@
                 da=randint(3,10);
             }
             problem+=` and DA = ${da}, what is the length of segment DE, rounded to the nearest hundredth?`;
-            solutions.push(Math.round((ac*scale)*((ba-da)/ba)*100)/100);
+            solutions.push(round((ac*scale)*((ba-da)/ba)));
+
+            steps.push(`In the question, we are also given side DA = ${da}. Segment BA is made of segments DA and BD.`);
+            steps.push(`This means we can subtract DA from BA to get BD.`);
+            steps.push(`${ba*scale} - ${da} = ${(ba-da)}. BD = ${(ba-da)}.`);
+            steps.push(`Because △BAC and △BDE are similar, we can now use BA and BD to find the scale factor between △BAC and △BDE.`);
+            steps.push(`If we use a variable k to represent the scale factor between the two triangles, then BA(k) = BD.`);
+            steps.push(`k = ${ba-da}/${ba}.`);
+            steps.push(`Finally, since DE on △BDE corresponds to AC on △BAC, we can multiply AC by k (our scale factor) to get DE.`);
+            steps.push(`${ac*scale}(${ba-da}/${ba}) ≈ ${round((ac*scale)*((ba-da)/ba))}. DE ≈ ${round((ac*scale)*((ba-da)/ba))}.`);
         }else if(toFind==2){ //da
             ba*=scale;
             ac*=scale;
@@ -1214,8 +1236,18 @@
             while(ac-de<=0){
                 de=randint(3,10);
             }
-            problem+=` and DE = ${de}, what is the length of segment DA, rounded to the nearest hundredth?`
-            solutions.push(Math.round((ba-(ba*(de/ac)))*100)/100);
+            problem+=` and DE = ${de}, what is the length of segment DA?`;
+            solutions.push(round((ba-(ba*(de/ac)))));
+
+            steps.push(`In the question, we are also given side DE = ${de}. Remember that △BAC and △BDE are similar; side DE on △BDE corresponds to side AC on △BAD.`);
+            steps.push(`This means that we can use DE and AC to find the scale factor between △BAC and △BDE.`);
+            steps.push(`If we use a variable k to represent the scale factor between the two triangles, then AC(k) = DE.`);
+            steps.push(`k = ${de}/${ac}.`);
+            steps.push(`Since segment BA is composed of segments BD and DA together, and BD is part of △BDE, we can find BD and subtract it from BA to get DA.`);
+            steps.push(`BD corresponds to BA, so BD = BA(k) (with k being our scale factor).`);
+            steps.push(`DA will equal BA - BA(k).`);
+            steps.push(`Substitue the length of BA and our scale factor into this, and we get DA = ${ba} - ${ba}(${de}/${ac}).`);
+            steps.push(`DA ≈ ${solutions[0]}.`);
         }else if(toFind==3){ //find bd
             ba*=scale;
             ac*=scale;
@@ -1223,8 +1255,17 @@
             while(ac-de<=0){
                 de=randint(3,10);
             }
-            problem+=` and DE = ${de}, what is the length of segment BD, rounded to the nearest hundredth?`;
-            solutions.push(Math.round((ba*(de/ac))*100)/100);
+            problem+=` and DE = ${de}, what is the length of segment BD?`;
+            solutions.push(round(ba*(de/ac)));
+
+            steps.push(`In the question, we are also given side DE = ${de}. Remember that △BAC and △BDE are similar; side DE on △BDE corresponds to side AC on △BAD.`);
+            steps.push(`This means that we can use DE and AC to find the scale factor between △BAC and △BDE.`);
+            steps.push(`If we use a variable k to represent the scale factor between the two triangles, then AC(k) = DE.`);
+            steps.push(`k = ${de}/${ac}.`);
+            steps.push(`Side BD in △BDE corresponds to side BA in △BAC, so we can use our newly-found scale factor between the two triangles to determine BD from BA.`);
+            steps.push(`BD = BA(k) (where k represents the scale factor between the two triangles).`);
+            steps.push(`BD = ${ba}(${de}/${ac}).`);
+            steps.push(`BD = ${solutions[0]}.`);
         }
     }
 
