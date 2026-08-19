@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeM();
+       // typeN();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1274,6 +1274,7 @@
         openResponse.makeVisible(true);
         let alphabet:string[]=["a","b","c","d","f","g","h","j","k","m","n","p","q","r","u","v","w","z"];
         let whatToSolve:number=randint(1,4);
+        //whatToSolve=4;
         if(whatToSolve==1){ //var outside, infinite solutions
             let toDistribute:number=randint(3,10);
             let xCoeff:number=randint(2,25);
@@ -1283,12 +1284,16 @@
             equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(toDistribute);
+
+            steps.push(`If an equation has infinite solutions, that means that it's identical on both the left and right sides.`);
+            steps.push(`We just need to find the value of ${alphabet[chosenLetter]} that multiplies with ${xCoeff} to get ${xCoeff*toDistribute} and multiplies with ${constant} to get ${constant*toDistribute}.`);
+            steps.push(`${alphabet[chosenLetter]} = ${toDistribute}.`);
         }else if(whatToSolve==2){ //var outside, no solutions
             let toDistribute:number=randint(3,10);
             let xCoeff:number=randint(2,25);
             let constant:number=randint(2,25);
             let constantRight:number=randint(2*toDistribute, constant*toDistribute);
-            while(constant==constantRight/toDistribute){
+            while(constant*toDistribute==constantRight){
                 constantRight=randint(2*toDistribute, constant*toDistribute);
             }
             let chosenLetter:number=randint(0,alphabet.length-1);
@@ -1296,6 +1301,11 @@
             equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(toDistribute);
+
+            steps.push(`If an equation has no solutions, that means that it comes out to something that's always false no matter what.`);
+            steps.push(`In this case, the coefficients before the x should be the exact same so they can be cancelled out, leaving only two constants that are not equal to each other (e.g. 2 = 5 is false).`);
+            steps.push(`So we need to find the value of ${alphabet[chosenLetter]} that multiplies with ${xCoeff} to get ${xCoeff*toDistribute}, but does not multiply with ${constant} to get ${constantRight}.`);
+            steps.push(`${alphabet[chosenLetter]} = ${toDistribute}.`);
         }else if(whatToSolve==3){ //var inside, infinite solutions
             let toDistribute:number=randint(3,10);
             let xCoeff:number=randint(2,25);
@@ -1305,6 +1315,10 @@
             equation1.updateEquation(makeEquationArr(eq1));
             solutions.push(xCoeff);
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has infinite solutions. What is the value of ${alphabet[chosenLetter]}?`;
+
+            steps.push(`If an equation has infinite solutions, that means that it's identical on both the left and right sides.`);
+            steps.push(`We just need to find the value of ${alphabet[chosenLetter]} that multiplies with ${toDistribute} to get ${xCoeff*toDistribute}.`);
+            steps.push(`${alphabet[chosenLetter]} = ${xCoeff}.`);
         }else if(whatToSolve==4){ //var inside, no solutions
             let toDistribute:number=randint(3,10);
             let xCoeff:number=randint(2,25);
@@ -1318,6 +1332,11 @@
             equation1.updateEquation(makeEquationArr(eq1));
             problem=`In the given equation, ${alphabet[chosenLetter]} is a constant. The equation has no solutions. What is the value of ${alphabet[chosenLetter]}?`;
             solutions.push(xCoeff);
+
+            steps.push(`If an equation has no solutions, that means that it comes out to something that's always false no matter what.`);
+            steps.push(`In this case, the coefficients before the x should be the exact same so they can be cancelled out, leaving only two constants that are not equal to each other (e.g. 2 = 5 is false).`);
+            steps.push(`We just need to find the value of ${alphabet[chosenLetter]} that multiplies with ${toDistribute} to get ${xCoeff*toDistribute}; we already know that ${toDistribute} * ${constant} ≠ ${constantRight}.`);
+            steps.push(`${alphabet[chosenLetter]} = ${xCoeff}.`);
         }
     }
 
