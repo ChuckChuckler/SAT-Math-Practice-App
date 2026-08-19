@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeJ();
+        //typeK();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1139,6 +1139,19 @@
         let lenYZ:number=randint(5,30);
         solutions.push(Math.pow(lenYZ,2)/2);
         problem=`In triangle XYZ, angle Y is a right angle, the measure of angle Z is ${angleZ}°, and the length of side YZ is ${lenYZ} units. If the area, in square units, of triangle XYZ can be represented by the expression ktan${angleZ}°, where k is a constant, what is the value of k?`;
+
+        steps.push(`Recall that the tangent of a right triangle's angle is y/x, where y is the side opposite that angle and x is the side adjacent.`);
+        steps.push(`We're given side YZ, which is ${lenYZ}. Side YZ is adjacent to angle Z, which means that x = side YZ and thus, x = ${lenYZ}.`);
+        steps.push(`Remember that the area of a triangle is 1/2(bh). In a right triangle, b and h are the two legs-- x and y.`);
+        steps.push(`Since tan = y/x, and we have both an angle measure (Z-- ${angleZ})° and its x (${lenYZ}).`);
+        steps.push(`We can find side y by multiplying x(y/x) and therefore cancelling x out in the denominator.`);
+        steps.push(`Since y/x = tan, it follows that x(y/x) is equivalent to xtan, or ${lenYZ}tan${angleZ}°.`);
+        steps.push(`We now know our two legs, ${lenYZ} and ${lenYZ}tan${angleZ}°.`);
+        steps.push(`Multiplying these gets us ${lenYZ*lenYZ}tan${angleZ}°.`);
+        steps.push(`Again, the area of a triangle is 1/2(bh), so we need to divide ${lenYZ*lenYZ}tan${angleZ}° by 2.`);
+        steps.push(`We get ${(lenYZ*lenYZ)/2}tan${angleZ}°.`);
+        steps.push(`The question gives us the format ktan${angleZ}° and asks us for k. We have our area as ${(lenYZ*lenYZ)/2}tan${angleZ}°.`);
+        steps.push(`Therefore, k = ${(lenYZ*lenYZ)/2}.`);
     }
 
     function typeL():void{ //sphere inside a cube
