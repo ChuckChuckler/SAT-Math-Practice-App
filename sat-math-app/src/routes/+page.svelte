@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeI();
+        //typeJ();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1018,6 +1018,9 @@
         let dpg:number=randint(3,6); //dollars per gallon
         let dtr:number=randint(2,5); //dollars to reduce
         let mtr:number=randint(10,30); //miles to reduce
+        while(mpg==mtr){
+            mtr=randint(10,30);
+        }
         while(mpw==mtr){
             mtr=randint(10,30);
         }
@@ -1030,6 +1033,7 @@
         */
 
         let whatToSolve:number=randint(1,4);
+        //whatToSolve=4;
         if(whatToSolve==1){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many fewer miles, m, Joe Banana should drive each week?`;
             let optionsUnrandomized:string[]=["","","",""];
@@ -1045,6 +1049,14 @@
                 optionsUnrandomized.splice(index,1);
             }
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+
+            steps.push(`We want to find the number of FEWER miles Joe Banana should drive per week. In other words, we want to find how many miles yield a weekly expenditure of $${dtr}, because that's the number of miles Joe Banana should reduce.`);
+            steps.push(`So our correct option will have ${dtr} on the right side of its equation. We can eliminate both options that have ${((mpw/mpg)*dpg)-dtr} on the right side, because those equations would give us how many miles Joe Banana should drive, not how many FEWER he should drive, per week.`);
+            steps.push(`If we recall, we're given how far his car travels on a gallon of gasoline (${mpg}) and how much a gallon costs (${dpg}).`);
+            steps.push(`m represents miles, not dollars.`);
+            steps.push(`Therefore, we need to set up our ratio (aka our slope) as dollars over miles. That way, the values representing miles cancel out (as one, ${mpg}, is in a denominator, and one, m, is in the numerator), leaving only a dollar value.`);
+            steps.push(`Another way to think about it is this: in ${dpg}m = ${dtr}, m would represent how many miles should be saved if Joe Banana's car could only move a mile per gallon of gas. But we know that Joe's car can actually move ${mpg} miles per gallon of gas, which is why we need to divide ${dpg}m by ${mpg}-- so we can determine how many gallons we actually need.`);
+            steps.push(`The correct equation representing this scenario is (${dpg}/${mpg})m = ${dtr}.`);
         }else if(whatToSolve==2){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Joe Banana would like to reduce his weekly expidenture on gas by $${dtr}. Assuming gas is $${dpg} per gallon, which equation models how many miles, m, Joe Banana should drive each week?`;
             let optionsUnrandomized:string[]=["","","",""];
@@ -1056,6 +1068,15 @@
             let optionsRandomized:string[]=[];
             optionsRandomized=createRandomAnswers(optionsUnrandomized);
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+
+            steps.push(`We want to find the number of miles Joe Banana should drive per week if he wants to save $${dtr}. So, we need to find the number of miles Joe Banana needs for his weekly expidenture on gas to be $${dtr} less than it is right now.`);
+            steps.push(`We know how many miles he drives already (${mpw}), how many miles he can drive per gallon (${mpg}), and how much a gallon costs ($${dpg}), so we can figure out how much he pays for gas per week right now ((${mpw}/${mpg}) * ${dpg} = $${mpw/mpg*dpg}).`);
+            steps.push(`What we solve for should be $${dtr} less than that: $${(mpw/mpg*dpg)-dtr}.`);
+            steps.push(`And so our correct option will have ${(mpw/mpg*dpg)-dtr} on the right side of its equation. We can eliminate both options that have ${dtr} on the right side, because those equations would give us how many FEWER miles Joe Banana should drive per week, not how many he SHOULD drive.`);
+            steps.push(`m represents miles, not dollars.`);
+            steps.push(`Therefore, we need to set up our ratio (aka our slope) as dollars over miles. That way, the values representing miles cancel out (as one, ${mpg}, is in a denominator, and one, m, is in the numerator), leaving only a dollar value.`);
+            steps.push(`Another way to think about it is this: in ${dpg}m = ${(mpw/mpg*dpg)-dtr}, m would represent how many miles Joe Banana should drive per week if Joe Banana's car could only move a mile per gallon of gas. But we know that Joe's car can actually move ${mpg} miles per gallon of gas, which is why we need to divide ${dpg}m by ${mpg}-- so we can determine how many gallons we actually need.`);
+            steps.push(`The correct equation representing this scenario is (${dpg}/${mpg})m = ${(mpw/mpg*dpg)-dtr}.`);
         }else if(whatToSolve==3){
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will save on gas next week?`;
             let optionsUnrandomized:string[]=["","","",""];
@@ -1071,6 +1092,14 @@
                 optionsUnrandomized.splice(index,1);
             }
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+            
+            steps.push(`We want to know how much money Joe Banana will be saving. In order to determine that, we need to use the number of fewer miles that he'll be driving per week.`);
+            steps.push(`We can eliminate any option that doesn't have ${mtr} in it, because those options would be hinting towards Joe Banana's new expidenture on gas, not how much he'd be saving.`);
+            steps.push(`We know that Joe Banana can drive ${mpg} miles with a gallon of gas, and that each gallon costs ${dpg} dollars.`);
+            steps.push(`We need to know how many miles Joe can drive per gallon so we can accurately see how many gallons of gas he'll need for a certain amount of miles (${mtr}), and then we can use that to find out how much that many gallons of gas will cost.`);
+            steps.push(`Therefore, we need to use ${mpg} miles per gallon in our equation.`);
+            steps.push(`Since we're ultimately getting a price (unit: dollars only) through this equation, and our price of ${dpg} is per gallon (dollars/gallon), we should set up our equation so that our ratio cancels out the miles and leaves gallons in the numerator-- (miles)/(miles/gallons) * (dollars/gallon) --> gallons * (dollars/gallons) = dollars.`);
+            steps.push(`The only equation that fits this is ${correct}.`);
         }else{
             problem=`Joe Banana drives an average of ${mpw} miles each week. His car travels an average of ${mpg} miles per gallon. Over the next week, Joe Banana will be driving ${mtr} miles less in total. Assuming gas is $${dpg} per gallon, which equation models how many dollars, d, Joe Banana will pay for gas next week?`;
             let optionsUnrandomized:string[]=["","","",""];
@@ -1086,6 +1115,16 @@
                 optionsUnrandomized.splice(index,1);
             }
             mcqdiv.updateOptions(optionsRandomized[0], optionsRandomized[1], optionsRandomized[2], optionsRandomized[3], correct);
+
+            steps.push(`We want to know how much money Joe Banana will now pay weekly for gas after the reduction in weekly miles. In order to determine that, we need to find out how many miles per week he'll actually be driving now.`);
+            steps.push(`We can find that by simply subtracting ${mtr}, the miles Joe will not be driving now, from ${mpw}, the previous amount of weekly miles Joe was driving.`);
+            steps.push(`${mpw} - ${mtr} = ${mpw-mtr}.`);
+            steps.push(`So we can eliminate any option that doesn't have ${mpw-mtr} in it, because those options would be hinting towards how much money Joe Banana would save, not how much his new expidenture on gas actually is.`);
+            steps.push(`We know that Joe Banana can drive ${mpg} miles with a gallon of gas, and that each gallon costs ${dpg} dollars.`);
+            steps.push(`We need to know how many miles Joe can drive per gallon so we can accurately see how many gallons of gas he'll need for a certain amount of miles (${mtr}), and then we can use that to find out how much that many gallons of gas will cost.`);
+            steps.push(`Therefore, we need to use ${mpg} miles per gallon in our equation.`);
+            steps.push(`Since we're ultimately getting a price (unit: dollars only) through this equation, and our price of ${dpg} is per gallon (dollars/gallon), we should set up our equation so that our ratio cancels out the miles and leaves gallons in the numerator-- (miles)/(miles/gallons) * (dollars/gallon) --> gallons * (dollars/gallons) = dollars.`);
+            steps.push(`The only equation that fits this is ${correct}.`);
         }
         
     }
