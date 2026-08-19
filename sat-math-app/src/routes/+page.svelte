@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeK();
+        //typeL();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1161,8 +1161,20 @@
         let sphereRadius:number=squareEdgeLength/2;
         let sqVolume:number=Math.pow(squareEdgeLength,3);
         let sphVolume:number=(4/3)*Math.PI*Math.pow(sphereRadius,3);
-        solutions.push(Math.round(sqVolume-sphVolume));
-        problem=`A cube has edge length ${squareEdgeLength} inches. A solid sphere with radius ${sphereRadius} inches is inside the cube, such that the sphere touches the center of each face of the cube. To the nearest cubic inch, what is the volume of the space in the cube NOT taken up by the sphere?`;
+        solutions.push(round(sqVolume-sphVolume));
+        problem=`A cube has edge length ${squareEdgeLength} inches. A solid sphere with radius ${sphereRadius} inches is inside the cube, such that the sphere touches the center of each face of the cube. What is the volume of the space in the cube NOT taken up by the sphere?`;
+
+        steps.push(`Let's first find the volume of the cube.`);
+        steps.push(`The formula for the volume of a cube is s³, where s = the side length of the cube.`);
+        steps.push(`We know the side length of the cube is ${squareEdgeLength}.`);
+        steps.push(`The volume of the cube is ${squareEdgeLength}³, or ${Math.pow(squareEdgeLength,3)}.`);
+        steps.push(`Next, we'll find the volume of the sphere.`);
+        steps.push(`The formula for the volume of a sphere is (4/3)πr³, where r = the radius of the sphere.`);
+        steps.push(`We know the radius of the sphere = ${sphereRadius}.`);
+        steps.push(`The volume of the sphere is (4/3)π(${sphereRadius})³, or (4/3)(${Math.pow(sphereRadius, 3)})π.`);
+        steps.push(`To find the volume of the cube not taken up by the sphere, we simply subtract the volume of the sphere from the volume of the cube to get the leftover volume.`);
+        steps.push(`${Math.pow(squareEdgeLength,3)} - (4/3)(${Math.pow(sphereRadius, 3)})π ≈ ${solutions[0]}.`);
+        steps.push(`The volume of the space not taken up by the sphere is ~${solutions[0]}.`);
     }
 
     function typeM():void{ //given a triangle and a smaller similar triangle inside, find DE, etc.
