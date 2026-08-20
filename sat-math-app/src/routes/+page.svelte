@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-       // typeN();
+        //typeO();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1358,17 +1358,34 @@
         let optionsRandomized:string[]=[];
         let correct:string="";
         optionsUnrandomized[0]=`((r/${scale})+ ${c}, (r/${scale})+ ${c*scale})`;
+
+        steps.push(`If we compare the two equations in this system, we'll notice that they are actually the same equation.`);
+        steps.push(`Because of that, we can just pick one of these two equations to find our points. We'll pick the first one since the numbers are smaller and more manageable.`);
+        steps.push(`In the first equation, we'll plug r first into x, then into y, and solve for the other coordinate to get two possible points.`);
+        steps.push(`Let's set x = r first. Our x coordinate will be r; let's solve for our y coordinate.`);
+        steps.push(`${xCoeff}r + ${yCoeff}y = ${c}.`);
+        steps.push(`After solving this, we get y = (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}.`);
+        steps.push(`When x = r, our coordinate point is (r, (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}).`);
+
         if(xOrY==1){ //x = r, y = whatever whatever r
             console.log("h");
             optionsUnrandomized[1]=`(r, (${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}))`;
             optionsUnrandomized[2]=`((${yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
             optionsUnrandomized[3]=`((${-xCoeff}/${yCoeff})r + ${c}/${yCoeff}, r)`;
             correct=optionsUnrandomized[1];
+
+            steps.push(`(r, ${-xCoeff}r/${yCoeff} + ${c}/${yCoeff}) is actually one of our option choices, so we can select it with no problem without needing to plug r into y.`);
         }else{
             optionsUnrandomized[1]=`((${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r)`;
             optionsUnrandomized[2]=`(r, (${xCoeff}/${yCoeff})r + ${c}/${yCoeff}))`;
             optionsUnrandomized[3]=`(r, (${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}))`;
             correct=optionsUnrandomized[1];
+
+            steps.push(`(r, (${xCoeff}/${yCoeff})r + ${c}/${yCoeff}) is not one of our answer choices, so let's try plugging in r for y next and solving for x.`);
+            steps.push(`${xCoeff}x + ${yCoeff}r = ${c}.`);
+            steps.push(`After solving this, we get x = (${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}.`);
+            steps.push(`When y = r, our coordinate point is ((${-yCoeff}/${xCoeff})r + ${c}/${xCoeff}, r).`);
+            steps.push(`This is one of our option choices, so we can now select it as our answer.`);
         }
         
         optionsRandomized=createRandomAnswers(optionsUnrandomized);
