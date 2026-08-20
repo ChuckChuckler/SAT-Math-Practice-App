@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeO();
+        //typeP();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1402,10 +1402,28 @@
         let factor1:number=factors[factorsChosen][0];
         let factor2:number=factors[factorsChosen][1];
         let factorsNegative:number=randint(1,2);
+        //factorsNegative=1;
         let eq1:string=factorsNegative==1?`${product}x² + (${factor1}a + ${factor2}b)x + ab`:`${product}x² - (${factor1}a + ${factor2}b)x + ab`;
         equation1.updateEquation(makeEquationArr(eq1));
+
+        steps.push(`We can use the equation we're given to find the factored form, which we can then use to find the solutions.`);
+        steps.push(`Since the constant of this equation is just ab, we can assume that the constants in our factored form will just be a and b, since-- obviously-- those multiply to just be ab.`);
+        steps.push(`Since our linear coefficient (b in the format ax² + bx + c) is ${(factorsNegative==1)?`(${factor1}a + ${factor2}b)`:`-(${factor1}a + ${factor2}b)`}, we know that our factored equation will look something like ${(factorsNegative==1)?`([some factor]x + a)([some factor]x + b)`:`([some factor]x - a)([some factor]x - b)`}.`)
+        steps.push(`Speaking of our linear coefficient, we can also use it to find the two coefficients for x in the two factors. In accordance with FOIL rules, because the linear coefficient, again, is ${(factorsNegative==1)?`(${factor1}a + ${factor2}b)`:`-(${factor1}a + ${factor2}b)`}, it follows that one coefficient of x in the factored form must be ${factor1} and one must be ${factor2}.`);
+        steps.push(`Specifically, each coefficient must be in the opposite factor of the term it's multiplied by in the linear coefficient so they can actually be multiplied when FOILing. ${factor1} multiplies with a, so it must be in the factor with b; ${factor2} multiplies with b, so vice versa.`);
+        steps.push(`Our factored form is ${(factorsNegative==1)?`(${factor2}x + a)(${factor1}x + b)`:`(${factor2}x - a)(${factor1}x - b)`}.`);
+        steps.push(`Now let's set this equal to 0 so we can find our two solutions.`);
+        if(factorsNegative==1){
+            steps.push(`(${factor2}x + a) = 0. x = ${(factor2==1)?`-${factor2}a`:`-(1/${factor2})a`}.`);
+            steps.push(`(${factor1}x + b) = 0. x = ${(factor1==1)?`-${factor1}b`:`-(1/${factor1})b`}`);
+        }else{
+            steps.push(`(${factor2}x - a) = 0. x = ${(factor2==1)?`${factor2}a`:`(1/${factor2})a`}.`);
+            steps.push(`(${factor1}x - b) = 0. x = ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}.`);
+        }
+
+
         let whatToFind:number=randint(1,4);
-        whatToFind=4;
+        //whatToFind=4;
         problem=`In the given equation, a and b are positive constants. The `;
         let kDenom:number=0;
         if(whatToFind==1 || whatToFind==2){ //sum or difference (they have identical setup)
@@ -1419,13 +1437,39 @@
             problem+=(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`${Math.abs(kDenom)}/${factor2}a `;
             problem+=(whatToFind==2)?` - `:` + `;
             problem+=(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b), `:`${Math.abs(kDenom)}/${factor1}b), `;
-            solutions.push(Math.round((1/kDenom)*1000)/1000);
+            solutions.push(round((1/kDenom)));
+
+            if(whatToFind==1){
+                steps.push(`The question asks us to find k if the sum of the solutions is k(${(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`(${Math.abs(kDenom)}/${factor2})a `} + ${(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b`:`(${Math.abs(kDenom)}/${factor1})b`}).`);
+                let step:string=`${(factorsNegative==1)?`${(factor2==1)?`-${factor2}a`:`-(1/${factor2})a`} - ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`:`${(factor2==1)?`${factor2}a`:`(1/${factor2})a`} + ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`}`;
+                steps.push(step+` gives us the sum of the solutions.`);
+                steps.push(`The form given by the question means that something-- k-- has to have been factored out of the sum. We need to find out what multiplies with (${(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`(${Math.abs(kDenom)}/${factor2})a `} + ${(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b`:`(${Math.abs(kDenom)}/${factor1})b`}) to get (${step}), and that will be k.`);
+                steps.push(`k = 1/${kDenom}, or ~${round(1/kDenom)}.`);
+            }else{
+                steps.push(`The question asks us to find k if the difference of the solutions is k(${(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`(${Math.abs(kDenom)}/${factor2})a `} - ${(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b`:`(${Math.abs(kDenom)}/${factor1})b`}).`);
+                let step:string=`${(factorsNegative==1)?`${(factor2==1)?`-${factor2}a`:`-(1/${factor2})a`} + ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`:`${(factor2==1)?`${factor2}a`:`(1/${factor2})a`} - ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`}`;
+                steps.push(step+` gives us the difference of the solutions.`);
+                steps.push(`The form given by the question means that something-- k-- has to have been factored out of the sum. We need to find out what multiplies with (${(kDenom%factor2==0)?`${Math.abs(kDenom)/factor2}a `:`(${Math.abs(kDenom)}/${factor2})a `} - ${(kDenom%factor1==0)?`${Math.abs(kDenom)/factor1}b`:`(${Math.abs(kDenom)}/${factor1})b`}) to get (${step}), and that will be k.`);
+                steps.push(`k = ${(kDenom<0)?`-1/${-kDenom}`:`1/${kDenom}`}, or ~${round(1/kDenom)}.`);
+            }
         }else if(whatToFind==3){ //product
-            solutions.push(Math.round((1/(factor1*factor2))*1000)/1000);
+            solutions.push(round(1/(factor1*factor2)));
             problem+=`product of the solutions to the given equation is kab, `;
+
+            steps.push(`The question asks us to find k if the product of the solutions is kab.`);
+            steps.push(`We just need to multiply the two solutions together. k = the product of the two coefficients in front of a and b.`);
+            let step:string=`${(factorsNegative==1)?`${(factor2==1)?`-${factor2}a`:`-(1/${factor2})a`} * ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`:`${(factor2==1)?`${factor2}a`:`(1/${factor2})a`} * ${(factor1==1)?`${factor1}b`:`(1/${factor1})b`}`}`;
+            steps.push(step+` gives us the product of the solutions.`);
+            steps.push(`k = 1/${factor1*factor2}, or ~${round(1/(factor1*factor2))}.`);
         }else{
-            solutions.push(Math.round((factor1/factor2)*1000)/1000);
+            solutions.push(round(factor1/factor2));
             problem+=`quotient of the solutions to the given equation is k(a/b), `
+
+            steps.push(`The question asks us to find k if the quotient of the solutions is k(a/b).`);
+            steps.push(`We just need to divide the solution with a by the solution with b. k = the result of the two coefficients in front of a and b being divided (a/b).`);
+            let step:string=`(${(factorsNegative==1)?`${(factor2==1)?`-${factor2}a`:`-(1/${factor2})a`})/(${(factor1==1)?`${factor1}b`:`(1/${factor1})b`})`:`${(factor2==1)?`${factor2}a`:`(1/${factor2})a`})/(${(factor1==1)?`${factor1}b`:`(1/${factor1})b`})`}`;
+            steps.push(step+` gives us the quotient of the solutions.`);
+            steps.push(`k = ${factor1}/${factor2}, or ~${round(factor1/factor2)}.`);
         }
         
         problem+=`where k is a constant. What is the value of k?`;
