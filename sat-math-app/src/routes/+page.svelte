@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeQ();
+        //typeS();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1769,18 +1769,21 @@
             letter2=alphabet[randint2(0,alphabet.length-1)];
         }
         let xIntercept:number=randint(-30,30);
+        while(Math.abs(xIntercept)==1){
+            xIntercept=randint(-30,30);
+        }
         /*
             numerator: x^2 - x - a, x^2 + x - a, x^2 - x + a, or x^2 + x + a
         */
         let numerator:string="";
-        let formatChoice:number=randint(1,4);
-        if(formatChoice==1){ //x^2 - x - a
+        let formatChoice1:number=randint(1,4);
+        if(formatChoice1==1){ //x^2 - x - a
             numerator=`x² - x - ${letter1}`;
             a=Math.pow(xIntercept,2)-xIntercept;
-        }else if(formatChoice==2){
+        }else if(formatChoice1==2){
             numerator=`x² + x + ${letter1}`;
             a=-(Math.pow(xIntercept,2)+xIntercept);
-        }else if(formatChoice==3){
+        }else if(formatChoice1==3){
             numerator=`x² + x - ${letter1}`;
             a=Math.pow(xIntercept,2)+xIntercept;
         }else{
@@ -1804,30 +1807,104 @@
 
         let yIntercept:number=0;
         let denominator:string="";
-        formatChoice=randint(1,4);
-        if(formatChoice==1){
+        let formatChoice2:number=randint(1,4);
+        if(formatChoice2==1){
             denominator=`x³ - x - ${letter2}`;
-            yIntercept=(-a/b);
-        }else if(formatChoice==2){
+            if(formatChoice1==1||formatChoice1==3){
+                yIntercept=a/b;
+            }else{
+                yIntercept=-(a/b);
+            }
+        }else if(formatChoice2==2){
             denominator=`x³ + x - ${letter2}`;
-            yIntercept=(-a/b);
-        }else if(formatChoice==3){
+            if(formatChoice1==1||formatChoice1==3){
+                yIntercept=a/b;
+            }else{
+                yIntercept=-(a/b);
+            }
+        }else if(formatChoice2==3){
             denominator=`x³ - x + ${letter2}`;
-            yIntercept=a/b;
+            if(formatChoice1==1||formatChoice1==3){
+                yIntercept=-(a/b);
+            }else{
+                yIntercept=a/b;
+            }
         }else{
             denominator=`x³ + x + ${letter2}`;
-            yIntercept=a/b;
+            if(formatChoice1==1||formatChoice1==3){
+                yIntercept=-(a/b);
+            }else{
+                yIntercept=a/b;
+            }
         }
+
         equation1.updateEquation(makeEquationArr(`${eq1}${numerator}/${denominator}[fracfunc]`));
         problem=`The function g is defined by the given equation, where ${letter1} and ${letter2} are constants. In the xy-plane, the graph of y = g(x) passes through the point `;
-        problem+=(randint(1,2)==1)?`(${xIntercept}, 0) and g(0) = ${yIntercept}. `:`(0, ${yIntercept}) and g(${xIntercept}) = 0. `;
+        let points:string[]=(randint(1,2)==1)?[`(${xIntercept}, 0)`, `g(0) = ${yIntercept}`]:[`(0, ${yIntercept})`, `g(${xIntercept}) = 0`];
+        problem+=(`${points[0]} and ${points[1]}. `);
+        
+        steps.push(`We are told that ${points[0]} and that ${points[1]}.`);
+        steps.push(`When ${xIntercept} is plugged into the equation, the resulting value is 0 (g(${xIntercept}) = 0), meaning (${xIntercept}, 0) is the x-intercept.`);
+        steps.push(`We can use the x-intercept to find the value of ${letter1}.`);
+        steps.push(`We know that the denominator cannot be 0, because that would result in an undefined value. That means that when ${xIntercept} is plugged into the function, the NUMERATOR must end up as 0 (0/anything = 0).`);
+        let step:string=`We'll plug ${xIntercept} into just our numerator, giving us the equation `;
+        if(formatChoice1==1){
+            step+=`(${xIntercept})² ${(xIntercept<0)?`+`:`-`} ${Math.abs(xIntercept)} - ${letter1} = 0.`;
+        }else if(formatChoice1==2){
+            step+=`(${xIntercept})² ${(xIntercept<0)?`-`:`+`} ${Math.abs(xIntercept)} + ${letter1} = 0.`;
+        }else if(formatChoice1==3){
+            step+=`(${xIntercept})² ${(xIntercept<0)?`-`:`+`} ${Math.abs(xIntercept)} - ${letter1} = 0.`;
+        }else{
+            step+=`(${xIntercept})² ${(xIntercept<0)?`+`:`-`} ${Math.abs(xIntercept)} + ${letter1} = 0.`;
+        }
+
+        steps.push(step);
+        steps.push(`This makes ${letter1} = ${a}.`);
+        
         let whatToFind:number=randint(1,2);
+        whatToFind=2;
         if(whatToFind==1){
             problem+=`What is the value of ${letter1}?`;
             solutions.push(a);
         }else{
             problem+=`What is the value of ${letter2}?`;
             solutions.push(b);
+
+            steps.push(`But the question asks us for the value of ${letter2}, not ${letter1}.`);
+            steps.push(`To find ${letter2}, we can replace ${letter1} in the function with ${a}, since we know it now.`);
+            steps.push(`Then we can use our second given point, our y-intercept (0, ${yIntercept}), to find the value of ${letter2}. When x = 0, our value should be ${yIntercept}.`);
+            step=`After plugging in 0 for every x, we're left with just `;
+            if(formatChoice1==1 || formatChoice1==3){
+                if(formatChoice2==1 || formatChoice2==2){
+                    if(a<0){
+                        step+=`-${Math.abs(a)}/${letter2}`;
+                    }else{
+                        step+=`${Math.abs(a)}/${letter2}`;
+                    }
+                }else{
+                    if(a<0){
+                        step+=`${Math.abs(a)}/${letter2}`;
+                    }else{
+                        step+=`-${Math.abs(a)}/${letter2}`;
+                    }
+                }
+            }else{
+                if(formatChoice2==1 || formatChoice2==2){
+                    if(a<0){
+                        step+=`${Math.abs(a)}/${letter2}`;
+                    }else{
+                        step+=`-${Math.abs(a)}/${letter2}`;
+                    }
+                }else{
+                    if(a<0){
+                        step+=`-${Math.abs(a)}/${letter2}`;
+                    }else{
+                        step+=`${Math.abs(a)}/${letter2}`;
+                    }
+                }
+            }
+            steps.push(`${step} = ${yIntercept}.`);
+            steps.push(`Solving this, we get ${letter2} = ${b}.`)
         }
     }
 
