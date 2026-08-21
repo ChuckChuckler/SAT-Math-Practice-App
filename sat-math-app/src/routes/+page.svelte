@@ -2211,8 +2211,7 @@
         imageVisible=true;
         imgBind=typeyImg;
         problem=`In the given figure, BC is the diameter of the circle. If the length of `;
-        let given1:number=randint(1,5);
-        given1=3;
+        let given1:number=randint(1,2);
         if(given1==1){ //bc given
             let bc:number=randint(7,50)*3;
             let factors:number[][]=getFactors(Math.floor(Math.pow(bc,2)/3));
