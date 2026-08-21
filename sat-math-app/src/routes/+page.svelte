@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeP();
+        //typeQ();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1481,15 +1481,26 @@
         problem=`The function f is defined by f(x) = ax² + bx + c, where a, b, and c are constants. The graph of y = f(x) in the xy-plane passes through the points `;
         let r1:number=randint(-10,10);
         let r2:number=randint(-10,10);
+        while(r1==r2){
+            r2=randint(-10,10);
+        }
         problem+=`(${r1}, 0) and (${r2}, 0). If a is an integer `
-        let bUnscaled:number=-r1-r2;
+        let bUnscaled:number=-(r1+r2);
         let cUnscaled:number=r1*r2;
         let aGreaterOrLess:number=randint(1,2);
+        //aGreaterOrLess=2;
         let aScale:number=randint(2,4);
         let optionsUnrandomized:number[]=[0,0,0,0];
         let optionsRandomized:number[]=[];
         let correct:number=0;
-        aGreaterOrLess=2;
+
+        steps.push(`Since we're given the x intercepts, (${r1}, 0) and (${r2}, 0), we can set them up in factored form as a(x ${(r1>0)?`- ${Math.abs(r1)}`:`+ ${r1}`})(x ${(r2>0)?`- ${Math.abs(r2)}`:`+ ${r2}`}). We don't know the value of a, so we'll put it in front as a variable.`);
+        steps.push(`Expanding the factors gets us a(x² ${(bUnscaled<0)?`- ${Math.abs(bUnscaled)}`:`+ ${bUnscaled}`}x ${(r1*r2<0)?`- ${Math.abs(r1*r2)}`:`+ ${r1*r2}`}).`);
+        steps.push(`Distributing a into the expanded form yields ax² ${(-(r1+r2)<0)?`- ${Math.abs(r1+r2)}`:`+ ${r1+r2}`}ax ${(r1*r2<0)?`- ${Math.abs(r1*r2)}`:`+ ${r1*r2}`}a.`);
+        steps.push(`It follows that a = a, b = ${-(r1+r2)}a, and c = ${r1*r2}a.`);
+
+        let sumDecided:string=``;
+
         if(aGreaterOrLess==1){ //a>1
             problem+=`greater than 1, which of the following could be the value of `;
             let whatToFind:number=randint(1,3);
@@ -1506,6 +1517,9 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+bUnscaled)==0){
                     optionsUnrandomized[3]=(1+bUnscaled)*aScale+(randint2(-3,3)*aScale+1);
                 }
+
+                steps.push(`Then, a + b = a + ${bUnscaled}a, or ${bUnscaled+1}a.`);
+                sumDecided=`${bUnscaled+1}`;
             }else if(whatToFind==2){ //b+c
                 problem+=`b + c?`;
                 optionsUnrandomized[0]=(bUnscaled+cUnscaled);
@@ -1518,6 +1532,9 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(bUnscaled+cUnscaled)==0){
                     optionsUnrandomized[3]=(bUnscaled+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
                 }
+
+                steps.push(`Then, b + c = ${bUnscaled}a + ${cUnscaled}a, or ${bUnscaled+cUnscaled}a.`);
+                sumDecided=`${bUnscaled+cUnscaled}`;
             }else{ //a+c
                 problem+=`a + c?`;
                 optionsUnrandomized[0]=(1+cUnscaled);
@@ -1530,7 +1547,14 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+cUnscaled)==0){
                     optionsUnrandomized[3]=(1+cUnscaled)*aScale+(randint2(-3,3)*aScale+1);
                 }
+
+                steps.push(`Then, a + c = a + ${cUnscaled}a, or ${1+cUnscaled}a.`);
+                sumDecided=`${1+cUnscaled}`;
             }
+
+            steps.push(`We are told that a is greater than 1, and that it is an integer.`);
+            steps.push(`So we need to see which of the four options results in a being an integer greater than 1 when it is set equal to ${sumDecided}a. Or, which option, when divided by ${sumDecided}, yields an integer which is greater than 1.`);
+            steps.push(`Out of the four options, ${optionsUnrandomized[1]} is the only one which, when divided by ${sumDecided}, is greater than 1 and an integer (${optionsUnrandomized[1]}/${sumDecided} = ${aScale}; a = ${aScale}).`);
         }else{ //a<1
             problem+=`less than 1, which of the following could be the value of `;
             let whatToFind:number=randint(1,3);
@@ -1547,6 +1571,9 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+bUnscaled)==0){
                     optionsUnrandomized[3]=(1+bUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
                 }
+
+                steps.push(`Then, a + b = a + ${bUnscaled}a, or ${bUnscaled+1}a.`);
+                sumDecided=`${bUnscaled+1}`;
             }else if(whatToFind==2){ //b+c
                 problem+=`b + c?`;
                 optionsUnrandomized[0]=(bUnscaled+cUnscaled);
@@ -1559,6 +1586,9 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(bUnscaled+cUnscaled)==0){
                     optionsUnrandomized[3]=(bUnscaled+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
                 }
+
+                steps.push(`Then, b + c = ${bUnscaled}a + ${cUnscaled}a, or ${bUnscaled+cUnscaled}a.`);
+                sumDecided=`${bUnscaled+cUnscaled}`;
             }else{ //a+c
                 problem+=`a + c?`;
                 optionsUnrandomized[0]=(1+cUnscaled);
@@ -1571,7 +1601,14 @@
                 while(optionsUnrandomized[2]==optionsUnrandomized[3] || optionsUnrandomized[3]%(1+cUnscaled)==0){
                     optionsUnrandomized[3]=(1+cUnscaled)*-aScale+(randint2(-3,3)*-aScale-1);
                 }
+
+                steps.push(`Then, a + c = a + ${cUnscaled}a, or ${cUnscaled+1}a.`);
+                sumDecided=`${cUnscaled+1}`;
             }
+
+            steps.push(`We are told that a is less than 1, and that it is an integer.`);
+            steps.push(`So we need to see which of the four options results in a being an integer less than 1 when it is set equal to ${sumDecided}a. Or, which option, when divided by ${sumDecided}, yields an integer which is less than 1.`);
+            steps.push(`Out of the four options, ${optionsUnrandomized[1]} is the only one which, when divided by ${sumDecided}, is less than 1 and an integer (${optionsUnrandomized[1]}/${sumDecided} = ${-aScale}; a = ${-aScale}).`);
         }
 
         correct=optionsUnrandomized[1];
