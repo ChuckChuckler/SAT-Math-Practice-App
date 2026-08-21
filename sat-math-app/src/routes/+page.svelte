@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeS();
+        //typeT();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -1914,8 +1914,9 @@
         let h:number=randint(-10,10);
         let k:number=randint(-15,15);
         problem=`In the xy-plane, a parabola has vertex (${h}, ${k}) and `;
+        steps.push(`According to the question, the vertex is (${h}, ${k}). This means that the y-intercept of the vertex = ${k}, which is ${(k<0)?`below`:`above`} the x-axis.`);
+
         let intersects:number=randint(1,2);
-       // intersects=2;
         if(intersects==1){
             problem+=`intersects the x-axis at two points. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
             let unrandomized:number[]=[];
@@ -1938,6 +1939,10 @@
             }
             randomized=createRandomAnswers(unrandomized);
             mcqdiv.updateOptions(randomized[0].toString(),randomized[1].toString(),randomized[2].toString(),randomized[3].toString(),unrandomized[1].toString());
+
+            steps.push(`We are told also that the graph crosses the x-axis at two points.`);
+            steps.push(`This means two things: one, that a has to be ${(k<0)?`positive`:`negative`} so that the graph can actually cross the x-axis, and two, that c-- our y-intercept-- must be ${(k<0)?`greater than`:`less than`} ${k} (since it literally can't be ${(k<0)?`less`:`greater`}).`);
+            steps.push(`Out of the four option choices, there is only one that is ${(k<0)?`greater than`:`less than`} ${k}, which is ${unrandomized[1].toString()}.`);
         }else{
             problem+=`does not intersect the x-axis. If the equation is written in the form y = ax² + bx + c, where a, b, and c are constants, which of the following could be the value of a + b + c?`;
             let unrandomized:number[]=[];
@@ -1960,6 +1965,10 @@
             }
             randomized=createRandomAnswers(unrandomized);
             mcqdiv.updateOptions(randomized[0].toString(),randomized[1].toString(),randomized[2].toString(),randomized[3].toString(),unrandomized[1].toString());
+        
+            steps.push(`We are told also that the graph does not cross the x-axis.`);
+            steps.push(`This means two things: one, that a has to be ${(k<0)?`negative`:`positive`} so that the graph does not cross the x-axis, and two, that c-- our y intercept-- must be ${(k<0)?`less than`:`greater than`} ${k} (since it literally can't be ${(k<0)?`greater`:`less`}).`);
+            steps.push(`Out of the four option choices, there is only one that is ${(k<0)?`less than`:`greater than`} ${k}, which is ${unrandomized[1].toString()}.`);
         }
     }
 
