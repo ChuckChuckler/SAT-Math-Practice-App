@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeU();
+        //typeV();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -2055,6 +2055,9 @@
 
         let possibleCoords:string[]=["(1,0)","(0,1)","(-1,0)","(0,-1)"];
         let coordUnknowns:number=randint(1,2);
+        coordUnknowns=1;
+
+        steps.push(`Let's first find out what our angle should be.`);
 
         if(coordUnknowns==1){ //no coordinate unknown
             aCoords=possibleCoords[randint2(0,3)];
@@ -2064,11 +2067,37 @@
             }
 
             problem+=`${aCoords}. Point ${alphabet[startIndex+1].toUpperCase()} has coordinates (0,0), and point ${alphabet[startIndex+2].toUpperCase()} has coordinates ${cCoords}. `;
-
+            steps.push(`We are given one coordinate as ${aCoords}, one as (0,0), and one as ${cCoords}.`);
+            
             if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(0,1)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(-1,0)")&&[aCoords,cCoords].includes("(0,-1)")) || ([aCoords,cCoords].includes("(0,-1)")&&[aCoords,cCoords].includes("(1,0)"))){
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[1]);
+                steps.push(`If we sketch this out on a coordinate plane, one point would lie on the x-axis, and one would lie on the y-axis.`);
+                steps.push(`That would mean that the two segments form a 90° angle.`);
+                steps.push(`To convert from degrees to radians, we multiply our angle in degrees by (π/180).`);
+                steps.push(`90*(π/180) = π/2 radians.`);
+                steps.push(`The four answer options may look scary at first, but try simplifying them, and you'll see they end with a denominator of either 1 or 2.`);
+                steps.push(`This means that the four options are coterminal-- they share the same angle measure after one or more full rotations-- with the four quadrantals (90°, 180°, 270°, and 360°).`);
+                steps.push(`Let's find out which of the four options is coterminal with π/2.`);
+                steps.push(`Immediately, we can eliminate ${unrandomized[0]} and ${unrandomized[2]}, since they have 1 as their denominator, not 2; that means they're either π (180°) or 2π (0°/360°).`);
+                steps.push(`Now, we have to find what angles ${unrandomized[1]} and ${unrandomized[3]} are coterminal with.`);
+                steps.push(`To do this, we can simplify ${unrandomized[1]} as ${(scale*denominator+(denominator/2))/(denominator/2)}π/2 and ${unrandomized[3]} as ${(scale*denominator+((denominator/2)*3))/(denominator/2)}π/2.`);
+                steps.push(`Remember that a coterminal angle means that one or more full rotations have passed. So if we subtract enough full rotations from ${(scale*denominator+(denominator/2))/(denominator/2)}π/2 and ${(scale*denominator+((denominator/2)*3))/(denominator/2)}π/2, we should eventually get π/2 for one and 3π/2 for one.`);
+                steps.push(`Instead of subtracting two over and over, we'll just find the number closest to ${(scale*denominator+(denominator/2))/(denominator/2)} and ${(scale*denominator+((denominator/2)*3))/(denominator/2)} that yields an even number when divided by two (as if it yields an odd number, it would be coterminal with a half rotation and not a full rotation).`);
+                steps.push(`In this case, we'll subtract both angles by ${((scale*denominator+(denominator/2))/(denominator/2))-1}π/2.`);
+                steps.push(`${(scale*denominator+(denominator/2))/(denominator/2)}π/2 (unsimplified: ${unrandomized[1]}) is coterminal with π/2.`);
             }else if(([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(-1,0)")) || ([aCoords,cCoords].includes("(0,1)")&&[aCoords,cCoords].includes("(0,-1)"))){
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
+                steps.push(`If we sketch this out on a coordinate plane, both points would lie on the ${([aCoords,cCoords].includes("(1,0)")&&[aCoords,cCoords].includes("(-1,0)"))?`x`:`y`}-axis.`);
+                steps.push(`That would mean that the two segments form a 180° angle.`);
+                steps.push(`To convert from degrees to radians, we multiply our angle in degrees by (π/180).`);
+                steps.push(`180*(π/180) = π radians.`);
+                steps.push(`The four answer options may look scary at first, but try simplifying them, and you'll see they end with a denominator of either 1 or 2.`);
+                steps.push(`This means that the four options are coterminal-- they share the same angle measure after one or more full rotations-- with four different quadrantals (90° * n).`);
+                steps.push(`Let's find out which of the four options is coterminal with π.`);
+                steps.push(`Immediately, we can eliminate ${unrandomized[1]} and ${unrandomized[3]}, since they have 2 as their denominator, not 1; that means they're either π/2 (90°) or 3π/2 (270°).`);
+                steps.push(`From there, figuring out whether the answer is ${unrandomized[0]} or ${unrandomized[2]} is easy. Simplify both answers. If the angle is coterminal with 2π, it will be even; if it is coterminal with π, it will be odd.`);
+                steps.push(`${(scale+1)*denominator}/${denominator} = ${scale+1}. The correct option is ${unrandomized[2]}.`);
+                
             }
         }else if(coordUnknowns==2){ //x and y are unknown, but we know their signs (pos/neg)
             let index:number=randint2(0,3);
@@ -2107,7 +2136,7 @@
                 mcqdiv.updateOptions(randomized[0],randomized[1],randomized[2],randomized[3],unrandomized[2]);
             }
         }
-        problem+=`Which of the following could be the positive measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
+        problem+=`Which of the following could be the smallest measure of angle ∠${alphabet[startIndex].toUpperCase()}${alphabet[startIndex+1].toUpperCase()}${alphabet[startIndex+2].toUpperCase()}?`;
     }
 
     function typeW():void{ //pyramid with square base, find surface area of triangle face
