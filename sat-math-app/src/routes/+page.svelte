@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeT();
+        //typeU();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -2020,6 +2020,16 @@
         eq1=eq1.substring(0,eq1.length-2);
         equation1.updateEquation(makeEquationArr(eq1));
         problem+=`${(Math.floor(add/10)+1)*10}. The list above shows ${number-1} of the integers from data set A. The mean of these ${number-1} integers is ${averageWithout}. If the mean of data set A is an integer greater than ${averageWithout}, what is the value of the largest integer from data set A?`;
+
+        steps.push(`We are given ${number-1} integers part of Data Set A. We know that the mean of these ${number-1} integers is ${averageWithout}, so it's safe to assume that (${number-1}*${averageWithout})/${number-1}, or ${(number-1)*averageWithout}/${number-1}, is another way to represent this average.`);
+        steps.push(`However, Data Set A has ${number} values, not ${number-1}; one value is excluded from the set above.`);
+        steps.push(`If we factor that unknown value in, using x to represent it, we'll get our average as (${(number-1)*averageWithout} + x)/${number}.`);
+        steps.push(`All ${number} values in Data Set A are less than ${(Math.floor(add/10)+1)*10}, and the mean of Data Set A as a whole is greater than ${(number-1)*averageWithout}. So we can set this up as an inequality: 24 < (${(number-1)*averageWithout} + x)/${number} < ${(Math.floor(add/10)+1)*10}.`);
+        steps.push(`We know that Data Set A consists of only integers, so we know that the value not included above has to be an integer, too. We are additionally told that the mean is also an integer. So both x and (${(number-1)*averageWithout} + x)/${number} must end up as integers.`);
+        steps.push(`Now we find the value of x that is an integer, yields an integer, and fits the inequality.`);
+        steps.push(`x = ${add}. (${(number-1)*averageWithout} + ${add})/${number} = ${((number-1)*averageWithout+add)/number}. ${((number-1)*averageWithout+add)/number} is greater than ${((number-1)*averageWithout)/(number-1)} and less than ${(Math.floor(add/10)+1)*10}.`);
+        steps.push(`Since the mean of Data Set A is lower when x is not present, x must be the largest integer in the data set, as the mean will increase when it is added.`);
+        steps.push(`The largest integer in Data Set A is ${add}.`);
     }
 
     function typeV():void{ //xy plane, there are these points...what angle
