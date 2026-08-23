@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeW();
+        //typeX();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -2195,6 +2195,8 @@
             c2=randint(-50,50);
         }
 
+        
+
         let eq1:string=`${x1}ax `;
         eq1+=(y1<0)?`- ${-y1}by = ${c1}`:`+ ${y1}by = ${c1}`
         equation1.updateEquation(makeEquationArr(eq1));
@@ -2206,13 +2208,79 @@
         problem=`In the given system of equations, a and b are constants. The system has a solution of `;
 
         let aOrB:number=randint(1,2);
-       // aOrB=2;
+        aOrB=1;
         if(aOrB==1){ //user finds a
             let a:number=randint(-15,15);
             while(a==-1 || a==1){
                 a=randint(-15,15);
             }
             solutions.push(a);
+
+            steps.push(`We can see that we are given the x-value of a solution.`);
+            steps.push(`We should start by using the elimination method to eliminate y and solve for only x.`);
+            if(y1%y2==0){
+                let step:string=`We can multiply the entire second equation by `;
+                if((y1>0&&y2>0) || (y1<0&&y2<0)){
+                    step+=`-${y1/y2}.`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n${x1}ax ${(y1<0)?`- ${Math.abs(y1)}`:`+ ${y1}`}by = ${c1}\n${x2*(-y1/y2)}ax ${(-y2<0)?`- ${Math.abs(y1)}`:`+ ${Math.abs(y1)}`}by = ${c2*(-y1/y2)}`);
+                }else if(y1>0&&y2<0 || y1<0&&y2>0){
+                    step+=`${y1/y2}.`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${x1}ax ${(y1<0)?`- ${Math.abs(y1)}`:`+ ${y1}`}by = ${c1}\n
+                        ${x2*(y1/y2)}ax ${(y2<0)?`- ${Math.abs(y1)}`:`+ ${y1}`}by = ${c2*(y1/y2)}
+                    `);
+                } 
+            }else if(y2%y1==0){
+                let step:string=`We can multiply the entire first equation by `;
+                if((y1>0&&y2>0) || (y1<0&&y2<0)){
+                    step+=`-${y2/y1}.`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n${x1*(-y2/y1)}ax ${(-y1<0)?`- ${Math.abs(y2)}`:`+ ${Math.abs(y2)}`}by = ${c1*(-y2/y1)}\n${x2}ax ${(y2<0)?`- ${Math.abs(y2)}`:`+ ${Math.abs(y2)}`}by = ${c2}`);
+                }else if(y1>0&&y2<0 || y1<0&&y2>0){
+                    step+=`${y2/y1}.`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${x1*(y2/y1)}ax ${(y1<0)?`- ${Math.abs(y2)}`:`+ ${y2}`}by = ${c1*(y2/y1)}\n
+                        ${x2}ax ${(y2<0)?`- ${Math.abs(y2)}`:`+ ${y2}`}by = ${c2}
+                    `);
+                } 
+            }else if(y1>y2){ //multiply first equation by y2/y1
+                let step:string=`We can multiply the entire first equation by `;
+                if((y1>0&&y2>0)||(y1<0&&y2<0)){
+                    step+=`-${y2}/${y1}.`
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${-x1*Math.abs(y2)}/${Math.abs(y1)}ax ${(y1<0)?`+ ${Math.abs(y2)}`:`- ${Math.abs(y2)}`}by = ${-c1*Math.abs(y2)}/${Math.abs(y1)}\n
+                        ${x2}ax ${(y2<0)?`- ${Math.abs(y2)}`:`+ ${y2}`}by = ${c2}
+                    `);
+                }else if((y1<0&&y2>0)||(y1>0&&y2<0)){
+                    step+=`${y2}/${y1}.`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${x1*Math.abs(y2)}/${Math.abs(y1)}ax ${(y1<0)?`- ${Math.abs(y2)}`:`+ ${Math.abs(y2)}`}by = ${c1*Math.abs(y2)}/${Math.abs(y1)}\n
+                        ${x2}ax ${(y2<0)?`- ${Math.abs(y2)}`:`+ ${y2}`}by = ${c2}
+                    `);
+                }
+            }else if(y2>y1){ //multiply second equation by y1/y2
+                let step:string=`We can multiply the entire second equation by `;
+                if((y1>0&&y2>0)||(y1<0&&y2<0)){
+                    step+=`-${Math.abs(y1)}/${Math.abs(y2)}`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${x1}ax ${(y1<0)?`- ${Math.abs(y1)}`:`+ ${Math.abs(y1)}`}by = ${c1}\n
+                        ${-x2*Math.abs(y1)}/${Math.abs(y2)}ax ${(y2<0)?`+ ${Math.abs(y1)}`:`- ${Math.abs(y1)}`}by = ${-c2*Math.abs(y1)}/${Math.abs(y2)}
+                    `);
+                }else if((y1<0&&y2>0)||(y1>0&&y2<0)){
+                    step+=`${Math.abs(y1)}/${Math.abs(y2)}`;
+                    steps.push(step);
+                    steps.push(`We'll get our system as follows:\n
+                        ${x1}ax ${(y1<0)?`- ${Math.abs(y1)}`:`+ ${Math.abs(y1)}`}by = ${c1}\n
+                        ${x2*Math.abs(y1)}/${Math.abs(y2)}ax ${(y2<0)?`- ${Math.abs(y1)}`:`+ ${Math.abs(y1)}`}by = ${c2*Math.abs(y1)}/${Math.abs(y2)}
+                    `);
+                }
+            }
 
             if((y1>0&&y2>0)||(y1<0&&y2<0)){
                 x1*=y2;
@@ -2391,7 +2459,7 @@
         <br>
         <div class={`w-[70%] max-h-[40vh] overflow-auto box-border p-[10px] border-[2px] border-white scrollbar ${(displayedSteps.length==0)?`hidden`:`block`}`}>
             {#each displayedSteps as step,i}
-                <h3>{i+1}. {step}</h3>
+                <h3 class="whitespace-pre-line">{i+1}. {step}</h3>
             {/each}
         </div>
     </div>
