@@ -2208,7 +2208,7 @@
         problem=`In the given system of equations, a and b are constants. The system has a solution of `;
 
         let aOrB:number=randint(1,2);
-        aOrB=1;
+        //aOrB=1;
         if(aOrB==1){ //user finds a
             let a:number=randint(-15,15);
             while(a==-1 || a==1){
