@@ -108,7 +108,7 @@
         let index:number=randint2(0,Object.keys(domain).length-1);
         domain[Object.keys(domain)[index]]();
         type=Object.keys(domain)[index];
-        //typeV();
+        //typeW();
 
         eq1Visible=(equation1.getNumbers().length==0)?false:true;
         eq2Visible=(equation2.getNumbers().length==0)?false:true;
@@ -2148,6 +2148,12 @@
         let s1:number=(choice==0)?chosenTriple[0]:chosenTriple[1];
         let s2:number=(choice==0)?chosenTriple[1]:chosenTriple[0];
         problem=`A rectangular pyramid has a square base with an area of ${Math.pow(s1*2,2)} square units. What is the surface area, in square units, of `;
+
+        steps.push(`Firstly, since area of a square = a², we can determine that the edge length of the base = ${s1*2}.`);
+        steps.push(`We are given the volume of the rectangular pyramid, ${(Math.pow(s1*2,2)*s2)/3} units³.`);
+        steps.push(`The volume of a pyramid is given by V = 1/3(lwh), where l and w are the length and width of the base and h is the height of the pyramid.`);
+        steps.push(`Since we know our length and width are ${s1*2} (area of the base ${Math.pow(s1*2,2)}), we can find the height of our pyramid by solving ${(Math.pow(s1*2,2)*s2)/3} = 1/3(${Math.pow(s1*2,2)})h.`);
+        steps.push(`The height of our triangle = ${s2}.`);
         choice=randint(1,2);
         if(choice==1){ //find surface area of js triangular side
             problem+=`one of the triangular faces `;
@@ -2157,6 +2163,18 @@
             solutions.push(((chosenTriple[2]*s1)*4)+Math.pow(s1*2,2));
         }
         problem+=`if the rectangular pyramid has a volume of ${(Math.pow(s1*2,2)*s2)/3} cubic units?`;
+        
+        steps.push(`But that alone isn't enough to find the surface area of ${(choice==1)?`a triangular face!`:`the pyramid!`}`);
+        steps.push(`If we want to find the surface area of one triangular face, we actually need to get the slant height, aka the height of that individual face; we only have the height of the 3D pyramid right now.`);
+        steps.push(`To get the slant height, we can think of it as the hypotenuse of a right triangle, where the vertical leg is the height of the pyramid and the horizontal leg extends from where the height touches the base to the bottom edge of the triangular face. So one leg would be ${s2} and the other would be half of the base's edge length-- ${s1*2}/2, or ${s1}.`);
+        steps.push(`From there, we can use pythagorean theorem to find the slant height.`);
+        steps.push(`√(${s1}² + ${s2}²) = √(${Math.pow(chosenTriple[2],2)}) = ${chosenTriple[2]}. The slant height is ${chosenTriple[2]}.`);
+        steps.push(`Now that we have the actual height of a triangular face of this pyramid, we can calculate the area of the triangular face with 1/2(bh).`);
+        steps.push(`We'll multiply the edge length of the square (${s1*2}) by the height, ${chosenTriple[2]}, to get ${(s1*2)*chosenTriple[2]}; then, we divide it by 2 to get the area of a triangular face: ${((s1*2)*chosenTriple[2])/2}.`);
+        if(choice==2){
+            steps.push(`There are four triangular faces in a pyramid, so we'll multiply ${((s1*2)*chosenTriple[2])/2} * 4 to get the combined surface area, ${(((s1*2)*chosenTriple[2])/2)*4}.`);
+            steps.push(`Finally, we add the surface area of our base, ${Math.pow(s1*2,2)} to this to get our total surface area: ${solutions[0]}.`);
+        }
     }
 
     function typeX():void{ //what is the value of k or m?
